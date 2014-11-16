@@ -31,4 +31,4 @@ def api(request):
     else:
         return Response({"status": "error", "reason": "out_of_auth_code"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-    return Response({"status": "success", "code": code.code})
+    return Response({"status": "success", "uid": student_id, "code": code.code})
