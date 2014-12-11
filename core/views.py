@@ -38,7 +38,6 @@ def api(request):
     if not (re.match(r'[A-Z]\d{2}[0-9AB]\d{6}', student_id) and student_id[3] in kinds):
         return Response({"status": "error", "reason": "invalid_card"}, status=status.HTTP_400_BAD_REQUEST)
 
-
     kind = student_id[3] + '1'
 
     code = AuthCode.objects.filter(kind=kind, issued=False).first()
@@ -52,4 +51,4 @@ def api(request):
     else:
         return Response({"status": "error", "reason": "out_of_auth_code"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-    return Response({"status": "success", "uid": student_id, "type": kinds[kind], "code": code.code})
+    return Response({"status": "success", "uid": student_id, "type": kinds[kind[0]], "code": code.code})
