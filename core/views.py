@@ -35,12 +35,13 @@ def api(request):
         'B': '生命科學院',
     }
 
-    kind = student_id[3]
-
-    if not (re.match(r'[A-Z]\d{2}[0-9AB]\d{6}', student_id) and kind in kinds):
+    if not (re.match(r'[A-Z]\d{2}[0-9AB]\d{6}', student_id) and student_id[3] in kinds):
         return Response({"status": "error", "reason": "invalid_card"}, status=status.HTTP_400_BAD_REQUEST)
 
-    code = AuthCode.objects.filter(kind=kind+'1', issued=False).first()
+
+    kind = student_id[3] + '1'
+
+    code = AuthCode.objects.filter(kind=kind, issued=False).first()
     if code:
         entry = VoteEntry()
         entry.student_id = student_id
