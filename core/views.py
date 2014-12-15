@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from urllib.error import URLError
 
 def index(request):
     return HttpResponse('It works!')
@@ -41,6 +42,8 @@ def api(request):
     # Call ACA API
     try:
         aca_student_id = service.to_student_id(internal_id)
+    except URLError:
+        return error('server_error', status.HTTP_502_BAD_GATEWAY)
     except service.ExternalError as e:
         # TODO: Check service error
         return error('error')
