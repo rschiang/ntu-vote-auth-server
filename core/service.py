@@ -33,20 +33,30 @@ def to_student_id(internal_id):
 
     # Read the response entity
     try:
-        status_ok = resp_entity.find('WEBOK').text
+        status = resp_entity.find('WEBOK').text
         error = resp_entity.find('ERROR').text
-        student_id = resp_entity.find('STUID').text
-        student_type = resp_entity.find('STUTYPE').text
-        in_campus = resp_entity.find('INCAMPUS').text
-        college = resp_entity.find('COLLEGE').text
 
-        if status_ok != 'OK':
+        if status != 'OK':
             raise ExternalError(error)
+
+        info = StudentInfo()
+        info.id = resp_entity.find('STUID').text
+        info.type = resp_entity.find('STUTYPE').text
+        info.valid = resp_entity.find('INCAMPUS').text
+        info.college = resp_entity.find('COLLEGE').text
 
     except AttributeError:
         raise ExternalError('entity_malformed')
 
-    return student_id
+    return info
+
+class StudentInfo(object):
+
+    def __init__(self, id=None, type=None, valid=False, college=None):
+        self.id = id
+        self.type = type
+        self.valid = valid
+        self.college = college
 
 class ExternalError(Exception):
     def __init__(self, reason):

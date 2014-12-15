@@ -41,14 +41,16 @@ def api(request):
 
     # Call ACA API
     try:
-        aca_student_id = service.to_student_id(internal_id)
+        aca_info = service.to_student_id(internal_id)
     except URLError:
         return error('server_error', status.HTTP_502_BAD_GATEWAY)
     except service.ExternalError as e:
-        # TODO: Check service error
-        return error('error')
+        if e.reason == 'card_invalid':
+            return error('card_invalid')
+        else:
+            return error('server_error', status.HTTP_502_BAD_GATEWAY)
     else:
-        if aca_student_id != student_id:
+        if aca_info.id != student_id:
             return error('card_suspicious')
 
     # Check vote record
@@ -74,6 +76,8 @@ def api(request):
     if code:
         entry = Record()
         entry.student_id = student_id
+        entry.revision = revision
+        entry.state = Record.USED
         entry.save()
 
         code.issued = True
@@ -81,4 +85,4 @@ def api(request):
     else:
         return error('out_of_auth_code', status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-    return Response({"status": "success", "uid": student_id, "type": kind_name, "code": code.code})
+    return Response({'status': 'success', 'uid': student_id, 'type': kind_name, 'code': code.code})
