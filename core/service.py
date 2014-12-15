@@ -1,8 +1,10 @@
+import logging
 from core.models import CooperativeMember
 from django.conf import settings
-from urllib.error import URLError
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as et
+
+logger = logging.getLogger('vote.service')
 
 def is_coop_member(student_id):
     return CooperativeMember.objects.filter(student_id=student_id).exists()
@@ -29,6 +31,7 @@ def to_student_id(internal_id):
         resp_data = response.read().decode('big5')
         resp_entity = et.fromstring(resp_data)
     except (UnicodeDecodeError, et.ParseError):
+        logger.exception('Failed to load server entity')
         raise ExternalError('entity_malformed')
 
     # Read the response entity
@@ -46,6 +49,7 @@ def to_student_id(internal_id):
         info.college = resp_entity.find('COLLEGE').text
 
     except AttributeError:
+        logger.exception('Server entity malformed')
         raise ExternalError('entity_malformed')
 
     return info
