@@ -1,4 +1,4 @@
-from .models import AuthCode, VoteEntry, CooperativeMember
+from .models import AuthCode, Record, CooperativeMember
 
 def import_auth_code(filename=None):
     '''
@@ -37,4 +37,4 @@ def import_coop_member(filename=None):
         CooperativeMember.objects.bulk_create(members)
 
 def get_student(student_id):
-    return VoteEntry.objects.get(student_id=student_id)
+    return Record.objects.get(student_id=student_id)

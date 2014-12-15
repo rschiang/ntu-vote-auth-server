@@ -4,7 +4,7 @@ class CooperativeMember(models.Model):
     student_id = models.CharField(max_length=10, unique=True)
     serial = models.CharField(max_length=16, unique=True)
 
-class VoteEntry(models.Model):
+class Record(models.Model):
     UNAVAILABLE = 'U'
     AVAILABLE = 'A'
     LOCKED = 'L'

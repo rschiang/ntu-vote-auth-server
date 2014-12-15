@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Django settings for core project.
 
@@ -70,3 +72,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# App configurations
+API_KEY = os.environ.get('VOTE_API_KEY')
+
+COLLEGES = {
+    '1': '文學院',
+    '2': '理學院',
+    '3': '社會科學院',
+    '4': '醫學院',
+    '5': '工學院',
+    '6': '生物資源暨農學院',
+    '7': '管理學院',
+    '8': '公共衛生學院',
+    '9': '電機資訊學院',
+    'A': '法律學院',
+    'B': '生命科學院',
+}
+
+KINDS = {
+    (college + str(coop)):
+        COLLEGES[college] + ('（合作社員）' if coop == 1 else '')
+    for college in COLLEGES.keys()
+    for coop in range(2)
+}
