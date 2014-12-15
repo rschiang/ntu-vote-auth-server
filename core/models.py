@@ -1,8 +1,28 @@
 from django.db import models
 
+class CooperativeMember(models.Model):
+    student_id = models.CharField(max_length=10, unique=True)
+    serial = models.CharField(max_length=16, unique=True)
+
 class VoteEntry(models.Model):
-    student_id = models.CharField(max_length=10)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    UNAVAILABLE = 'U'
+    AVAILABLE = 'A'
+    LOCKED = 'L'
+    USED = 'U'
+    FLAGGED = 'F'
+
+    STATE_CHOICES = (
+        (UNAVAILABLE, 'Unavailable'),
+        (AVAILABLE, 'Available'),
+        (LOCKED, 'Locked'),
+        (USED, 'Used'),
+        (FLAGGED, 'Flagged'),
+    )
+
+    student_id = models.CharField(max_length=10, unique=True)
+    revision = models.IntegerField(default=0)
+    state = models.CharField(max_length=1, choices=STATE_CHOICES, default=AVAILABLE)
+    timestamp = models.DateTimeField(auto_now=True)
 
 class AuthCode(models.Model):
     kind = models.CharField(max_length=2)

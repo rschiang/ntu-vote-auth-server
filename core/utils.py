@@ -1,10 +1,10 @@
-from .models import AuthCode, VoteEntry
+from .models import AuthCode, VoteEntry, CooperativeMember
 
-def do_import(filename):
+def import_auth_code(filename=None):
     '''
     Imports auth code from single plain text file.
     '''
-    with open(filename, 'r') as f:
+    with open(filename or 'authcode.csv', 'r') as f:
         codes = []
         for line in f:
             if not line:
@@ -17,5 +17,24 @@ def do_import(filename):
 
         AuthCode.objects.bulk_create(codes)
 
+def import_coop_member(filename=None):
+    '''
+    Imports coop member entries from CSV file.
+    '''
+    with open(filename or 'coop.csv', 'r') as f:
+        members = []
+        for line in f:
+            serial, _, student_id = line.partition(',')
+            if not serial or not student_id:
+                print('Invalid line:', line)
+                continue
+
+            member = CooperativeMember()
+            member.serial = serial
+            member.student_id = student_id
+            members.append(member)
+
+        CooperativeMember.objects.bulk_create(members)
+
 def get_student(student_id):
-    return VoteEntry.objects.filter(student_id__startswith=student_id)
+    return VoteEntry.objects.get(student_id=student_id)
