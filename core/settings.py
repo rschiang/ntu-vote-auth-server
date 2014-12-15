@@ -75,6 +75,9 @@ STATIC_URL = '/static/'
 
 # App configurations
 API_KEY = os.environ.get('VOTE_API_KEY')
+ACA_API_USER = os.environ.get('ACA_API_USER')
+ACA_API_PASSWORD = os.environ.get('ACA_API_PASSWORD')
+ACA_API_URL = os.environ.get('ACA_API_URL')
 
 COLLEGES = {
     '1': '文學院',
