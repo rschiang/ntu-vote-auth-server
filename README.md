@@ -1,0 +1,39 @@
+NTUVote 身份驗證系統
+===================
+
+這是用於電子投票的身份驗證系統伺服器，將在臺灣大學 103 學年度第一學期學代會學生代表選舉使用。系統架構以 Django REST Framework 為基礎，藉由讀取卡片資訊、並與校務系統連線，使得此次電子投票得以透過自動化的方式驗證身份、派發選票，並有效過濾偽卡。
+
+完整電子投票系統架構分為驗證與投票兩部分，其中裝置整合與身份驗證系統由[臺灣大學學生會選舉罷免執行委員會](https://www.facebook.com/NTUVote)委託[臺灣大學開源社](https://ntuosc.org) [RSChiang](https://github.com/rschiang/ntu-vote-auth-server) 規劃研發；投票系統則延請 [MouseMs](https://github.com/mousems/NTUvoteV2) 實作。
+
+此專案以 [Apache 2.0](LICENSE.md) 授權釋出供公眾使用。
+
+安裝 / Install
+--------------
+
+專案依賴的套件與 Python 版本可參考 `requirements.txt` 與 `.python-version`，所需設定的環境變數可以在 `core/settings.py` 找到。
+
+    git clone https://github.com/rschiang/ntu-vote-auth-server
+    pip install virtualenv
+
+    virtualenv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+
+    # Create tables
+    ./manage.py migrate
+
+    # Set up nginx for production use
+    apt-get install nginx
+
+    # Running dev server on localhost:8000
+    ./manage.py runserver
+
+
+NTU Vote Authentication Server
+------------------------------
+
+This project is the authentication server that will be used in the upcoming 103-1 NTU Student Council Representative Election. Based on Django REST Framework, the authentication system enables the automation of identity verification process, while significantly reduces the chance for electoral fraud.
+
+The full e-vote architecture consists of two distinguish parts: authentication and ballot-casting. The authentication and device integration part is done by [NTU Open Source Community](https://ntuosc.org) under the delegation of [NTU Students' Association Election Commission](https://www.facebook.com/NTUVote), while [MouseMs](https://github.com/mousems/NTUvoteV2) from NTUST is in charge of the voting system.
+
+This project is released under [Apache License 2.0](LICENSE.md).
