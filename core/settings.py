@@ -79,7 +79,7 @@ ACA_API_USER = os.environ.get('ACA_API_USER')
 ACA_API_PASSWORD = os.environ.get('ACA_API_PASSWORD')
 ACA_API_URL = os.environ.get('ACA_API_URL')
 
-COLLEGES = {
+COLLEGE_NAMES = {
     '1': '文學院',
     '2': '理學院',
     '3': '社會科學院',
@@ -93,9 +93,11 @@ COLLEGES = {
     'B': '生命科學院',
 }
 
+COLLEGE_IDS = { value : key for key, value in COLLEGE_NAMES.items() }
+
 KINDS = {
     (college + str(coop)):
-        COLLEGES[college] + ('（合作社員）' if coop == 1 else '')
-    for college in COLLEGES.keys()
+        COLLEGE_NAMES[college] + ('（合作社員）' if coop == 1 else '')
+    for college in COLLEGE_NAMES.keys()
     for coop in range(2)
 }
