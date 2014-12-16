@@ -56,6 +56,10 @@ def to_student_id(internal_id):
         logger.exception('Server entity malformed')
         raise ExternalError('entity_malformed')
 
+    # Normalize
+    info.valid = (info.valid == 'true')
+
+    logger.info('Student %s (%s %s)', info.id, info.college, info.type)
     return info
 
 class StudentInfo(object):
