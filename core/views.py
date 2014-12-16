@@ -85,7 +85,12 @@ def api(request):
     is_coop = service.is_coop_member(student_id)
 
     # Build up kind identifier
-    college = aca_info.college
+    try:
+        college = settings.COLLEGE_IDS[aca_info.college]
+    except KeyError:
+        logger.warning('College %s mismatch', aca_info.college)
+        college = student_id[3]
+        
     kind = college + ('1' if is_coop else '0')
     kind_name = settings.KINDS[kind]
 
