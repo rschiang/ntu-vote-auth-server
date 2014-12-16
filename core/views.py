@@ -85,7 +85,7 @@ def api(request):
     is_coop = service.is_coop_member(student_id)
 
     # Build up kind identifier
-    college = settings.COLLEGE_IDS.get(aca_info.college, student_id[3])
+    college = aca_info.college
     kind = college + ('1' if is_coop else '0')
     kind_name = settings.KINDS[kind]
 

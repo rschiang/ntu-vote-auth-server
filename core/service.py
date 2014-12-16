@@ -58,6 +58,11 @@ def to_student_id(internal_id):
 
     # Normalize
     info.valid = (info.valid == 'true')
+    try:
+        info.college = settings.COLLEGE_IDS[info.college]
+    except KeyError:
+        logger.warning('College %s mismatch', info.college)
+        raise ExternalError('entity_malformed')
 
     logger.info(str(info))
     return info
