@@ -22,19 +22,22 @@ def import_coop_member(filename=None):
     Imports coop member entries from CSV file.
     '''
     with open(filename or 'coop.csv', 'r') as f:
-        members = []
+        members = {}
         for line in f:
             serial, _, student_id = line.partition(',')
             if not serial or not student_id:
                 print('Invalid line:', line)
                 continue
+            elif student_id in members:
+                member = members[student_id]
+                print('Duplicate entry:', member.serial, member.student_id)
 
             member = CooperativeMember()
-            member.serial = serial
-            member.student_id = student_id
-            members.append(member)
+            member.serial = serial.strip()
+            member.student_id = student_id.strip()
+            members[student_id] = member
 
-        CooperativeMember.objects.bulk_create(members)
+        CooperativeMember.objects.bulk_create(members.values())
 
 def get_student(student_id):
     return Record.objects.get(student_id=student_id)
