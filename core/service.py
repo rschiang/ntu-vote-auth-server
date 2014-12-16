@@ -21,7 +21,7 @@ def to_student_id(internal_id):
     req_pass = et.SubElement(req_entity, 'PASSWORD')
     req_pass.text = settings.ACA_API_PASSWORD
     req_cid = et.SubElement(req_entity, 'CARDNO')
-    req_cid.text = str(reverse_indian(int(internal_id, 16)))
+    req_cid.text = str(reverse_indian(int(internal_id, 16))[0])
     req_data = et.tostring(req_entity, encoding='big5')
 
     # Initiate HTTP request
