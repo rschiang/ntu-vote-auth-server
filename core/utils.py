@@ -29,8 +29,8 @@ def import_coop_member(filename=None):
             serial = serial.strip()
             student_id = student_id.strip().upper()
 
-            if not (serial and re.match(r'[A-Z]\d{2}[0-9AB]\d{5}', student_id)):
-                print('Invalid line:', line)
+            if not (serial and re.match(r'[A-Z]\d{2}[0-9A-Z]\d{5}', student_id)):
+                print('Invalid line:', line.strip())
                 continue
             elif student_id in members:
                 member = members[student_id]
@@ -50,7 +50,7 @@ def reset_server_state():
     print('Record entries:', records.count())
 
     row_count = auth_codes.update(issued=False)
-    print('... reset %s rows.', row_count)
+    print('... reset %s rows.' % row_count)
 
     records.delete()
     print('... cleared.')

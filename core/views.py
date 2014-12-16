@@ -40,7 +40,7 @@ def api(request):
             return error('version_not_supported')
 
         # Parse student ID
-        if re.match(r'[A-Z]\d{2}[0-9AB]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id):
+        if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id):
             student_id = raw_student_id[:-1]
             revision = int(raw_student_id[-1:])
             logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
@@ -88,11 +88,21 @@ def api(request):
     try:
         college = settings.COLLEGE_IDS[aca_info.college]
     except KeyError:
+        # Use student ID as an alternative
         logger.warning('College %s mismatch', aca_info.college)
         college = student_id[3]
-        
+
+        # In rare cases, we may encounter students without colleges
+        if college not in settings.COLLEGE_NAMES:
+            college = '0'
+
     kind = college + ('1' if is_coop else '0')
     kind_name = settings.KINDS[kind]
+
+    # Filter out unqualified students
+    # i.e. non-cooperative members who belong to no college
+    if kind == '00':
+        return error('unqualified')
 
     code = AuthCode.objects.filter(kind=kind, issued=False).first()
     if code:
