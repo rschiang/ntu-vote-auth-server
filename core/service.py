@@ -1,4 +1,5 @@
 import logging
+import struct
 from core.models import CooperativeMember
 from django.conf import settings
 from urllib.request import Request, urlopen
@@ -9,6 +10,9 @@ logger = logging.getLogger('vote.service')
 def is_coop_member(student_id):
     return CooperativeMember.objects.filter(student_id=student_id).exists()
 
+def reverse_indian(i):
+    return struct.unpack('<I', struct.pack('>I', i))
+
 def to_student_id(internal_id):
     # Build up the clumsy request entity
     req_entity = et.Element('STUREQ')
@@ -17,7 +21,7 @@ def to_student_id(internal_id):
     req_pass = et.SubElement(req_entity, 'PASSWORD')
     req_pass.text = settings.ACA_API_PASSWORD
     req_cid = et.SubElement(req_entity, 'CARDNO')
-    req_cid.text = internal_id
+    req_cid.text = str(reverse_indian(int(internal_id, 16)))
     req_data = et.tostring(req_entity, encoding='big5')
 
     # Initiate HTTP request

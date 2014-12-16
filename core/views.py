@@ -40,13 +40,13 @@ def api(request):
             return error('version_not_supported')
 
         # Parse student ID
-        if not re.match(r'[A-Z]\d{2}[0-9AB]\d{6}', raw_student_id):
-            logger.info('Station %s request for card %s (%s)', station_id, raw_student_id, internal_id)
-            return error('card_invalid')
-        else:
+        if re.match(r'[A-Z]\d{2}[0-9AB]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id):
             student_id = raw_student_id[:-1]
             revision = int(raw_student_id[-1:])
             logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
+        else:
+            logger.info('Station %s request for card %s (%s)', station_id, raw_student_id, internal_id)
+            return error('card_invalid')
 
     # Call ACA API
     try:
