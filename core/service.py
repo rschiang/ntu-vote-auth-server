@@ -59,7 +59,7 @@ def to_student_id(internal_id):
     # Normalize
     info.valid = (info.valid == 'true')
 
-    logger.info('Student %s (%s %s)', info.id, info.college, info.type)
+    logger.info(str(info))
     return info
 
 class StudentInfo(object):
@@ -69,6 +69,12 @@ class StudentInfo(object):
         self.type = type
         self.valid = valid
         self.college = college
+
+    def __repr__(self):
+        return "{0}(id='{id}', type='{type}', valid={valid}, college='{college}')".format(self.__class__.__name__, **self.__dict__)
+
+    def __str__(self):
+        return '<StudentInfo: {id} ({college} {type}){0}>'.format('' if self.valid else '*', **self.__dict__)
 
 class ExternalError(Exception):
     def __init__(self, reason):
