@@ -54,13 +54,13 @@ def api(request):
 
     except URLError:
         logger.exception('Failed to connect to ACA server')
-        return error('server_error', status.HTTP_502_BAD_GATEWAY)
+        return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     except service.ExternalError as e:
         if e.reason == 'card_invalid':
             return error('card_invalid')
         else:
-            return error('server_error', status.HTTP_502_BAD_GATEWAY)
+            return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     else:
         if aca_info.id != student_id:
