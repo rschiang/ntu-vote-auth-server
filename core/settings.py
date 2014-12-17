@@ -58,6 +58,11 @@ DATABASES = {
     }
 }
 
+# Enable the use of external database
+# You may install additional dependencies like this:
+#     apt-get install python3-dev libpq-dev
+#     pip install psycopg2
+
 if os.environ.get('DATABASE_USER'):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -82,6 +87,36 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'vote.log'),
+        },
+    },
+    'formatters': {
+        'default': {
+            'format': '%(levelname)s %(asctime)s\n%(message)s\n'
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'vote': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    },
+}
 
 # App configurations
 API_KEY = os.environ.get('VOTE_API_KEY')
