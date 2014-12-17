@@ -97,6 +97,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'vote.log'),
+            'formatter': 'default',
         },
     },
     'formatters': {
