@@ -4,6 +4,7 @@ from core import service
 from core.models import Record, AuthCode
 from django.conf import settings
 from django.http import HttpResponse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -20,6 +21,15 @@ def error(reason, status=status.HTTP_400_BAD_REQUEST):
 
 @api_view(['POST'])
 def api(request):
+    # Check event timespan
+    if settings.ENFORCE_EVENT_DATE:
+        tz = timezone.get_default_timezone()
+        start_date = timezone.make_aware(settings.EVENT_START_DATE, tz)
+        end_date = timezone.make_aware(settings.EVENT_END_DATE, tz)
+
+        if not (start_date <= timezone.now() <= end_date):
+            return error('service_closed')
+
     # Check parameters
     try:
         api_key = request.DATA['api_key']
