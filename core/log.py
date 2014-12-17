@@ -1,6 +1,7 @@
-import os
-
+# Logging
 # Configure logging mechanism here
+
+import os
 LOGGING_DIR = os.path.dirname(os.path.dirname(__file__))
 
 LOGGING = {
