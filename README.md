@@ -7,26 +7,43 @@ NTUVote 身份驗證系統
 
 此專案以 [Apache 2.0](LICENSE.md) 授權釋出供公眾使用。
 
+系統需求 / System Requirements
+-----------------------------
+
+身份驗證系統使用下列環境建置：
+
+* Ubuntu 14.04
+* Python 3.4
+* PostgreSQL 9.3
+
+專案依賴的套件與版本可參考 `requirements.txt`，所需設定的環境變數可以在 `core/settings.py` 找到。
+
 安裝 / Install
 --------------
-
-專案依賴的套件與 Python 版本可參考 `requirements.txt` 與 `.python-version`，所需設定的環境變數可以在 `core/settings.py` 找到。
-
     git clone https://github.com/rschiang/ntu-vote-auth-server
     pip install virtualenv
 
+    # (a) For environment with Python 2.7 as default
+    apt-get install python3
+    virtualenv --python=`which python3` venv
+
+    # (b) For enviroment with newer Python installation
     virtualenv venv
+
+    # Install dependencies
     source venv/bin/activate
     pip install -r requirements.txt
 
     # Create tables
     ./manage.py migrate
 
-    # Set up nginx for production use
-    apt-get install nginx
-
     # Running dev server on localhost:8000
     ./manage.py runserver
+
+    # Use Gunicorn when you're ready
+    # You might want to bind to unix socket (e.g. "unix:/tmp/gunicorn.sock")
+    # and use Nginx to serve static files instead.
+    gunicorn core.wsgi --bind=0.0.0.0:80
 
 
 NTU Vote Authentication Server
