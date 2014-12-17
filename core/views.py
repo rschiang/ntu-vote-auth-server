@@ -118,4 +118,5 @@ def api(request):
         logger.info('Auth codes of kind %s have used up', kind)
         return error('out_of_auth_code', status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+    logger.info('Auth code issued: %s', kind)
     return Response({'status': 'success', 'uid': student_id, 'type': kind_name, 'code': code.code})

@@ -9,16 +9,17 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console', 'file'],
+            'level': 'DEBUG',
         },
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['mail_admins', 'file'],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': False,
         },
         'django.security': {
             'handlers': ['mail_admins', 'file'],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': False,
         },
         'py.warnings': {
             'handlers': ['console', 'file'],
@@ -38,7 +39,7 @@ LOGGING = {
     },
     'formatters': {
         'default': {
-            'format': '%(levelname)s %(asctime)s\n%(message)s\n'
+            'format': '[%(asctime)s] %(levelname)s\n%(message)s\n'
         },
     },
     'handlers': {
