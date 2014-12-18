@@ -2,23 +2,17 @@ import re
 from core import service
 from core.models import Record, AuthCode
 from django.conf import settings
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from urllib.error import URLError
-from .utils import logger, error
+from .utils import event_available, logger, error
 
 @api_view(['POST'])
 def api(request):
     # Check event timespan
-    if settings.ENFORCE_EVENT_DATE:
-        tz = timezone.get_default_timezone()
-        start_date = timezone.make_aware(settings.EVENT_START_DATE, tz)
-        end_date = timezone.make_aware(settings.EVENT_END_DATE, tz)
-
-        if not (start_date <= timezone.now() <= end_date):
-            return error('service_closed')
+    if not event_available():
+        return error('service_closed')
 
     # Check parameters
     try:
@@ -90,20 +84,22 @@ def api(request):
         college = settings.COLLEGE_IDS[aca_info.college]
     except KeyError:
         # Use student ID as an alternative
-        logger.warning('College %s mismatch', aca_info.college)
+        logger.warning('No matching college for ACA entry %s', aca_info.college)
         college = student_id[3]
 
         # In rare cases, we may encounter students without colleges
         if college not in settings.COLLEGE_NAMES:
+            logger.warning('No matching college for ID %s', college)
             college = '0'
 
     kind = college + ('1' if is_coop else '0')
-    kind_name = settings.KINDS[kind]
 
     # Filter out unqualified students
     # i.e. non-cooperative members who belong to no college
-    if kind == '00':
+    if kind not in settings.KINDS:
         return error('unqualified')
+    else:
+        kind_name = settings.KINDS[kind]
 
     code = AuthCode.objects.filter(kind=kind, issued=False).first()
     if code:
