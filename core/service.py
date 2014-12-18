@@ -44,6 +44,20 @@ def to_student_id(internal_id):
         error = resp_entity.find('ERROR').text
 
         if status != 'OK':
+            logger.warning('Querying ACA failed: %s', error)
+
+            if '為黑名單' in error:
+                raise ExternalError('card_blacklisted')
+            elif '在卡務中不存在' in error or '尚未啟用' in error:
+                raise ExternalError('card_invalid')
+            elif '查無學號資料' in error:
+                raise ExternalError('student_not_found')
+            elif '未授權' in error:
+                raise ExternalError('unauthorized')
+            elif '輸入資料錯誤' in error:
+                raise ExternalError('params_invalid')
+
+            # All other rare cases
             raise ExternalError(error)
 
         info = StudentInfo()

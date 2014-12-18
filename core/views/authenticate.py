@@ -51,11 +51,12 @@ def api(request):
         return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     except service.ExternalError as e:
-        logger.exception('Card rejected by ACA server')
-        if e.reason == 'card_invalid':
+        logger.exception('Card rejected by ACA server, reason %s', e.reason)
+        if e.reason == 'card_invalid' or e.reason == 'student_not_found':
             return error('card_invalid')
-        else:
-            return error('external_error', status.HTTP_502_BAD_GATEWAY)
+        elif e.reason == 'card_blacklisted':
+            return error('card_suspicious')
+        return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     else:
         if aca_info.id != student_id:
