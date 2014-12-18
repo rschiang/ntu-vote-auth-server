@@ -79,7 +79,7 @@ def api(request):
 
     # Check vote record
     try:
-        record = Record.objects.filter(student_id=student_id)
+        record = Record.objects.get(student_id=student_id)
         if record.revision != revision:
             # ACA claim the card valid!
             logger.info('Expect revision %s, recorded %s', revision, record.revision)
