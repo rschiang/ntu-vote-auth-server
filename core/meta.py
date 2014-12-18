@@ -18,13 +18,53 @@ COLLEGE_NAMES = {
     'B': '生命科學院',
 }
 
-COLLEGE_IDS = { value : key for key, value in COLLEGE_NAMES.items() }
+COLLEGE_IDS = {
+    # Ordinary colleges
+    '文學院': '1',
+    '理學院': '2',
+    '社會科學院': '3',
+    '醫學院': '4',
+    '工學院': '5',
+    '生物資源暨農學院': '6',
+    '管理學院': '7',
+    '公共衛生學院': '8',
+    '電機資訊學院': '9',
+    '法律學院': 'A',
+    '生命科學院': 'B',
+
+    # School of Professional Studies
+    '牙醫專業學院': '4',
+    '藥學專業學院': '4',
+    '獸醫專業學院': '6',
+}
 
 KINDS = {
-    (college + str(coop)):
-        COLLEGE_NAMES[college] + ('（合作社員）' if coop == 1 else '')
-    for college in COLLEGE_NAMES.keys()
-    for coop in range(2)
+    # Student representative
+    '10': '文學院',
+    '20': '理學院',
+    '30': '社會科學院',
+    '40': '醫學院',
+    '50': '工學院',
+    '60': '生物資源暨農學院',
+    '70': '管理學院',
+    '80': '公共衛生學院',
+    '90': '電機資訊學院',
+    'A0': '法律學院',
+    'B0': '生命科學院',
+
+    # With cooperative memeber identity
+    '01': '合作社員',
+    '11': '文學院（合作社員）',
+    '21': '理學院（合作社員）',
+    '31': '社會科學院（合作社員）',
+    '41': '醫學院（合作社員）',
+    '51': '工學院（合作社員）',
+    '61': '生物資源暨農學院（合作社員）',
+    '71': '管理學院（合作社員）',
+    '81': '公共衛生學院（合作社員）',
+    '91': '電機資訊學院（合作社員）',
+    'A1': '法律學院（合作社員）',
+    'B1': '生命科學院（合作社員）',
 }
 
 ENFORCE_EVENT_DATE = os.environ.get('ENFORCE_EVENT')
