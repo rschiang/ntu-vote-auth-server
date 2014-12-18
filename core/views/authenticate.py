@@ -6,41 +6,28 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from urllib.error import URLError
-from .utils import event_available, logger, error
+from .utils import check_prerequisites, error, logger
 
 @api_view(['POST'])
 def api(request):
-    # Check event timespan
-    if not event_available():
-        return error('service_closed')
+    # Check if prerequisites match
+    errors = check_prerequisites(request, 'cid', 'uid', 'station')
+    if errors:
+        return errors
 
     # Check parameters
-    try:
-        api_key = request.DATA['api_key']
-        version = request.DATA['version']
-        internal_id = request.DATA['cid']
-        raw_student_id = request.DATA['uid']
-        station_id = request.DATA['station']
+    internal_id = request.DATA['cid']
+    raw_student_id = request.DATA['uid']
+    station_id = request.DATA['station']
 
-    except KeyError:
-        logger.exception('Invalid parameters')
-        return error('params_invalid')
-
+    # Parse student ID
+    if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id):
+        student_id = raw_student_id[:-1]
+        revision = int(raw_student_id[-1:])
+        logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
     else:
-        # Assert API key and version match
-        if api_key != settings.API_KEY:
-            return error('unauthorized', status.HTTP_401_UNAUTHORIZED)
-        elif version != '1':
-            return error('version_not_supported')
-
-        # Parse student ID
-        if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id):
-            student_id = raw_student_id[:-1]
-            revision = int(raw_student_id[-1:])
-            logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
-        else:
-            logger.info('Station %s request for card %s (%s)', station_id, raw_student_id, internal_id)
-            return error('card_invalid')
+        logger.info('Station %s request for card %s (%s)', station_id, raw_student_id, internal_id)
+        return error('card_invalid')
 
     # Call ACA API
     try:
