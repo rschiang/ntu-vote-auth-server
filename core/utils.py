@@ -1,5 +1,5 @@
 import re
-from .models import AuthCode, Record, CooperativeMember
+from .models import AuthCode, AuthToken, Record, CooperativeMember
 
 def import_auth_code(filename=None):
     '''
@@ -45,13 +45,16 @@ def import_coop_member(filename=None):
 
 def reset_server_state():
     auth_codes = AuthCode.objects.filter(issued=True)
+    tokens = AuthToken.objects.all()
     records = Record.objects.all()
     print('Issued auth codes:', auth_codes.count())
+    print('Generated tokens:', tokens.count())
     print('Record entries:', records.count())
 
     row_count = auth_codes.update(issued=False)
     print('... reset %s rows.' % row_count)
 
+    tokens.delete()
     records.delete()
     print('... cleared.')
 

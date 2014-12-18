@@ -47,7 +47,7 @@ class AuthToken(models.Model):
     @classmethod
     def generate(cls, student_id, station_id, kind):
         t = timezone.now()
-        s = '&'.join((student_id, station_id, kind, t.timestamp(), settings.SECRET_KEY))
+        s = '&'.join((student_id, station_id, kind, t.isoformat(), settings.SECRET_KEY))
         h = hashlib.sha256(s.encode()).hexdigest().upper()
 
         token = AuthToken(student_id=student_id, station_id=station_id, kind=kind)
