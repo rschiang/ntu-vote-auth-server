@@ -1,4 +1,6 @@
 import logging
+import re
+from core.models import AuthToken
 from django.conf import settings
 from django.utils import timezone
 from rest_framework import status
@@ -39,3 +41,27 @@ def check_prerequisites(request, *params):
 
     # All safe
     return None
+
+def exchange_token(request):
+    student_id = request.DATA['uid']
+    station_id = request.DATA['station']
+    token_code = request.DATA['token']
+
+    # Check params
+    if not (re.match(r'[A-Z]\d{2}[0-9A-Z]\d{5}', student_id) and re.match(r'\d+', station_id)):
+        logger.info('Invalid parameter: user <%s>, station <%s>')
+        return None
+
+    # Fetch token from database
+    try:
+        token = AuthToken.objects.get(code=token_code, student_id=student_id, station_id=int(station_id))
+    except AuthToken.DoesNotExist:
+        logger.exception('Invalid auth token pair: (%s, %s, %s)', token_code, student_id, station_id)
+        return None
+
+    # Check state
+    if token.issued:
+        logger.info('Token already used')
+        return None
+
+    return token
