@@ -1,4 +1,7 @@
+import hashlib
+from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 class CooperativeMember(models.Model):
     student_id = models.CharField(max_length=10, unique=True)
@@ -32,3 +35,22 @@ class AuthCode(models.Model):
 
     def __str__(self):
         return self.code
+
+class AuthToken(models.Model):
+    student_id = models.CharField(max_length=10)
+    station_id = models.IntegerField()
+    kind = models.CharField(max_length=2)
+    code = models.CharField(max_length=256, unique=True)
+    issued = models.BooleanField(default=False)
+    timestamp = models.DateTimeField()
+
+    @classmethod
+    def generate(cls, student_id, station_id, kind):
+        t = timezone.now()
+        s = '&'.join((student_id, station_id, kind, t.timestamp(), settings.SECRET_KEY))
+        h = hashlib.sha256(s.encode()).hexdigest().upper()
+
+        token = AuthToken(student_id=student_id, station_id=station_id, kind=kind)
+        token.code = h
+        token.timestamp = t
+        return token
