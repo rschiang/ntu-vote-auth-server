@@ -30,7 +30,7 @@ def check_prerequisites(request, *params):
     # Check parameters
     for key in (('api_key', 'version') + params):
         if key not in request.DATA:
-            logger.exception('Invalid parameters')
+            logger.error('Invalid parameters')
             return error('params_invalid')
 
     # Assert API key and version match

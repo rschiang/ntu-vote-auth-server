@@ -9,7 +9,7 @@ from urllib.error import URLError
 from .utils import check_prerequisites, error, logger
 
 @api_view(['POST'])
-def api(request):
+def authenticate(request):
     # Check if prerequisites match
     errors = check_prerequisites(request, 'cid', 'uid', 'station')
     if errors:
@@ -21,9 +21,7 @@ def api(request):
     station_id = request.DATA['station']
 
     # Parse student ID
-    if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and
-       re.match(r'[0-9a-f]{8}', internal_id) and
-       re.match(r'\d+', station_id):
+    if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id) and re.match(r'\d+', station_id):
         # Extract parameters
         student_id = raw_student_id[:-1]
         revision = int(raw_student_id[-1:])
