@@ -1,23 +1,13 @@
-import logging
 import re
 from core import service
 from core.models import Record, AuthCode
 from django.conf import settings
-from django.http import HttpResponse
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from urllib.error import URLError
-
-logger = logging.getLogger('vote')
-
-def index(request):
-    return HttpResponse('It works!')
-
-def error(reason, status=status.HTTP_400_BAD_REQUEST):
-    logger.info('Status code %s, reason %s', status, reason)
-    return Response({'status': 'error', 'reason': reason}, status=status)
+from .utils import logger, error
 
 @api_view(['POST'])
 def api(request):
@@ -67,6 +57,7 @@ def api(request):
         return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     except service.ExternalError as e:
+        logger.exception('Card rejected by ACA server')
         if e.reason == 'card_invalid':
             return error('card_invalid')
         else:
