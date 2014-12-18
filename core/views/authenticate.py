@@ -1,6 +1,6 @@
 import re
 from core import service
-from core.models import Record, AuthCode
+from core.models import Record, AuthToken
 from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -21,7 +21,10 @@ def api(request):
     station_id = request.DATA['station']
 
     # Parse student ID
-    if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id):
+    if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and
+       re.match(r'[0-9a-f]{8}', internal_id) and
+       re.match(r'\d+', station_id):
+        # Extract parameters
         student_id = raw_student_id[:-1]
         revision = int(raw_student_id[-1:])
         logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
@@ -86,22 +89,16 @@ def api(request):
     # i.e. non-cooperative members who belong to no college
     if kind not in settings.KINDS:
         return error('unqualified')
-    else:
-        kind_name = settings.KINDS[kind]
 
-    code = AuthCode.objects.filter(kind=kind, issued=False).first()
-    if code:
-        entry = Record()
-        entry.student_id = student_id
-        entry.revision = revision
-        entry.state = Record.USED
-        entry.save()
+    # Generate record and token
+    record = Record()
+    record.student_id = student_id
+    record.revision = revision
+    record.state = Record.LOCKED
+    record.save()
 
-        code.issued = True
-        code.save()
-    else:
-        logger.info('Auth codes of kind %s have used up', kind)
-        return error('out_of_auth_code', status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    token = AuthToken.generate(student_id, station_id, kind)
+    token.save()
 
-    logger.info('Auth code issued: %s', kind)
-    return Response({'status': 'success', 'uid': student_id, 'type': kind_name, 'code': code.code})
+    logger.info('Auth token issued: %s', token.code)
+    return Response({'status': 'success', 'uid': student_id, 'type': settings.KINDS[kind], 'token': token.code})
