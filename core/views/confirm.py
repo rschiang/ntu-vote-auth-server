@@ -20,7 +20,7 @@ def confirm(request):
 
     # Fetch record
     try:
-        record = Record.object.get(student_id=token.student_id)
+        record = Record.objects.get(student_id=token.student_id)
     except Record.DoesNotExist:
         logger.exception('Record not found: %s', token.student_id)
         return error('token_invalid')
