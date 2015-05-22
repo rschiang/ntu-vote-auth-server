@@ -65,9 +65,6 @@ def authenticate(request):
     except Record.DoesNotExist:
         pass
 
-    # Check if cooperative member
-    is_coop = False
-
     # Build up kind identifier
     try:
         college = settings.COLLEGE_IDS[aca_info.college]
@@ -81,7 +78,7 @@ def authenticate(request):
             logger.warning('No matching college for ID %s', college)
             college = '0'
 
-    kind = college + ('1' if is_coop else '0')
+    kind = college + '0'
 
     # Filter out unqualified students
     # i.e. non-cooperative members who belong to no college
