@@ -1,14 +1,10 @@
 import logging
 import struct
-from core.models import CooperativeMember
 from django.conf import settings
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as et
 
 logger = logging.getLogger('vote.service')
-
-def is_coop_member(student_id):
-    return CooperativeMember.objects.filter(student_id=student_id).exists()
 
 def reverse_indian(i):
     return struct.unpack('<I', struct.pack('>I', i))
@@ -65,6 +61,7 @@ def to_student_id(internal_id):
         info.type = resp_entity.find('STUTYPE').text
         info.valid = resp_entity.find('INCAMPUS').text
         info.college = resp_entity.find('COLLEGE').text
+        info.department = resp_entity.find('DPTCODE').text
 
     except AttributeError:
         logger.exception('Server entity malformed')
@@ -78,17 +75,18 @@ def to_student_id(internal_id):
 
 class StudentInfo(object):
 
-    def __init__(self, id=None, type=None, valid=False, college=None):
+    def __init__(self, id=None, type=None, valid=False, college=None, department=None):
         self.id = id
         self.type = type
         self.valid = valid
         self.college = college
+        self.department = department
 
     def __repr__(self):
-        return "{0}(id='{id}', type='{type}', valid={valid}, college='{college}')".format(self.__class__.__name__, **self.__dict__)
+        return "{0}(id='{id}', type='{type}', valid={valid}, college='{college}', department='{department}')".format(self.__class__.__name__, **self.__dict__)
 
     def __str__(self):
-        return '<StudentInfo: {id} ({college} {type}){0}>'.format('' if self.valid else '*', **self.__dict__)
+        return '<StudentInfo: {id} ({college} {type} {department}){0}>'.format('' if self.valid else '*', **self.__dict__)
 
 class ExternalError(Exception):
     def __init__(self, reason):

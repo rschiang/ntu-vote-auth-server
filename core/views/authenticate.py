@@ -66,7 +66,7 @@ def authenticate(request):
         pass
 
     # Check if cooperative member
-    is_coop = service.is_coop_member(student_id)
+    is_coop = False
 
     # Build up kind identifier
     try:

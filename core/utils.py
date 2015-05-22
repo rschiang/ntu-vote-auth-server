@@ -1,5 +1,5 @@
 import re
-from .models import AuthCode, AuthToken, Record, CooperativeMember
+from .models import AuthCode, AuthToken, Record
 
 def import_auth_code(filename=None):
     '''
@@ -18,31 +18,6 @@ def import_auth_code(filename=None):
 
         AuthCode.objects.bulk_create(codes)
 
-def import_coop_member(filename=None):
-    '''
-    Imports coop member entries from CSV file.
-    '''
-    with open(filename or 'coop.csv', 'r') as f:
-        members = {}
-        for line in f:
-            serial, _, student_id = line.partition(',')
-            serial = serial.strip()
-            student_id = student_id.strip().upper()
-
-            if not (serial and re.match(r'[A-Z]\d{2}[0-9A-Z]\d{5}', student_id)):
-                print('Invalid line:', line.strip())
-                continue
-            elif student_id in members:
-                member = members[student_id]
-                print('Duplicate entry:', member.serial, member.student_id)
-
-            member = CooperativeMember()
-            member.serial = serial
-            member.student_id = student_id
-            members[student_id] = member
-
-        CooperativeMember.objects.bulk_create(members.values())
-
 def reset_server_state():
     auth_codes = AuthCode.objects.filter(issued=True)
     tokens = AuthToken.objects.all()
@@ -60,9 +35,6 @@ def reset_server_state():
 
 def wipe_auth_code():
     AuthCode.objects.all().delete()
-
-def wipe_coop_member():
-    CooperativeMember.objects.all().delete()
 
 def get_student(student_id):
     return Record.objects.get(student_id=student_id)
