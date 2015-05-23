@@ -76,19 +76,17 @@ def authenticate(request):
 
     # Determine graduate status
     type_code = student_id[0]
+    kind = college
     if type_code in settings.GRADUATE_CODES:
-        kind = college + '1'
+        kind += '1'
     elif type_code in settings.UNDERGRADUATE_CODES:
         # Departments who opt to join election
         if aca_info.department in ('4010', '6290', '9010'):
-            kind = college + 'A'
+            kind += 'A'
         else:
-            kind = college + '0'
-    else:
-        return error('unqualified')
+            kind += '0'
 
-    # Filter out unqualified students
-    # i.e. students who belong to no college
+    # Check if student has eligible identity
     if kind not in settings.KINDS:
         return error('unqualified')
 
