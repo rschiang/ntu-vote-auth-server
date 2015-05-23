@@ -4,12 +4,8 @@ from rest_framework.response import Response
 from .utils import check_prerequisites, error, exchange_token, logger
 
 @api_view(['POST'])
+@check_prerequisites('uid', 'station', 'token')
 def report(request):
-    # Check if prerequisites match
-    errors = check_prerequisites(request, 'uid', 'station', 'token')
-    if errors:
-        return errors
-
     token = exchange_token(request)
     if not token:
         return error('token_invalid')

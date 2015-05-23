@@ -9,12 +9,8 @@ from urllib.error import URLError
 from .utils import check_prerequisites, error, logger
 
 @api_view(['POST'])
+@check_prerequisites('cid', 'uid', 'station')
 def authenticate(request):
-    # Check if prerequisites match
-    errors = check_prerequisites(request, 'cid', 'uid', 'station')
-    if errors:
-        return errors
-
     # Check parameters
     internal_id = request.DATA['cid']
     raw_student_id = request.DATA['uid']

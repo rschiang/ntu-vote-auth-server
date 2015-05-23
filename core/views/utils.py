@@ -3,6 +3,8 @@ import re
 from core.models import AuthToken
 from django.conf import settings
 from django.utils import timezone
+from django.utils.decorators import available_attrs
+from functools import wraps
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -22,25 +24,32 @@ def event_available():
             return False
     return True
 
-def check_prerequisites(request, *params):
-    # Check event timespan
-    if not event_available():
-        return error('service_closed')
+def check_prerequisites(*params):
+    def decorator(f):
+        @wraps(f, assigned=available_attrs(f))
+        def inner(request, *args, **kwargs):
+            # Check event timespan
+            if not event_available():
+                return error('service_closed')
 
-    # Check parameters
-    for key in (('api_key', 'version') + params):
-        if key not in request.DATA:
-            logger.error('Invalid parameters')
-            return error('params_invalid')
+            # Check parameters
+            for key in (('api_key', 'version') + params):
+                if key not in request.DATA:
+                    logger.error('Invalid parameters')
+                    return error('params_invalid')
 
-    # Assert API key and version match
-    if request.DATA['api_key'] != settings.API_KEY:
-        return error('unauthorized', status.HTTP_401_UNAUTHORIZED)
-    elif request.DATA['version'] != '1':
-        return error('version_not_supported')
+            # Assert API key and version match
+            if request.DATA['api_key'] != settings.API_KEY:
+                return error('unauthorized', status.HTTP_401_UNAUTHORIZED)
+            elif request.DATA['version'] != '1':
+                return error('version_not_supported')
 
-    # All safe
-    return None
+            # All safe
+            response = f(request, *args, **kwargs)
+            return response
+
+        return inner
+    return decorator
 
 def exchange_token(request):
     student_id = request.DATA['uid']
