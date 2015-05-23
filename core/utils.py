@@ -1,4 +1,4 @@
-import re
+import logging
 from .models import AuthCode, AuthToken, Record
 
 def import_auth_code(filename=None):
@@ -38,3 +38,37 @@ def wipe_auth_code():
 
 def get_student(student_id):
     return Record.objects.get(student_id=student_id)
+
+def apply_blacklist(*student_ids):
+    count = 0
+    for student_id in student_ids:
+        record = Record.objects.get_or_create(student_id=student_id)
+        if record.state == Record.AVAILABLE:
+            record.state = Record.UNAVAILABLE
+            record.save()
+        else:
+            print('SKIPPED: [{}] bears another state ʻ{}ʻ'.format(student_id, record.state))
+            continue
+        count += 1
+    print('... blacklisted {} IDs.'.format(count))
+
+def unlock_student(student_id, force=False):
+    logger = logging.getLogger('vote')
+    logger.info('Unlocking requested for student %s', student_id)
+
+    try:
+        record = Record.objects.get(student_id=student_id)
+    except Record.DoesNotExist:
+        print('Student is not locked.')
+        return False
+
+    if not (record.state == Record.LOCKED or force):
+        print('Student is not in lock state (%s). Use force to clear anyway.', record.state)
+        return False
+
+    record.delete()
+    if force:
+        logger.info('Record [%s] was forcibly deleted (was #%s, state ʻ%sʻ)', record.student_id, record.id, record.state)
+    else:
+        logger.info('Record [%s] deleted (was #%s)', record.student_id, record.id)
+    return True
