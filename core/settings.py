@@ -91,6 +91,9 @@ STATIC_URL = '/static/'
 # Logging
 from .log import LOGGING_DIR, LOGGING
 
+# API declarations
+API_VERSION = '1'
+
 # App configurations
 API_KEY = os.environ.get('VOTE_API_KEY')
 ACA_API_USER = os.environ.get('ACA_API_USER')

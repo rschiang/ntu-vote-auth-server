@@ -41,7 +41,7 @@ def check_prerequisites(*params):
             # Assert API key and version match
             if request.DATA['api_key'] != settings.API_KEY:
                 return error('unauthorized', status.HTTP_401_UNAUTHORIZED)
-            elif request.DATA['version'] != '1':
+            elif request.DATA['version'] != settings.API_VERSION:
                 return error('version_not_supported')
 
             # All safe
