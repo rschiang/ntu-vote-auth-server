@@ -74,10 +74,21 @@ def authenticate(request):
             logger.warning('No matching college for ID %s', college)
             college = '0'
 
-    kind = college + '0'
+    # Determine graduate status
+    type_code = student_id[0]
+    if type_code in settings.GRADUATE_CODES:
+        kind = college + '1'
+    elif type_code in settings.UNDERGRADUATE_CODES:
+        # Departments who opt to join election
+        if aca_info.department in ('4010', '6290', '9010'):
+            kind = college + 'A'
+        else:
+            kind = college + '0'
+    else:
+        return error('unqualified')
 
     # Filter out unqualified students
-    # i.e. non-cooperative members who belong to no college
+    # i.e. students who belong to no college
     if kind not in settings.KINDS:
         return error('unqualified')
 

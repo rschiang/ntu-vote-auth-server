@@ -39,7 +39,7 @@ COLLEGE_IDS = {
 }
 
 KINDS = {
-    # Student representative
+    # Colleges
     '10': '文學院',
     '20': '理學院',
     '30': '社會科學院',
@@ -66,13 +66,27 @@ KINDS = {
     'B1': '生命科學院研究生',
 
     # Additional combinations
-    '4A': '醫學院醫學系',
-    '4B': '醫學院醫學系研究生',
-    '6A': '生物資源暨農學院獸醫學系',
-    '6B': '生物資源暨農學院獸醫學系研究生',
-    '9A': '電機資訊學院電機工程學系',
-    '9B': '電機資訊學院電機工程學系研究生',
+    '4A': '醫學系',
+    '6A': '獸醫學系',
+    '9A': '電機工程學系',
 }
+
+UNDERGRADUATE_CODES = (
+    'B', # Bachelor
+    'T', # Exchange students
+)
+
+GRADUATE_CODES = (
+    'R', # Master
+    'A', # Master exchange students
+    'P', # Part-time master students
+    'J', # Executive master students
+    'M', # Bachelors transfered from doctor degree
+    'D', # Doctor
+    'C', # Doctor exhange students
+    'F', # Bachelors applied for doctor degree
+    'Q', # Part-time students of above
+)
 
 ENFORCE_EVENT_DATE = os.environ.get('ENFORCE_EVENT')
 EVENT_START_DATE = datetime.datetime(2015, 5, 28, 8, 45, 0)
