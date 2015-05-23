@@ -75,5 +75,5 @@ KINDS = {
 }
 
 ENFORCE_EVENT_DATE = os.environ.get('ENFORCE_EVENT')
-EVENT_START_DATE = datetime.datetime(2014, 12, 19, 8, 0, 0)
-EVENT_END_DATE = datetime.datetime(2014, 12, 19, 20, 0, 0)
+EVENT_START_DATE = datetime.datetime(2015, 5, 28, 8, 45, 0)
+EVENT_END_DATE = datetime.datetime(2015, 5, 28, 19, 15, 0)
