@@ -75,6 +75,7 @@ KINDS = {
 UNDERGRADUATE_CODES = (
     'B', # Bachelor
     'T', # Exchange students
+    'E', # Professional Education students
 )
 
 GRADUATE_CODES = (
