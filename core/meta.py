@@ -93,3 +93,6 @@ GRADUATE_CODES = (
 ENFORCE_EVENT_DATE = os.environ.get('ENFORCE_EVENT')
 EVENT_START_DATE = datetime.datetime(2015, 5, 28, 8, 45, 0)
 EVENT_END_DATE = datetime.datetime(2015, 5, 28, 19, 15, 0)
+
+SESSION_MAX_RESPOND_TIME = datetime.timedelta(minutes=2)
+SESSION_EXPIRE_TIME = datetime.timedelta(hours=12)
