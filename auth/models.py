@@ -6,7 +6,7 @@ from django.utils import timezone
 class User(AbstractBaseUser):
     # Meta information
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['kind']
 
     # Choices
     ADMIN = 'A'
@@ -25,12 +25,18 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return '<User: {}>'.format(self.username)
+
 class Station(models.Model):
     name = models.CharField(max_length=16)
     user = models.OneToOneField(User)
     external_id = models.IntegerField(null=True)
     is_active = models.BooleanField(default=True)
     max_sessions = models.IntegerField()
+
+    def __str__(self):
+        return '<Station: {}>'.format(self.name)
 
 class Session(models.Model):
     NORMAL = 'N'
@@ -51,3 +57,6 @@ class Session(models.Model):
         elif self.expired_on > now:
             return Session.EXPIRED
         return Session.NORMAL
+
+    def __str__(self):
+        return '<Session: {}>'.format(self.created_on)
