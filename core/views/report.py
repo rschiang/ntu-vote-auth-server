@@ -1,9 +1,11 @@
 from core.models import Record
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .utils import check_prerequisites, error, exchange_token, logger
+from .decorators import check_prerequisites, scheduled
+from .utils import error, exchange_token, logger
 
 @api_view(['POST'])
+@scheduled
 @check_prerequisites('uid', 'station', 'token')
 def report(request):
     token = exchange_token(request)
