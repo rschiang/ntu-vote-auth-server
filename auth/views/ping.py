@@ -1,11 +1,25 @@
-from django.conf import settings
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from core.views.decorators import check_prerequisites
 from core.views.utils import error, logger
+from .models import Session
 
 @api_view(['POST'])
-@check_prerequisites('station')
+@check_prerequisites('token')
 def ping(request):
-    pass
+    token = request.POST['token']
+    current_time = timezone.now()
+    try:
+        session = Session.objects.get(token=token)
+        if session.expired_on >= current_time:
+            logger.error('Session expired for token %s', token)
+            return error('unauthorized', status.HTTP_401_UNAUTHORIZED)
+    except Session.DoesNotExist:
+        logger.error('Ping attempted failed for token %s', token)
+        return error('unauthorized', status.HTTP_401_UNAUTHORIZED)
+
+    session.last_seen = current_time
+    session.save()
+    return Response({'status': 'success', 'timestamp': current_time.isoformat()})
