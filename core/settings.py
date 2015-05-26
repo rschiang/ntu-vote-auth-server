@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = (
     'core',
-    'auth',
+    'account',
     'rest_framework',
 #    'django.contrib.auth',
     'django.contrib.staticfiles',
