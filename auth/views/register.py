@@ -31,17 +31,26 @@ def register(request):
         return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
 
     # Authorization, check user identity type
-    if not user.kind == User.STATION or not user.station or not user.station.is_active:
+    station = user.station
+    if not user.kind == User.STATION or not station or not station.is_active:
         logger.error('User %s improperly attempted to register session', username)
         return error('forbidden', status=status.HTTP_403_FORBIDDEN)
 
+    # Expire older sessions
+    current_time = timezone.now()
+    sessions = Session.objects.filter(station=station, expired_on__gte=current_time).order_by('created_on')
+    if len(sessions) >= station.max_sessions:
+        old_session = sessions.first()
+        old_session.expired_on = current_time
+        old_session.save()
+
     # Issue session token
-    session = Session.generate(station=user.station)
+    session = Session.generate(station=station)
     session.save()
 
     return Response({
         'status': 'success',
-        'station': user.station.external_id or user.station.id,
-        'name': user.station.name,
+        'station': station.external_id or station.id,
+        'name': station.name,
         'token': session.token,
     })
