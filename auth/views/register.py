@@ -14,12 +14,16 @@ def register(request):
     password = request.POST['password']
 
     # Authentication
+    user = None
     try:
         user = User.objects.get(username=username)
-        if not user.check_password(password) or not user.is_active:
+        if not user.check_password(password):
             user = None
+        elif not user.is_active:
+            logger.error('Login attempt failed for deactivated user %s', username)
+            return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
     except User.DoesNotExist:
-        user = None
+        pass
 
     # Filter and log failed attempts
     if not user:
@@ -27,13 +31,12 @@ def register(request):
         return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
 
     # Authorization, check user identity type
-    if not user.kind == User.STATION or not user.station:
+    if not user.kind == User.STATION or not user.station or not user.station.is_active:
         logger.error('User %s improperly attempted to register session', username)
         return error('forbidden', status=status.HTTP_403_FORBIDDEN)
 
-    # TODO: Issue session token
-    session = Session(station=user.station)
-    session.expired_on = timezone.now() + settings.SESSION_EXPIRE_TIME
+    # Issue session token
+    session = Session.generate(station=user.station)
     session.save()
 
     return Response({

@@ -1,3 +1,4 @@
+import hashlib
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
@@ -60,3 +61,14 @@ class Session(models.Model):
 
     def __str__(self):
         return '<Session: {}>'.format(self.created_on)
+
+    @classmethod
+    def generate(cls, station, expired_on=None):
+        session = Session(station=station)
+        s = '&'.join((station.id, session.created_on.isoformat(), settings.SECRET_KEY))
+        h = hashlib.sha256(s.encode()).hexdigest().upper()
+        if not expired_on:
+            expired_on = session.created_on + settings.SESSION_EXPIRE_TIME
+        session.token = h
+        session.expired_on = expired_on
+        return session
