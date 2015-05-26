@@ -27,7 +27,7 @@ class User(AbstractBaseUser):
     date_joined = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return '<User: {}>'.format(self.username)
+        return self.username
 
 class Station(models.Model):
     name = models.CharField(max_length=16)
@@ -37,7 +37,7 @@ class Station(models.Model):
     max_sessions = models.IntegerField()
 
     def __str__(self):
-        return '<Station: {}>'.format(self.name)
+        return '{}({})'.format(self.name, self.external_id)
 
 class Session(models.Model):
     NORMAL = 'N'
@@ -60,7 +60,7 @@ class Session(models.Model):
         return Session.NORMAL
 
     def __str__(self):
-        return '<Session: {}>'.format(self.created_on)
+        return self.created_on.isoformat()
 
     @classmethod
     def generate(cls, station, expired_on=None):

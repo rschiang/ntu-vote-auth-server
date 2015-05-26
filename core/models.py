@@ -24,7 +24,7 @@ class Record(models.Model):
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '<Record: {student_id} [{state}]>'.format(**self.__dict__)
+        return '{student_id} [{state}]'.format(**self.__dict__)
 
 class AuthCode(models.Model):
     kind = models.CharField(max_length=2)
@@ -44,7 +44,7 @@ class AuthToken(models.Model):
     timestamp = models.DateTimeField()
 
     def __str__(self):
-        return '<AuthToken: {timestamp}>'.format(**self.__dict__)
+        return '{timestamp}'.format(**self.__dict__)
 
     @classmethod
     def generate(cls, student_id, station_id, kind):
