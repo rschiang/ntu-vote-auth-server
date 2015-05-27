@@ -9,7 +9,7 @@ from core.views.utils import error, logger
 @api_view(['POST'])
 @check_prerequisites('token')
 def ping(request):
-    token = request.POST['token']
+    token = request.DATA['token']
     current_time = timezone.now()
     try:
         session = Session.objects.get(token=token)

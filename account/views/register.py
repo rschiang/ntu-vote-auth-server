@@ -9,8 +9,8 @@ from core.views.utils import error, logger
 @api_view(['POST'])
 @check_prerequisites('username', 'password')
 def register(request):
-    username = request.POST['username']
-    password = request.POST['password']
+    username = request.DATA['username']
+    password = request.DATA['password']
 
     # Authentication
     user = None
