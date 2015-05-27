@@ -1,6 +1,16 @@
+# Virtualenv
 env/
+venv/
+
+# Caches
 .DS_Store
 *.pyc
+__pycache__
+
+# Temporary data and logs
 *.csv
 *.log
 db.sqlite3
+
+# Runtime files
+gunicorn.*
