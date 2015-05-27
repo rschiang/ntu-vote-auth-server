@@ -13,7 +13,7 @@ def ping(request):
     current_time = timezone.now()
     try:
         session = Session.objects.get(token=token)
-        if session.expired_on >= current_time:
+        if current_time >= session.expired_on:
             logger.error('Session expired for token %s', token)
             return error('unauthorized', status.HTTP_401_UNAUTHORIZED)
     except Session.DoesNotExist:
