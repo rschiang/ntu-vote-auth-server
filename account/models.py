@@ -65,7 +65,7 @@ class Session(models.Model):
     @classmethod
     def generate(cls, station, expired_on=None):
         session = Session(station=station)
-        s = '&'.join((station.id, session.created_on.isoformat(), settings.SECRET_KEY))
+        s = '&'.join((str(station.id), session.created_on.isoformat(), settings.SECRET_KEY))
         h = hashlib.sha256(s.encode()).hexdigest().upper()
         if not expired_on:
             expired_on = session.created_on + settings.SESSION_EXPIRE_TIME
