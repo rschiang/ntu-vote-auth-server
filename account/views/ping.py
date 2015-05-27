@@ -1,10 +1,10 @@
+from account.models import Session
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from core.views.decorators import check_prerequisites
 from core.views.utils import error, logger
-from .models import Session
 
 @api_view(['POST'])
 @check_prerequisites('token')
