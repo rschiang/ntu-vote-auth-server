@@ -7,11 +7,11 @@ from rest_framework import status
 def scheduled():
     def decorator(f):
         @wraps(f, assigned=available_attrs(f))
-        def inner(*args, **kwargs):
+        def inner(request, *args, **kwargs):
             # Check event timespan
             if not event_available():
                 return error('service_closed')
-            return f(*args, **kwargs)
+            return f(request, *args, **kwargs)
         return inner
     return decorator
 
