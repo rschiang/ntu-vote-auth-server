@@ -38,6 +38,10 @@ NTUVote 身分驗證系統
     sudo apt-get install libpq-dev
     pip install psycopg2
 
+    # Forking configuration file and export its path
+    cp examples/settings.json settings.json
+    export SETTINGS_FILE=`readlink -f settings.json`
+
     # Create tables
     ./manage.py migrate
 
