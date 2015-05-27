@@ -1,4 +1,4 @@
-from account.models import User, Session
+from account.models import User, Session, Station
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -30,12 +30,12 @@ def register(request):
         return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
 
     # Authorization, check user identity type
-    station = user.station
-    if not user.kind == User.STATION or not station or not station.is_active:
+    if not user.kind == User.STATION or not user.station.is_active:
         logger.error('User %s improperly attempted to register session', username)
         return error('forbidden', status=status.HTTP_403_FORBIDDEN)
 
     # Expire older sessions
+    station = user.station
     current_time = timezone.now()
     sessions = Session.objects.filter(station=station, expired_on__gte=current_time).order_by('created_on')
     if len(sessions) >= station.max_sessions:
