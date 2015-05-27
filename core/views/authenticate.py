@@ -61,7 +61,7 @@ def authenticate(request):
             return error('duplicate_entry')
 
     except Record.DoesNotExist:
-        pass
+        record = Record(student_id=student_id, revision=revision)
 
     # Build up kind identifier
     try:
@@ -93,9 +93,6 @@ def authenticate(request):
         return error('unqualified')
 
     # Generate record and token
-    record = Record()
-    record.student_id = student_id
-    record.revision = revision
     record.state = Record.LOCKED
     record.save()
 

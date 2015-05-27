@@ -4,9 +4,9 @@ from django.utils.decorators import available_attrs
 from functools import wraps
 from rest_framework import status
 
-def scheduled(*params):
+def scheduled():
     def decorator(f):
-        @wraps(f)
+        @wraps(f, assigned=available_attrs(f))
         def inner(*args, **kwargs):
             # Check event timespan
             if not event_available():
