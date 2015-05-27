@@ -44,7 +44,7 @@ class Session(models.Model):
     EXPIRED = 'E'
     NOT_RESPONDING = 'H'
 
-    station = models.OneToOneField(Station)
+    station = models.ForeignKey(Station)
     token = models.CharField(max_length=256, unique=True)
     created_on = models.DateTimeField(default=timezone.now)
     expired_on = models.DateTimeField()
