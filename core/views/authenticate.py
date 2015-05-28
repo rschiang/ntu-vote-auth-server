@@ -1,6 +1,6 @@
 import re
 from core import service
-from core.models import Record, AuthToken
+from core.models import Record, AuthToken, OverrideEntry
 from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -79,14 +79,18 @@ def authenticate(request):
     # Determine graduate status
     type_code = student_id[0]
     kind = college
-    if type_code in settings.GRADUATE_CODES:
-        kind += '1'
-    elif type_code in settings.UNDERGRADUATE_CODES:
-        # Departments who opt to join election
-        if aca_info.department in ('4010', '6290', '9010'):
-            kind += 'A'
-        else:
-            kind += '0'
+    try:
+        override = OverrideEntry.objects.get(student_id=student_id)
+        kind = override.kind
+    except OverrideEntry.DoesNotExist:
+        if type_code in settings.GRADUATE_CODES:
+            kind += '1'
+        elif type_code in settings.UNDERGRADUATE_CODES:
+            # Departments who opt to join election
+            if aca_info.department in ('4010', '6290', '9010'):
+                kind += 'A'
+            else:
+                kind += '0'
 
     # Check if student has eligible identity
     if kind not in settings.KINDS:

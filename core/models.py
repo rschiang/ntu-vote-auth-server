@@ -56,3 +56,7 @@ class AuthToken(models.Model):
         token.code = h
         token.timestamp = t
         return token
+
+class OverrideEntry(models.Model):
+    student_id = models.CharField(max_length=10, unique=True)
+    kind = models.CharField(max_length=2)
