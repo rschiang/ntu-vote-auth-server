@@ -42,7 +42,7 @@ def get_student(student_id):
 def apply_blacklist(*student_ids):
     count = 0
     for student_id in student_ids:
-        record = Record.objects.get_or_create(student_id=student_id)
+        record, _ = Record.objects.get_or_create(student_id=student_id)
         if record.state == Record.AVAILABLE:
             record.state = Record.UNAVAILABLE
             record.save()
@@ -72,3 +72,15 @@ def unlock_student(student_id, force=False):
     else:
         logger.info('Record [%s] deleted (was #%s)', record.student_id, record.id)
     return True
+
+def extract_code(kind):
+    logger = logging.getLogger('vote')
+    codes = AuthCode.objects.filter(issued=False, kind=kind).order_by('-id')
+    for i in codes:
+        if not i.issued:
+            i.issued = True
+            i.save()
+
+            logger.info('Extract token %s manually', i.code)
+            print(i.code)
+            break
