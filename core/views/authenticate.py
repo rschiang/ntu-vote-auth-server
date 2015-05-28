@@ -87,7 +87,7 @@ def authenticate(request):
             kind += '1'
         elif type_code in settings.UNDERGRADUATE_CODES:
             # Departments who opt to join election
-            if aca_info.department in ('4010', '6290', '9010'):
+            if aca_info.department in ('4010', '6090', '9010'):
                 kind += 'A'
             else:
                 kind += '0'
