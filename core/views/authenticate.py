@@ -9,6 +9,7 @@ from urllib.error import URLError
 from .decorators import check_prerequisites, scheduled
 from .utils import error, logger
 
+
 @api_view(['POST'])
 @scheduled
 @check_prerequisites('cid', 'uid', 'station')
@@ -18,15 +19,20 @@ def authenticate(request):
     raw_student_id = request.DATA['uid']
     station_id = request.DATA['station']
 
-    # Parse student ID
-    if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id) and re.match(r'\d+', station_id):
-        # Extract parameters
-        student_id = raw_student_id[:-1]
-        revision = int(raw_student_id[-1:])
-        logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
+    if settings.AUTH_CONFIG['STUDENT_ID_CHECK']:
+        # Parse student ID
+        if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id) and re.match(r'\d+', station_id):
+            # Extract parameters
+            student_id = raw_student_id[:-1]
+            revision = int(raw_student_id[-1:])
+            logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
+        else:
+            logger.info('Station %s request for card %s (%s)', station_id, raw_student_id, internal_id)
+            return error('card_invalid')
+
     else:
-        logger.info('Station %s request for card %s (%s)', station_id, raw_student_id, internal_id)
-        return error('card_invalid')
+        logger.info('Station %s request for card %s', station_id, raw_student_id)
+        student_id = None
 
     # Call ACA API
     try:
@@ -45,7 +51,10 @@ def authenticate(request):
         return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     else:
-        if aca_info.id != student_id:
+        if student_id is None:
+            student_id = aca_info.id
+            logger.info('User checked %s (%s)')
+        elif aca_info.id != student_id:
             logger.info('ID %s returned instead', aca_info.id)
             return error('card_suspicious')
 

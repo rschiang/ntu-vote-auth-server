@@ -106,6 +106,11 @@ ACA_API_USER = os.environ.get('ACA_API_USER')
 ACA_API_PASSWORD = os.environ.get('ACA_API_PASSWORD')
 ACA_API_URL = os.environ.get('ACA_API_URL')
 
+# Authentication configurations
+AUTH_CONFIG = {
+    "STUDENT_ID_CHECK": False,
+}
+
 # Meta
 # All election meta information
 from .meta import *
