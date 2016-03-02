@@ -3,10 +3,12 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+
 class Record(models.Model):
     UNAVAILABLE = 'U'
     AVAILABLE = 'A'
     LOCKED = 'L'
+    VOTING = 'V'
     USED = 'U'
     FLAGGED = 'F'
 
@@ -14,6 +16,7 @@ class Record(models.Model):
         (UNAVAILABLE, 'Unavailable'),
         (AVAILABLE, 'Available'),
         (LOCKED, 'Locked'),
+        (VOTING, 'voting'),
         (USED, 'Used'),
         (FLAGGED, 'Flagged'),
     )
@@ -26,6 +29,7 @@ class Record(models.Model):
     def __str__(self):
         return '{student_id} [{state}]'.format(**self.__dict__)
 
+
 class AuthCode(models.Model):
     kind = models.CharField(max_length=2)
     code = models.CharField(max_length=256)
@@ -34,6 +38,7 @@ class AuthCode(models.Model):
 
     def __str__(self):
         return self.code
+
 
 class AuthToken(models.Model):
     student_id = models.CharField(max_length=10)
@@ -56,6 +61,7 @@ class AuthToken(models.Model):
         token.code = h
         token.timestamp = t
         return token
+
 
 class OverrideEntry(models.Model):
     student_id = models.CharField(max_length=10, unique=True)
