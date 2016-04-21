@@ -1,10 +1,13 @@
 import hashlib
+
+from django.utils.crypto import get_random_string
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
 
 class Record(models.Model):
+
     UNAVAILABLE = 'U'
     AVAILABLE = 'A'
     LOCKED = 'L'
@@ -16,7 +19,7 @@ class Record(models.Model):
         (UNAVAILABLE, 'Unavailable'),
         (AVAILABLE, 'Available'),
         (LOCKED, 'Locked'),
-        (VOTING, 'voting'),
+        (VOTING, 'Voting'),
         (USED, 'Used'),
         (FLAGGED, 'Flagged'),
     )
@@ -45,6 +48,7 @@ class AuthToken(models.Model):
     station_id = models.IntegerField()
     kind = models.CharField(max_length=2)
     code = models.CharField(max_length=256, unique=True)
+    comfirm_code = models.CharField(max_length=256, unique=True)
     issued = models.BooleanField(default=False)
     timestamp = models.DateTimeField()
 
@@ -60,6 +64,7 @@ class AuthToken(models.Model):
         token = AuthToken(student_id=student_id, station_id=station_id, kind=kind)
         token.code = h
         token.timestamp = t
+        token.comfirm_code = get_random_string(16)
         return token
 
 
