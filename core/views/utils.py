@@ -26,9 +26,9 @@ def event_available():
 
 
 def exchange_token(request):
-    student_id = request.DATA['uid']
-    station_id = request.DATA['station']
-    token_code = request.DATA['token']
+    student_id = request.data['uid']
+    station_id = request.data['station']
+    token_code = request.data['token']
 
     # Check params
     if not (re.match(r'[A-Z]\d{2}[0-9A-Z]\d{5}', student_id) and re.match(r'\d+', station_id)):

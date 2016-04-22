@@ -19,14 +19,14 @@ def check_prerequisites(*params):
         def inner(request, *args, **kwargs):
             # Check parameters
             for key in (('api_key', 'version') + params):
-                if key not in request.DATA:
+                if key not in request.data:
                     logger.error('Invalid parameters')
                     return error('params_invalid')
 
             # Assert API key and version match
-            if request.DATA['api_key'] != settings.API_KEY:
+            if request.data['api_key'] != settings.API_KEY:
                 return error('unauthorized', status.HTTP_401_UNAUTHORIZED)
-            elif request.DATA['version'] != settings.API_VERSION:
+            elif request.data['version'] != settings.API_VERSION:
                 return error('version_not_supported')
 
             # All safe

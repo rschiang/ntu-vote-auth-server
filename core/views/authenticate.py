@@ -15,9 +15,9 @@ from .utils import error, logger
 @check_prerequisites('cid', 'uid', 'station')
 def authenticate(request):
     # Check parameters
-    internal_id = request.DATA['cid']
-    raw_student_id = request.DATA['uid']
-    station_id = request.DATA['station']
+    internal_id = request.data['cid']
+    raw_student_id = request.data['uid']
+    station_id = request.data['station']
 
     if settings.AUTH_CONFIG['STUDENT_ID_CHECK']:
         # Parse student ID
