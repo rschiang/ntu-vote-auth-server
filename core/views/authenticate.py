@@ -66,6 +66,11 @@ def authenticate(request):
             logger.info('Expect revision %s, recorded %s', revision, record.revision)
             return error('card_suspicious')
 
+        if record.state == Record.VOTING:
+            record.state = Record.AVAILABLE
+            record.save()
+            logger.info('Reset %s state from VOTING', student_id)
+
         if record.state != Record.AVAILABLE:
             return error('duplicate_entry')
 
