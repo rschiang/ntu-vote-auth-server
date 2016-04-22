@@ -35,11 +35,12 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
+    'django.contrib.staticfiles',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'rest_framework',
     'core',
     'account',
-    'rest_framework',
-#    'django.contrib.auth',
-    'django.contrib.staticfiles',
 )
 
 MIDDLEWARE_CLASSES = (
