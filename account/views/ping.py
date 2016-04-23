@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from core.views.decorators import check_prerequisites
 from core.views.utils import error, logger
 
+
 @api_view(['POST'])
 @check_prerequisites('token')
 def ping(request):
