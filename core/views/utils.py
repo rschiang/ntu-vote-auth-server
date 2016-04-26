@@ -32,7 +32,7 @@ def exchange_token(request):
 
     # Check params
     if not (re.match(r'[A-Z]\d{2}[0-9A-Z]\d{5}', student_id) and re.match(r'\d+', station_id)):
-        logger.info('Invalid parameter: user <%s>, station <%s>')
+        logger.info('Invalid parameter: user <%s>, station <%s>', student_id, station_id)
         return None
 
     # Fetch token from database
