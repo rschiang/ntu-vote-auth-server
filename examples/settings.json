@@ -9,5 +9,6 @@
     "ACA_API_USER": "ntusa",
     "ACA_API_PASSWORD": "ntusa",
     "ACA_API_URL": "http://localhost:9527/",
+    "CALLBACK_DOMAIN": "vote.ntuosc.org",
     "ENFORCE_EVENT": false
 }

@@ -112,6 +112,9 @@ ACA_API_USER = os.environ.get('ACA_API_USER')
 ACA_API_PASSWORD = os.environ.get('ACA_API_PASSWORD')
 ACA_API_URL = os.environ.get('ACA_API_URL')
 
+# Callback domain
+CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN')
+
 # Authentication configurations
 AUTH_CONFIG = {
     "STUDENT_ID_CHECK": False,

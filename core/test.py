@@ -1,5 +1,6 @@
 from django.conf import settings
 from account.models import User, Station, Session
+from core.models import Record, AuthToken, AuthCode
 
 from rest_framework.test import APIClient, APITestCase
 from django.core.urlresolvers import reverse
@@ -8,6 +9,8 @@ from django.core.urlresolvers import reverse
 class CoreTestCase(APITestCase):
     @classmethod
     def setUpTestData(self):
+        self.student_id = 'B03705024'
+
         self.username = 'station1'
         self.password = 'station1'
         self.user = User(username=self.username)
@@ -23,7 +26,6 @@ class CoreTestCase(APITestCase):
         self.station.max_sessions = 3
         self.station.save()
 
-        self.url = reverse('ping')
         # login
         data = {'username': self.username, 'password': self.password,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
@@ -37,13 +39,38 @@ class CoreTestCase(APITestCase):
         self.session = session
         self.token = session.token
 
-    def test_authenticate_success(self):
-        pass
+        self.authcode = AuthCode(kind='70', code='70-ZU2U0RAKX-KOXLUYHJI-7C05B')
+        self.authcode.save()
 
-    def test_complete_success(self):
-        pass
+    def test_authenticate_success(self):
+        return
+        url = reverse('authenticate')
+        data = {'cid': 'fff', 'uid': 'B03705024',
+                'station': self.station.external_id,
+                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+        response = self.client.post(url, data)
+        print(response.data)
 
     def test_confirm_success(self):
+        record = Record(student_id=self.student_id)
+        record.state = Record.LOCKED
+        record.save()
+        token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
+        token.save()
+
+        url = reverse('confirm')
+        data = {'uid': self.student_id, 'station': str(self.station.external_id), 'token': token.code,
+                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+        response = self.client.post(url, data)
+        callback = 'https://{0}{1}?callback={2}'.format(
+            settings.CALLBACK_DOMAIN, reverse('callback'), token.confirm_code)
+        self.assertEqual(response.data, {
+            'status': 'success',
+            'code': self.authcode.code,
+            'callback': callback,
+        })
+
+    def test_complete_success(self):
         pass
 
     def test_report_success(self):

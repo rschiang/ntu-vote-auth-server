@@ -1,4 +1,5 @@
 from core.models import Record, AuthCode
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -42,5 +43,12 @@ def confirm(request):
         return error('out_of_auth_code', status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     logger.info('Auth code issued: %s', token.kind)
-    return Response({'status': 'success', 'code': code.code,
-                    'callback': '%s?callback=%s' % (reverse('callback'), token.token_code)})
+    callback = {
+        'domain': settings.CALLBACK_DOMAIN,
+        'url': reverse('callback'),
+        'code': token.confirm_code,
+    }
+    return Response({
+        'status': 'success', 'code': code.code,
+        'callback': 'https://{domain}{url}?callback={code}'.format(**callback)
+    })

@@ -48,7 +48,7 @@ class AuthToken(models.Model):
     station_id = models.IntegerField()
     kind = models.CharField(max_length=2)
     code = models.CharField(max_length=256, unique=True)
-    comfirm_code = models.CharField(max_length=256, unique=True)
+    confirm_code = models.CharField(max_length=256, unique=True)
     issued = models.BooleanField(default=False)
     timestamp = models.DateTimeField()
 
@@ -64,7 +64,7 @@ class AuthToken(models.Model):
         token = AuthToken(student_id=student_id, station_id=station_id, kind=kind)
         token.code = h
         token.timestamp = t
-        token.comfirm_code = get_random_string(16)
+        token.confirm_code = get_random_string(16)
         return token
 
 
