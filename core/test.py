@@ -3,6 +3,7 @@ from account.models import User, Station, Session
 from core.models import Record, AuthToken, AuthCode
 
 from rest_framework.test import APIClient, APITestCase
+from rest_framework import status
 from django.core.urlresolvers import reverse
 
 
@@ -71,7 +72,22 @@ class CoreTestCase(APITestCase):
         })
 
     def test_complete_success(self):
-        pass
+        record = Record(student_id=self.student_id)
+        record.state = Record.VOTING
+        record.save()
+        token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
+        token.save()
+
+        url = 'https://{0}{1}?callback={2}'.format(
+            settings.CALLBACK_DOMAIN, reverse('callback'), token.confirm_code)
+        response = self.client.get(url)
+        record = Record.objects.get(student_id=self.student_id)
+        self.assertEqual(record.state, Record.USED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {
+            'status': 'success',
+            'message': 'all correct',
+        })
 
     def test_report_success(self):
         pass
