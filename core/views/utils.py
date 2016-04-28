@@ -8,9 +8,11 @@ from rest_framework.response import Response
 
 logger = logging.getLogger('vote')
 
+
 def error(reason, status=status.HTTP_400_BAD_REQUEST):
     logger.info('Status code %s, reason %s', status, reason)
     return Response({'status': 'error', 'reason': reason}, status=status)
+
 
 def event_available():
     if settings.ENFORCE_EVENT_DATE:
@@ -22,14 +24,15 @@ def event_available():
             return False
     return True
 
+
 def exchange_token(request):
-    student_id = request.DATA['uid']
-    station_id = request.DATA['station']
-    token_code = request.DATA['token']
+    student_id = request.data['uid']
+    station_id = request.data['station']
+    token_code = request.data['token']
 
     # Check params
     if not (re.match(r'[A-Z]\d{2}[0-9A-Z]\d{5}', student_id) and re.match(r'\d+', station_id)):
-        logger.info('Invalid parameter: user <%s>, station <%s>')
+        logger.info('Invalid parameter: user <%s>, station <%s>', student_id, station_id)
         return None
 
     # Fetch token from database

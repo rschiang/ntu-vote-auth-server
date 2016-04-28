@@ -15,9 +15,9 @@ from .utils import error, logger
 @check_prerequisites('cid', 'uid', 'station')
 def authenticate(request):
     # Check parameters
-    internal_id = request.DATA['cid']
-    raw_student_id = request.DATA['uid']
-    station_id = request.DATA['station']
+    internal_id = request.data['cid']
+    raw_student_id = request.data['uid']
+    station_id = request.data['station']
 
     if settings.AUTH_CONFIG['STUDENT_ID_CHECK']:
         # Parse student ID
@@ -65,6 +65,11 @@ def authenticate(request):
             # ACA claim the card valid!
             logger.info('Expect revision %s, recorded %s', revision, record.revision)
             return error('card_suspicious')
+
+        if record.state == Record.VOTING:
+            record.state = Record.AVAILABLE
+            record.save()
+            logger.info('Reset %s state from VOTING', student_id)
 
         if record.state != Record.AVAILABLE:
             return error('duplicate_entry')

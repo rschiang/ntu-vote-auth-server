@@ -1,9 +1,12 @@
 from core.models import Record, AuthCode
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .decorators import check_prerequisites, scheduled
 from .utils import error, exchange_token, logger
+
 
 @api_view(['POST'])
 @scheduled
@@ -30,7 +33,7 @@ def confirm(request):
     # Issue auth code
     code = AuthCode.objects.filter(kind=token.kind, issued=False).first()
     if code:
-        record.state = Record.USED
+        record.state = Record.VOTING
         record.save()
 
         code.issued = True
@@ -40,4 +43,12 @@ def confirm(request):
         return error('out_of_auth_code', status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     logger.info('Auth code issued: %s', token.kind)
-    return Response({'status': 'success', 'code': code.code})
+    callback = {
+        'domain': settings.CALLBACK_DOMAIN,
+        'url': reverse('callback'),
+        'code': token.confirm_code,
+    }
+    return Response({
+        'status': 'success', 'code': code.code,
+        'callback': 'https://{domain}{url}?callback={code}'.format(**callback)
+    })

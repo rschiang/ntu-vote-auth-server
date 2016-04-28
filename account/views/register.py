@@ -1,4 +1,4 @@
-from account.models import User, Session, Station
+from account.models import User, Session
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -6,11 +6,12 @@ from rest_framework.response import Response
 from core.views.decorators import check_prerequisites
 from core.views.utils import error, logger
 
+
 @api_view(['POST'])
 @check_prerequisites('username', 'password')
 def register(request):
-    username = request.DATA['username']
-    password = request.DATA['password']
+    username = request.data['username']
+    password = request.data['password']
 
     # Authentication
     user = None

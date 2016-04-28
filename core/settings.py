@@ -35,11 +35,12 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
+    'django.contrib.staticfiles',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'rest_framework',
     'core',
     'account',
-    'rest_framework',
-#    'django.contrib.auth',
-    'django.contrib.staticfiles',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -110,6 +111,9 @@ API_KEY = os.environ.get('VOTE_API_KEY')
 ACA_API_USER = os.environ.get('ACA_API_USER')
 ACA_API_PASSWORD = os.environ.get('ACA_API_PASSWORD')
 ACA_API_URL = os.environ.get('ACA_API_URL')
+
+# Callback domain
+CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN')
 
 # Authentication configurations
 AUTH_CONFIG = {

@@ -1,13 +1,13 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+from .views import (index, authenticate, confirm, report, complete)
+from account.views import (register, ping)
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'core.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-    url(r'^$', 'core.views.index'),
-    url(r'^api/station/register$', 'account.views.register'),
-    url(r'^api/station/ping$', 'account.views.ping'),
-    url(r'^api/authenticate$', 'core.views.authenticate'),
-    url(r'^api/confirm$', 'core.views.confirm'),
-    url(r'^api/report$', 'core.views.report'),
-)
+urlpatterns = [
+    url(r'^$', index),
+    url(r'^api/station/register$', register, name='register'),
+    url(r'^api/station/ping$', ping, name='ping'),
+    url(r'^api/authenticate$', authenticate, name='authenticate'),
+    url(r'^api/confirm$', confirm, name='confirm'),
+    url(r'^api/report$', report, name='report'),
+    url(r'^api/complete$', complete, name='callback'),
+]
