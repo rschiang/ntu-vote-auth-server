@@ -75,21 +75,21 @@ KINDS = {
 }
 
 UNDERGRADUATE_CODES = (
-    'B', # Bachelor
-    'T', # Exchange students
-    'E', # Professional Education students
+    'B',  # Bachelor
+    'T',  # Exchange students
+    'E',  # Professional Education students
 )
 
 GRADUATE_CODES = (
-    'R', # Master
-    'A', # Master exchange students
-    'P', # Part-time master students
-    'J', # Executive master students
-    'M', # Bachelors transfered from doctor degree
-    'D', # Doctor
-    'C', # Doctor exhange students
-    'F', # Bachelors applied for doctor degree
-    'Q', # Part-time students of above
+    'R',  # Master
+    'A',  # Master exchange students
+    'P',  # Part-time master students
+    'J',  # Executive master students
+    'M',  # Bachelors transfered from doctor degree
+    'D',  # Doctor
+    'C',  # Doctor exhange students
+    'F',  # Bachelors applied for doctor degree
+    'Q',  # Part-time students of above
 )
 
 ENFORCE_EVENT_DATE = os.environ.get('ENFORCE_EVENT')
