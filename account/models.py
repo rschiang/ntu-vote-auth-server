@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.utils import timezone
 
+
 class User(AbstractBaseUser):
     # Meta information
     USERNAME_FIELD = 'username'
@@ -29,6 +30,7 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.username
 
+
 class Station(models.Model):
     name = models.CharField(max_length=16)
     user = models.OneToOneField(User)
@@ -38,6 +40,7 @@ class Station(models.Model):
 
     def __str__(self):
         return '{}({})'.format(self.name, self.external_id)
+
 
 class Session(models.Model):
     NORMAL = 'N'
@@ -55,7 +58,7 @@ class Session(models.Model):
         now = timezone.now()
         if (now - self.last_seen) > settings.SESSION_MAX_RESPOND_TIME:
             return Session.NOT_RESPONDING
-        elif self.expired_on > now:
+        elif self.expired_on < now:
             return Session.EXPIRED
         return Session.NORMAL
 

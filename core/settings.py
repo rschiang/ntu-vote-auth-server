@@ -115,6 +115,10 @@ ACA_API_URL = os.environ.get('ACA_API_URL')
 # Callback domain
 CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN')
 
+# Session
+SESSION_MAX_RESPOND_TIME = os.environ.get('SESSION_MAX_RESPOND_TIME', 60)
+SESSION_EXPIRE_TIME = os.environ.get('SESSION_EXPIRE_TIME', 6000)
+
 # Authentication configurations
 AUTH_CONFIG = {
     "STUDENT_ID_CHECK": False,
