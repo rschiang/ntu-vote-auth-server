@@ -4,13 +4,14 @@ from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .decorators import check_prerequisites, scheduled
+from .decorators import check_prerequisites, scheduled, login_required
 from .utils import error, exchange_token, logger
 
 
 @api_view(['POST'])
 @scheduled
-@check_prerequisites('uid', 'station', 'token')
+@login_required
+@check_prerequisites('uid', 'vote_token')
 def confirm(request):
     token = exchange_token(request)
     if not token:

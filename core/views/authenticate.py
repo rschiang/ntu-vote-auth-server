@@ -6,18 +6,19 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from urllib.error import URLError
-from .decorators import check_prerequisites, scheduled
+from .decorators import check_prerequisites, scheduled, login_required
 from .utils import error, logger
 
 
 @api_view(['POST'])
 @scheduled
-@check_prerequisites('cid', 'uid', 'station')
+@login_required
+@check_prerequisites('cid', 'uid')
 def authenticate(request):
     # Check parameters
     internal_id = request.data['cid']
     raw_student_id = request.data['uid']
-    station_id = request.data['station']
+    station_id = request.station
 
     if settings.AUTH_CONFIG['STUDENT_ID_CHECK']:
         # Parse student ID
