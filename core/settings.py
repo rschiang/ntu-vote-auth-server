@@ -107,7 +107,7 @@ from .log import LOGGING_DIR, LOGGING
 API_VERSION = '2'
 
 # App configurations
-API_KEY = os.environ.get('VOTE_API_KEY')
+API_KEY = os.environ.get('VOTE_API_KEY', 'testapikey')
 ACA_API_USER = os.environ.get('ACA_API_USER')
 ACA_API_PASSWORD = os.environ.get('ACA_API_PASSWORD')
 ACA_API_URL = os.environ.get('ACA_API_URL')
