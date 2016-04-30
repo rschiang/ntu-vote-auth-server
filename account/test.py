@@ -3,6 +3,7 @@ from account.models import User, Station, Session
 
 from rest_framework.test import APIClient, APITestCase
 from django.core.urlresolvers import reverse
+from rest_framework import status
 
 
 class RegisterTestCase(APITestCase):
@@ -92,3 +93,34 @@ class PingTestCase(APITestCase):
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         response = self.client.post(self.url, data)
         self.assertEqual(response.data['status'], 'success')
+
+    def test_null_station_id(self):
+        username = 'station2'
+        password = 'station2'
+        user = User(username=username)
+        user.set_password(password)
+        user.kind = User.STATION
+        user.save()
+
+        station = Station()
+        station.name = 'no name'
+        station.user = user
+        station.max_sessions = 3
+        station.save()
+        # login
+        data = {'username': username, 'password': password,
+                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+        client = APIClient()
+        client.post(reverse('register'), data, format='json')
+
+        try:
+            session = Session.objects.get(station=station)
+        except:
+            session = None
+        self.assertTrue(session is not None)
+
+        data = {'token': session.token,
+                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.data, {'status': 'error', 'reason': 'station error'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
