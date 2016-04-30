@@ -1,3 +1,4 @@
+# Voteing API version 2
 ## API requirements
 General requirements:  
 
@@ -10,24 +11,24 @@ General requirements:
 
 ### ping
 GET
-- token (in the header)
+- token
 
 ### status
 GET
-- token (in the header)
+- token
 
 ### authenticate
-- token (in the header)
+- token
 - cid
 - uid
 
 ### confirm
-- token (in the header)
+- token
 - uid
-- auth_token
+- vote_token
 
 ### report
-- token (in the header)
+- token
 - uid
 
 ### complete
@@ -35,9 +36,9 @@ nothing but a callback api
 
 ### reset
 TBD
-- token (in the header)
+- token
 
 ### migration
 TBD
-- token (in the header)
+- token
 
