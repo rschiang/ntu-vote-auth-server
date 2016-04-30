@@ -48,6 +48,7 @@ class CoreTestCase(APITestCase):
         url = reverse('authenticate')
         data = {'cid': 'fff', 'uid': 'B03705024',
                 'station': self.station.external_id,
+                'token': self.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         response = self.client.post(url, data)
         print(response.data)
@@ -56,15 +57,16 @@ class CoreTestCase(APITestCase):
         record = Record(student_id=self.student_id)
         record.state = Record.LOCKED
         record.save()
-        token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
-        token.save()
+        vote_token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
+        vote_token.save()
 
         url = reverse('confirm')
-        data = {'uid': self.student_id, 'station': str(self.station.external_id), 'token': token.code,
+        data = {'uid': self.student_id,
+                'vote_token': vote_token.code, 'token': self.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         response = self.client.post(url, data)
         callback = 'https://{0}{1}?callback={2}'.format(
-            settings.CALLBACK_DOMAIN, reverse('callback'), token.confirm_code)
+            settings.CALLBACK_DOMAIN, reverse('callback'), vote_token.confirm_code)
         self.assertEqual(response.data, {
             'status': 'success',
             'code': self.authcode.code,
