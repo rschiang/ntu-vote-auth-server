@@ -1,10 +1,12 @@
-from django.conf import settings
 from account.models import User, Station, Session
 from core.models import Record, AuthToken, AuthCode
+from core import service
 
 from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.test import override_settings
 
 
 class CoreTestCase(APITestCase):
@@ -93,3 +95,11 @@ class CoreTestCase(APITestCase):
 
     def test_report_success(self):
         pass
+
+
+class ACATestCase(APITestCase):
+    @override_settings(
+        ACA_API_URL='http://localhost:3000/seqServices/stuinfoByCardno',
+        ACA_API_USER='aca_api_user', ACA_API_PASSWORD='password')
+    def test_get_student_info(self):
+            service.to_student_id('123456')
