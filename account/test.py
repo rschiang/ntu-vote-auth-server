@@ -44,7 +44,7 @@ class RegisterTestCase(APITestCase):
 
         # Get session object
         try:
-            session = Session.objects.get(station=self.station)
+            session = Session.objects.get(user=self.user)
         except:
             session = None
 
@@ -82,7 +82,7 @@ class PingTestCase(APITestCase):
         client.post(reverse('register'), data, format='json')
 
         try:
-            session = Session.objects.get(station=self.station)
+            session = Session.objects.get(user=self.user)
         except:
             session = None
         self.session = session
@@ -114,10 +114,9 @@ class PingTestCase(APITestCase):
         client.post(reverse('register'), data, format='json')
 
         try:
-            session = Session.objects.get(station=station)
+            session = Session.objects.get(user=user)
         except:
             session = None
-        self.assertTrue(session is not None)
 
         data = {'token': session.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}

@@ -1,6 +1,7 @@
 import hashlib
-from django.conf import settings
+
 from django.contrib.auth.models import AbstractBaseUser
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
@@ -47,7 +48,7 @@ class Session(models.Model):
     EXPIRED = 'E'
     NOT_RESPONDING = 'H'
 
-    station = models.ForeignKey(Station)
+    user = models.ForeignKey(User)
     token = models.CharField(max_length=256, unique=True)
     created_on = models.DateTimeField(default=timezone.now)
     expired_on = models.DateTimeField()
@@ -66,9 +67,9 @@ class Session(models.Model):
         return self.created_on.isoformat()
 
     @classmethod
-    def generate(cls, station, expired_on=None):
-        session = Session(station=station)
-        s = '&'.join((str(station.id), session.created_on.isoformat(), settings.SECRET_KEY))
+    def generate(cls, user, expired_on=None):
+        session = Session(user=user)
+        s = '&'.join((str(user.username), session.created_on.isoformat(), settings.SECRET_KEY))
         h = hashlib.sha256(s.encode()).hexdigest().upper()
         if not expired_on:
             expired_on = session.created_on + settings.SESSION_EXPIRE_TIME

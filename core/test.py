@@ -36,7 +36,7 @@ class CoreTestCase(APITestCase):
         client.post(reverse('register'), data, format='json')
 
         try:
-            session = Session.objects.get(station=self.station)
+            session = Session.objects.get(user=self.user)
         except:
             session = None
         self.session = session

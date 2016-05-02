@@ -38,14 +38,14 @@ def register(request):
     # Expire older sessions
     station = user.station
     current_time = timezone.now()
-    sessions = Session.objects.filter(station=station, expired_on__gte=current_time).order_by('created_on')
+    sessions = Session.objects.filter(user=user, expired_on__gte=current_time).order_by('created_on')
     if len(sessions) >= station.max_sessions:
         old_session = sessions.first()
         old_session.expired_on = current_time
         old_session.save()
 
     # Issue session token
-    session = Session.generate(station=station)
+    session = Session.generate(user=user)
     session.save()
 
     return Response({
