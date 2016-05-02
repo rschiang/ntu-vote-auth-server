@@ -14,6 +14,7 @@ class Record(models.Model):
     VOTING = 'V'
     USED = 'U'
     FLAGGED = 'F'
+    RESETTING = 'R'
 
     STATE_CHOICES = (
         (UNAVAILABLE, 'Unavailable'),
@@ -22,6 +23,7 @@ class Record(models.Model):
         (VOTING, 'Voting'),
         (USED, 'Used'),
         (FLAGGED, 'Flagged'),
+        (RESETTING, 'Resetting')
     )
 
     student_id = models.CharField(max_length=10, unique=True)
