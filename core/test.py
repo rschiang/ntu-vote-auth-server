@@ -123,6 +123,32 @@ class CoreTestCase(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.data, {'status': 'success'})
 
+    def test_status(self):
+        username = 'admin'
+        password = 'station1'
+        user = User(username=username)
+        user.set_password(password)
+        user.kind = User.ADMIN
+        user.save()
+
+        # login
+        data = {'username': username, 'password': password,
+                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+        client = APIClient()
+        client.post(reverse('register'), data, format='json')
+
+        try:
+            session = Session.objects.get(user=user)
+        except:
+            session = None
+        else:
+            url = '/api/status'
+            data = {
+                'token': session.token,
+                'api_key': settings.API_KEY, 'version': settings.API_VERSION,
+            }
+            response = self.client.post(url, data)
+
 
 class ACATestCase(APITestCase):
     @override_settings(
