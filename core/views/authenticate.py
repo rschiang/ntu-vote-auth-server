@@ -34,6 +34,7 @@ def authenticate(request):
     else:
         logger.info('Station %s request for card %s', station_id, raw_student_id)
         student_id = None
+        revision = 0
 
     # Call ACA API
     try:
