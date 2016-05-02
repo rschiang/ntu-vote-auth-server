@@ -30,19 +30,25 @@ def register(request):
         logger.error('Login attempt failed for "%s":"%s"', username, password)
         return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
 
-    # Authorization, check user identity type
-    if not user.kind == User.STATION or not user.station.is_active:
-        logger.error('User %s improperly attempted to register session', username)
-        return error('forbidden', status=status.HTTP_403_FORBIDDEN)
+    current_time = timezone.now()
 
     # Expire older sessions
-    station = user.station
-    current_time = timezone.now()
-    sessions = Session.objects.filter(user=user, expired_on__gte=current_time).order_by('created_on')
-    if len(sessions) >= station.max_sessions:
-        old_session = sessions.first()
-        old_session.expired_on = current_time
-        old_session.save()
+    if user.kind == User.STATION:
+        station = user.station
+        sessions = Session.objects.filter(user=user, expired_on__gte=current_time).order_by('created_on')
+        if len(sessions) >= station.max_sessions:
+            old_session = sessions.first()
+            old_session.expired_on = current_time
+            old_session.save()
+        name = station.name
+
+    else:
+        # ADMIN and SUPERVISOR
+        old_sessions = Session.objects.filter(user=user, expired_on__gte=current_time)
+        for s in old_sessions:
+            s.expired_on = current_time
+            s.save()
+        name = username
 
     # Issue session token
     session = Session.generate(user=user)
@@ -50,7 +56,6 @@ def register(request):
 
     return Response({
         'status': 'success',
-        'station': station.external_id or station.id,
-        'name': station.name,
+        'name': name,
         'token': session.token,
     })
