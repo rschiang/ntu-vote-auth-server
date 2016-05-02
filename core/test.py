@@ -94,7 +94,21 @@ class CoreTestCase(APITestCase):
         })
 
     def test_report_success(self):
-        pass
+        record = Record(student_id=self.student_id)
+        record.state = Record.LOCKED
+        record.save()
+        vote_token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
+        vote_token.save()
+
+        url = reverse('report')
+        data = {
+            'uid': self.student_id,
+            'vote_token': vote_token.code,
+            'token': self.token,
+            'api_key': settings.API_KEY, 'version': settings.API_VERSION,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.data, {'status': 'success'})
 
 
 class ACATestCase(APITestCase):
