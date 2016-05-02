@@ -67,7 +67,7 @@ def login_required(f):
             return error('Session expired')
 
         if session.station.external_id:
-            request.station = session.station.external_id
+            request.station = str(session.station.external_id)
         else:
             logger.error('Request from no id station (%s)', session.station.name)
             return error('station error')
