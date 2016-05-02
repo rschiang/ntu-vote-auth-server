@@ -45,15 +45,28 @@ class CoreTestCase(APITestCase):
         self.authcode = AuthCode(kind='70', code='70-ZU2U0RAKX-KOXLUYHJI-7C05B')
         self.authcode.save()
 
+    @override_settings(
+        ACA_API_URL='http://localhost:3000/seqServices/stuinfoByCardno',
+        ACA_API_USER='aca_api_user', ACA_API_PASSWORD='password',
+        AUTH_CONFIG={'STUDENT_ID_CHECK': True})
     def test_authenticate_success(self):
-        return
+        cid = '12345678'
+        aca_info = service.to_student_id(cid)
+        uid = aca_info.id
+        uid = uid + '0'
         url = reverse('authenticate')
-        data = {'cid': 'fff', 'uid': 'B03705024',
-                'station': self.station.external_id,
+        data = {'cid': cid, 'uid': uid,
                 'token': self.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         response = self.client.post(url, data)
-        print(response.data)
+        token = AuthToken.objects.get(student_id=aca_info.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {
+            'token': token.code,
+            'uid': aca_info.id,
+            'type': aca_info.college,
+            'status': 'success'
+        })
 
     def test_confirm_success(self):
         record = Record(student_id=self.student_id)
