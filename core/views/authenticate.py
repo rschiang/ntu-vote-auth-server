@@ -6,13 +6,15 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from urllib.error import URLError
-from .decorators import check_prerequisites, scheduled, login_required
+from .decorators import check_prerequisites, scheduled, login_required, permission
 from .utils import error, logger
+from account.models import User
 
 
 @api_view(['POST'])
 @scheduled
 @login_required
+@permission(User.STATION)
 @check_prerequisites('cid', 'uid')
 def authenticate(request):
     # Check parameters

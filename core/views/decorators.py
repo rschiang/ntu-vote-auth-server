@@ -41,10 +41,7 @@ def check_prerequisites(*params):
     return decorator
 
 
-def login_required(f, permission=None):
-    if permission is None:
-        permission = (User.ADMIN, User.STATION, User.SUPERVISOR)
-
+def login_required(f):
     @wraps(f, assigned=available_attrs(f))
     def inner(request, *args, **kwargs):
         # Check parameters
@@ -65,21 +62,31 @@ def login_required(f, permission=None):
         session.last_seen = current_time
         session.save()
 
-        if session.user.kind not in permission:
-            logger.error('Rejected %s to access %s', session.user, request.path)
-            return('Permission denied')
-
         if session.status is Session.EXPIRED:
             logger.info('Session (%s) expired', session.token[:10])
             return error('Session expired')
-
-        if session.user.kind is User.STATION:
-            if session.user.station.external_id:
-                request.station = str(session.user.station.external_id)
-            else:
-                logger.error('Request from no id station (%s)', session.user.station.name)
-                return error('station error')
+        request.user = session.user
 
         return f(request, *args, **kwargs)
 
     return inner
+
+
+def permission(*permission):
+    def decorator(f):
+        @wraps(f, assigned=available_attrs(f))
+        def inner(request, *args, **kwargs):
+            if request.user.kind not in permission:
+                logger.error('Rejected %s to access %s', request.user, request.path)
+                return error('Permission denied')
+
+            if request.user.kind is User.STATION:
+                if request.user.station.external_id:
+                    request.station = str(request.user.station.external_id)
+                else:
+                    logger.error('Request from no id station (%s)', request.user.station.name)
+                    return error('station error')
+
+            return f(request, *args, **kwargs)
+        return inner
+    return decorator
