@@ -59,10 +59,10 @@ class CoreTestCase(APITestCase):
                 'token': self.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         response = self.client.post(url, data)
-        token = AuthToken.objects.get(student_id=aca_info.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        token = AuthToken.objects.get(student_id=aca_info.id)
         self.assertEqual(response.data, {
-            'token': token.code,
+            'vote_token': token.code,
             'uid': aca_info.id,
             'type': aca_info.college,
             'status': 'success'
@@ -84,7 +84,7 @@ class CoreTestCase(APITestCase):
             settings.CALLBACK_DOMAIN, reverse('callback'), vote_token.confirm_code)
         self.assertEqual(response.data, {
             'status': 'success',
-            'code': self.authcode.code,
+            'ballot': self.authcode.code,
             'callback': callback,
         })
 
