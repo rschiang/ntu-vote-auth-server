@@ -52,6 +52,6 @@ def confirm(request):
         'code': token.confirm_code,
     }
     return Response({
-        'status': 'success', 'code': code.code,
+        'status': 'success', 'ballot': code.code,
         'callback': 'https://{domain}{url}?callback={code}'.format(**callback)
     })

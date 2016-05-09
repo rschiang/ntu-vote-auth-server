@@ -57,7 +57,7 @@ def authenticate(request):
     else:
         if student_id is None:
             student_id = aca_info.id
-            logger.info('User checked %s (%s)')
+            logger.info('User checked %s (%s)', student_id, aca_info.type)
         elif aca_info.id != student_id:
             logger.info('ID %s returned instead', aca_info.id)
             return error('card_suspicious')
@@ -122,4 +122,4 @@ def authenticate(request):
     token.save()
 
     logger.info('Auth token issued: %s', token.code)
-    return Response({'status': 'success', 'uid': student_id, 'type': settings.KINDS[kind], 'token': token.code})
+    return Response({'status': 'success', 'uid': student_id, 'type': settings.KINDS[kind], 'vote_token': token.code})
