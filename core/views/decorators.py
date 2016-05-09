@@ -40,7 +40,6 @@ def check_prerequisites(*params):
         return inner
     return decorator
 
-
 def login_required(f):
     @wraps(f, assigned=available_attrs(f))
     def inner(request, *args, **kwargs):
@@ -48,7 +47,7 @@ def login_required(f):
         token = request.data.get('token', None)
         if token is None:
             logger.error('token required')
-            return error('token required')
+            return error('token required', status.HTTP_401_UNAUTHORIZED)
 
         current_time = timezone.now()
 
@@ -64,7 +63,7 @@ def login_required(f):
 
         if session.status is Session.EXPIRED:
             logger.info('Session (%s) expired', session.token[:10])
-            return error('Session expired')
+            return error('Session expired', status.HTTP_401_UNAUTHORIZED)
         request.user = session.user
 
         return f(request, *args, **kwargs)
@@ -76,9 +75,11 @@ def permission(*permission):
     def decorator(f):
         @wraps(f, assigned=available_attrs(f))
         def inner(request, *args, **kwargs):
+            logger.debug('Permission Required: %s', permission)
+            logger.debug('user kind %s', request.user.kind)
             if request.user.kind not in permission:
                 logger.error('Rejected %s to access %s', request.user, request.path)
-                return error('Permission denied')
+                return error('Permission denied', status.HTTP_403_FORBIDDEN)
 
             if request.user.kind is User.STATION:
                 if request.user.station.external_id:
