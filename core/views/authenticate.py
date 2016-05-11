@@ -76,6 +76,7 @@ def authenticate(request):
             logger.info('Reset %s state from VOTING', student_id)
 
         if record.state != Record.AVAILABLE:
+            logger.error('Duplicate entry (%s)', student_id)
             return error('duplicate_entry')
 
     except Record.DoesNotExist:
