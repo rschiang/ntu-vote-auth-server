@@ -31,6 +31,7 @@ def register(request):
         return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
 
     current_time = timezone.now()
+    station_id = None
 
     # Expire older sessions
     if user.kind == User.STATION:
@@ -41,6 +42,7 @@ def register(request):
             old_session.expired_on = current_time
             old_session.save()
         name = station.name
+        station_id = station.external_id
 
     else:
         # ADMIN and SUPERVISOR
@@ -57,5 +59,6 @@ def register(request):
     return Response({
         'status': 'success',
         'name': name,
+        'station_id': 0 if station_id is None else station_id,
         'token': session.token,
     })
