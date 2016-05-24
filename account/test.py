@@ -51,6 +51,7 @@ class RegisterTestCase(APITestCase):
         self.assertEqual(response.data, {
             'status': 'success',
             'name': self.station.name,
+            'station_id': self.station.external_id,
             'token': session.token,
         })
 
