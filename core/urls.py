@@ -5,7 +5,7 @@ from core.views import (
 from account.views import (register, ping)
 
 urlpatterns = [
-    url(r'^$', index),
+    url(r'^api/$', index),
     url(r'^api/station/register$', register, name='register'),
     url(r'^api/station/ping$', ping, name='ping'),
     url(r'^api/authenticate$', authenticate, name='authenticate'),
