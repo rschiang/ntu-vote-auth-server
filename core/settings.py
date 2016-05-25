@@ -116,7 +116,7 @@ ACA_API_URL = os.environ.get('ACA_API_URL')
 CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN')
 
 # Enforce election time
-ENFORCE_EVENT_DATE = os.environ.get('ENFORCE_EVENT')
+ENFORCE_EVENT_DATE = (os.environ.get('ENFORCE_EVENT') != '0')
 
 # Session
 SESSION_MAX_RESPOND_TIME = os.environ.get('SESSION_MAX_RESPOND_TIME', 60)
