@@ -117,7 +117,7 @@ CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN')
 
 # Security enforcements
 ENFORCE_CARD_VALIDATION = True
-ENFORCE_EVENT_DATE = bool(os.environ.get('ENFORCE_EVENT'))
+ENFORCE_EVENT_DATE = (os.environ.get('ENFORCE_EVENT') == '1')
 
 # Session
 SESSION_MAX_RESPOND_TIME = os.environ.get('SESSION_MAX_RESPOND_TIME', 60)
