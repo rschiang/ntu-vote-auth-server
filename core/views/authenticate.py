@@ -103,10 +103,12 @@ def authenticate(request):
         kind = override.kind
     except OverrideEntry.DoesNotExist:
         if type_code in settings.GRADUATE_CODES:
-            kind += '1'
+            if aca_info.department in settings.JOINT_DEPARTMENT_CODES:
+                kind += 'B'
+            else:
+                kind += '1'
         elif type_code in settings.UNDERGRADUATE_CODES:
-            # Departments who opt to join election
-            if aca_info.department in ('4010', '6090', '9010'):
+            if aca_info.department in settings.JOINT_DEPARTMENT_CODES:
                 kind += 'A'
             else:
                 kind += '0'

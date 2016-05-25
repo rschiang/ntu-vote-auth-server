@@ -16,6 +16,7 @@ COLLEGE_NAMES = {
     '9': '電機資訊學院',
     'A': '法律學院',
     'B': '生命科學院',
+    'H': '共同教育中心',
 }
 
 COLLEGE_IDS = {
@@ -31,6 +32,7 @@ COLLEGE_IDS = {
     '電機資訊學院': '9',
     '法律學院': 'A',
     '生命科學院': 'B',
+    '共同教育中心': 'H',
 
     # School of Professional Studies
     '牙醫專業學院': '4',
@@ -64,9 +66,9 @@ KINDS = {
     '91': '電機資訊學院研究生',
     'A1': '法律學院研究生',
     'B1': '生命科學院研究生',
+    'H0': '共同教育中心研究生',
 
     # Additional combinations
-    '01': '共同教育中心研究生',
     '3A': '政治學系',
     '4A': '醫學系',
     '6A': '生物產業機電工程學系',
@@ -99,6 +101,14 @@ GRADUATE_CODES = (
     'C',  # Doctor exhange students
     'F',  # Bachelors applied for doctor degree
     'Q',  # Part-time students of above
+)
+
+# Departments who opt to join election
+JOINT_DEPARTMENT_CODES = (
+    '3021', '3022', '3023', # Department of Political Science
+    '4010',  # Department of Medicine
+    '6110',  # Department of Bio-industrial Mechatronics Engineering
+    '6310',  # Grad. Institute of Bio-industrial Mechatronics Engineering
 )
 
 ENFORCE_EVENT_DATE = os.environ.get('ENFORCE_EVENT')
