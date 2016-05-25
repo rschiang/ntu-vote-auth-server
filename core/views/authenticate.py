@@ -22,7 +22,7 @@ def authenticate(request):
     raw_student_id = request.data['uid']
     station_id = request.station
 
-    if settings.AUTH_CONFIG['STUDENT_ID_CHECK']:
+    if settings.ENFORCE_CARD_VALIDATION:
         # Parse student ID
         if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id) and re.match(r'\d+', station_id):
             # Extract parameters
@@ -30,13 +30,13 @@ def authenticate(request):
             revision = int(raw_student_id[-1:])
             logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
         else:
+            # Malformed card information
             logger.info('Station %s request for card %s (%s)', station_id, raw_student_id, internal_id)
             return error('card_invalid')
 
     else:
-        logger.info('Station %s request for card %s', station_id, raw_student_id)
-        student_id = None
-        revision = 0
+        # Do not reveal full internal ID as ACA requested
+        logger.info('Station %s request for card (%s****)', station_id, internal_id[:4])
 
     # Call ACA API
     try:
@@ -47,7 +47,13 @@ def authenticate(request):
         return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     except service.ExternalError as e:
-        logger.exception('Card rejected by ACA server, reason %s', e.reason)
+        if not settings.ENFORCE_CARD_VALIDATION:
+            # We can only reveal full internal ID if it’s an invalid card
+            logger.exception('Card rejected by ACA server (%s), reason %s', internal_id, e.reason)
+        else:
+            logger.exception('Card rejected by ACA server, reason %s', e.reason)
+
+        # Tell clients the exact reason of error
         if e.reason == 'card_invalid' or e.reason == 'student_not_found':
             return error('card_invalid')
         elif e.reason == 'card_blacklisted':
@@ -55,9 +61,10 @@ def authenticate(request):
         return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     else:
-        if student_id is None:
+        if settings.ENFORCE_CARD_VALIDATION:
             student_id = aca_info.id
-            logger.info('User checked %s (%s)', student_id, aca_info.type)
+            revision = 0
+            logger.info('User %s (%s) checked', student_id, aca_info.type)
         elif aca_info.id != student_id:
             logger.info('ID %s returned instead', aca_info.id)
             return error('card_suspicious')
@@ -65,12 +72,13 @@ def authenticate(request):
     # Check vote record
     try:
         record = Record.objects.get(student_id=student_id)
-        if record.revision != revision:
+        if settings.ENFORCE_CARD_VALIDATION and record.revision != revision:
             # ACA claim the card valid!
             logger.info('Expect revision %s, recorded %s', revision, record.revision)
             return error('card_suspicious')
 
         if record.state == Record.VOTING:
+            # Automaticlly unlock stuck record
             record.state = Record.AVAILABLE
             record.save()
             logger.info('Reset %s state from VOTING', student_id)

@@ -115,17 +115,13 @@ ACA_API_URL = os.environ.get('ACA_API_URL')
 # Callback domain
 CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN')
 
-# Enforce election time
-ENFORCE_EVENT_DATE = (os.environ.get('ENFORCE_EVENT') != '0')
+# Security enforcements
+ENFORCE_CARD_VALIDATION = True
+ENFORCE_EVENT_DATE = (os.environ.get('ENFORCE_EVENT') == '1')
 
 # Session
 SESSION_MAX_RESPOND_TIME = os.environ.get('SESSION_MAX_RESPOND_TIME', 60)
 SESSION_EXPIRE_TIME = os.environ.get('SESSION_EXPIRE_TIME', 6000)
-
-# Authentication configurations
-AUTH_CONFIG = {
-    "STUDENT_ID_CHECK": False,
-}
 
 # Meta
 # All election meta information

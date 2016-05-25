@@ -48,7 +48,7 @@ class CoreTestCase(APITestCase):
     @override_settings(
         ACA_API_URL='http://localhost:3000/seqServices/stuinfoByCardno',
         ACA_API_USER='aca_api_user', ACA_API_PASSWORD='password',
-        AUTH_CONFIG={'STUDENT_ID_CHECK': True})
+        ENFORCE_CARD_VALIDATION=True)
     def test_authenticate_success(self):
         cid = '12345678'
         aca_info = service.to_student_id(cid)
