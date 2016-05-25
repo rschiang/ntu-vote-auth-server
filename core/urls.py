@@ -11,6 +11,6 @@ urlpatterns = [
     url(r'^api/authenticate$', authenticate, name='authenticate'),
     url(r'^api/confirm$', confirm, name='confirm'),
     url(r'^api/report$', report, name='report'),
-    url(r'^api/complete$', complete, name='callback'),
-    url(r'^api/status$', status),
+    url(r'^api/complete$', complete, name='complete'),
+    url(r'^api/status$', status, name='status'),
 ]
