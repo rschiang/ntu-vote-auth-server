@@ -111,7 +111,6 @@ JOINT_DEPARTMENT_CODES = (
     '6310',  # Grad. Institute of Bio-industrial Mechatronics Engineering
 )
 
-ENFORCE_EVENT_DATE = os.environ.get('ENFORCE_EVENT')
 EVENT_START_DATE = datetime.datetime(2016, 5, 26, 8, 45, 0)
 EVENT_END_DATE = datetime.datetime(2016, 5, 26, 19, 15, 0)
 
