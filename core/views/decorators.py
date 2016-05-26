@@ -62,7 +62,7 @@ def login_required(f):
         session.save()
 
         if session.status is Session.EXPIRED:
-            logger.info('Session (%s) expired', session.token[:10])
+            logger.info('Session (%s) expired of user %s', session.token[:10], session.user.username)
             return error('Session expired', status.HTTP_401_UNAUTHORIZED)
         request.user = session.user
 

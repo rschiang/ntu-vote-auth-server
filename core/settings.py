@@ -119,10 +119,6 @@ CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN')
 ENFORCE_CARD_VALIDATION = True
 ENFORCE_EVENT_DATE = (os.environ.get('ENFORCE_EVENT') == '1')
 
-# Session
-SESSION_MAX_RESPOND_TIME = os.environ.get('SESSION_MAX_RESPOND_TIME', 60)
-SESSION_EXPIRE_TIME = os.environ.get('SESSION_EXPIRE_TIME', 6000)
-
 # Meta
 # All election meta information
 from .meta import *
