@@ -36,6 +36,9 @@ class Record(models.Model):
 
 
 class AuthCode(models.Model):
+    """
+    ballot, using a valid AuthToken to exchange this one
+    """
     kind = models.CharField(max_length=2)
     code = models.CharField(max_length=256)
     issued = models.BooleanField(default=False)
@@ -46,6 +49,9 @@ class AuthCode(models.Model):
 
 
 class AuthToken(models.Model):
+    """
+    Token for authentication
+    """
     student_id = models.CharField(max_length=10)
     station_id = models.IntegerField()
     kind = models.CharField(max_length=2)
@@ -70,6 +76,11 @@ class AuthToken(models.Model):
         return token
 
 
-class OverrideEntry(models.Model):
+class Entry(models.Model):
+    dptcode = models.CharField(max_length=4, unique=True)
+    kind = models.CharField(max_length=2, null=True)
+
+
+class OverrideEntry(Entry):
     student_id = models.CharField(max_length=10, unique=True)
-    kind = models.CharField(max_length=2)
+
