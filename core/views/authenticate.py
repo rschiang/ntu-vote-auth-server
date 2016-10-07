@@ -1,6 +1,6 @@
 import re
 from core import service
-from core.models import Record, AuthToken, OverrideEntry
+from core.models import Record, AuthToken, OverrideEntry, Entry
 from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -90,39 +90,22 @@ def authenticate(request):
     except Record.DoesNotExist:
         record = Record(student_id=student_id, revision=revision)
 
-    # Build up kind identifier
-    try:
-        college = settings.COLLEGE_IDS[aca_info.college]
-    except KeyError:
-        # Use student ID as an alternative
-        logger.warning('No matching college for ACA entry %s', aca_info.college)
-        college = student_id[3]
-
-        # In rare cases, we may encounter students without colleges
-        if college not in settings.COLLEGE_NAMES:
-            logger.warning('No matching college for ID %s', college)
-            college = '0'
-
     # Determine graduate status
-    type_code = student_id[0]
-    kind = college
+    kind = None
+    try:
+        entry = Entry.objects.get(dpt_code=aca_info.department)
+        kind = entry.kind
+    except Entry.DoesNotExist:
+        logger.error('Entry not found: %s', aca_info.department)
+        return error('entry_not_found')
+
     try:
         override = OverrideEntry.objects.get(student_id=student_id)
         kind = override.kind
     except OverrideEntry.DoesNotExist:
-        if type_code in settings.GRADUATE_CODES:
-            if aca_info.department in settings.JOINT_DEPARTMENT_CODES:
-                kind += 'B'
-            else:
-                kind += '1'
-        elif type_code in settings.UNDERGRADUATE_CODES:
-            if aca_info.department in settings.JOINT_DEPARTMENT_CODES:
-                kind += 'A'
-            else:
-                kind += '0'
+        pass
 
-    # Check if student has eligible identity
-    if kind not in settings.KINDS:
+    if kind is None:
         return error('unqualified')
 
     # Generate record and token
@@ -133,4 +116,4 @@ def authenticate(request):
     token.save()
 
     logger.info('Auth token issued: %s', token.code)
-    return Response({'status': 'success', 'uid': student_id, 'type': settings.KINDS[kind], 'vote_token': token.code})
+    return Response({'status': 'success', 'uid': student_id, 'type': settings.DPTCODE_NAME[entry.dptcode], 'vote_token': token.code})
