@@ -13,7 +13,6 @@ from .utils import logger
 @permission(User.ADMIN, User.SUPERVISOR)
 def status(request):
     current_time = timezone.now()
-    logger.debug('hello')
     return Response({
         'status': 'success',
         'ballot': {
