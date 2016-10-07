@@ -77,7 +77,7 @@ class AuthToken(models.Model):
 
 
 class Entry(models.Model):
-    dpt_code = models.CharField(max_length=4, unique=True)
+    dptcode = models.CharField(max_length=4, unique=True)
     kind = models.CharField(max_length=2, null=True)
 
 
