@@ -1,6 +1,6 @@
 from account.models import User, Station, Session
-from core.models import Record, AuthToken, AuthCode
-from core import service
+from core.models import Record, AuthToken, AuthCode, Entry
+from core import service, meta
 
 from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
@@ -10,6 +10,9 @@ from django.test import override_settings
 
 
 class CoreTestCase(APITestCase):
+
+    fixtures = ['fixtures/entry.json']
+
     @classmethod
     def setUpTestData(self):
         self.student_id = 'B03705024'
@@ -45,11 +48,17 @@ class CoreTestCase(APITestCase):
         self.authcode = AuthCode(kind='70', code='70-ZU2U0RAKX-KOXLUYHJI-7C05B')
         self.authcode.save()
 
+    def test_entry_loaded(self):
+        self.assertEqual(Entry.objects.count(), 216)
+
     @override_settings(
         ACA_API_URL='http://localhost:3000/seqServices/stuinfoByCardno',
         ACA_API_USER='aca_api_user', ACA_API_PASSWORD='password',
         ENFORCE_CARD_VALIDATION=True)
     def test_authenticate_success(self):
+        entry = Entry.objects.get(dpt_code='1010')
+        entry.kind = 'A0'
+        entry.save()
         cid = '12345678'
         aca_info = service.to_student_id(cid)
         uid = aca_info.id
@@ -65,6 +74,7 @@ class CoreTestCase(APITestCase):
             'vote_token': token.code,
             'uid': aca_info.id,
             'type': aca_info.college,
+            'college': meta.DPTCODE_NAME[aca_info.department],
             'status': 'success'
         })
 

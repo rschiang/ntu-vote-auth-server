@@ -95,6 +95,7 @@ def authenticate(request):
     try:
         entry = Entry.objects.get(dpt_code=aca_info.department)
         kind = entry.kind
+        logger.debug('DPT_CODE %s', type(aca_info.department))
     except Entry.DoesNotExist:
         logger.error('Entry not found: %s', aca_info.department)
         return error('entry_not_found')
@@ -116,4 +117,5 @@ def authenticate(request):
     token.save()
 
     logger.info('Auth token issued: %s', token.code)
-    return Response({'status': 'success', 'uid': student_id, 'type': settings.DPTCODE_NAME[entry.dptcode], 'vote_token': token.code})
+    return Response({'status': 'success', 'uid': student_id, 'type': aca_info.college, 
+        'college': settings.DPTCODE_NAME[aca_info.department], 'vote_token': token.code})
