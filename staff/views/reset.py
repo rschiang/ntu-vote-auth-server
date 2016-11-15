@@ -9,7 +9,7 @@ from .utils import logger, error
 @api_view(['GET'])
 @login_required
 @permission(User.ADMIN, User.SUPERVISOR)
-def get_reset_list(request):
+def reset_list(request):
     return Response({
         'status': 'success',
         'target': [{'student_id': r.student_id} for r in Record.objects.filter(state=Record.RESETTING)],
