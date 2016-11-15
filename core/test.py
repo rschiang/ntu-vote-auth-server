@@ -56,7 +56,7 @@ class CoreTestCase(APITestCase):
         ACA_API_USER='aca_api_user', ACA_API_PASSWORD='password',
         ENFORCE_CARD_VALIDATION=True)
     def test_authenticate_success(self):
-        entry = Entry.objects.get(dpt_code='1010')
+        entry, _ = Entry.objects.get_or_create(dpt_code='1010')
         entry.kind = 'A0'
         entry.save()
         cid = '12345678'
