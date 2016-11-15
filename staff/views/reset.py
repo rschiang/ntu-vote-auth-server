@@ -20,7 +20,7 @@ def reset_list(request):
 @login_required
 @permission(User.ADMIN)
 @check_prerequisites('uid')
-def apply_reset_list(request):
+def apply_reset(request):
     uid = request.data['uid']
 
     # Fetch Elector
@@ -32,14 +32,14 @@ def apply_reset_list(request):
         return error('student not found')
 
     # Log this event
-    logger.info('Elector %s has been reset by %s from state (%s)', uid, request.user.username, record.state)
+    logger.info('Admin %s create a reset request (%s - %s)', request.user.username, uid, record.state)
 
     record.state = Record.RESETTING
     record.save()
 
     return Response({
         'status': 'success',
-        'message': 'waiting for supervisor',
+        'message': 'reset request created',
     })
 
 
@@ -47,7 +47,7 @@ def apply_reset_list(request):
 @login_required
 @permission(User.SUPERVISOR)
 @check_prerequisites('uid')
-def confirm_reset_list(request):
+def confirm_reset(request):
     uid = request.data['uid']
 
     # Fetch Elector
@@ -55,13 +55,13 @@ def confirm_reset_list(request):
         record = Record.objects.get(student_id=uid)
 
     except Record.DoesNotExist:
-        logger.error('reset target (%s) not found', uid)
+        logger.error('student (%s) not found', uid)
         return error('student not found')
 
     # Checking elector state
     if record.state != Record.RESETTING:
-        logger.info('Supervisor want to reset %s before admin agreed', uid)
-        return error('Let admin applicate resetting rerquest first')
+        logger.info('reset request (%s) not found', uid)
+        return error('reset request (%s) not found', uid)
 
     # Log this event
     logger.info('Resetting event (%s) accepted by %s', uid, request.user.username)
@@ -71,9 +71,9 @@ def confirm_reset_list(request):
     record.save()
 
     # Log this event
-    logger.info('Elector %s has been reset by %s', uid, request.user.username)
+    logger.info('Supervisor %s apply the reset request (%s)', request.user.username, uid)
 
     return Response({
         'status': 'success',
-        'message': 'resetting completed'
+        'message': 'reset request confirmed',
     })
