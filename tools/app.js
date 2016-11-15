@@ -30,7 +30,7 @@ app.post('/seqServices/stuinfoByCardno', function(req, res, next) {
 
 
     parseString(unicode, function(err, result) {
-        console.log(result);
+        // console.log(result);
         if ("STUREQ" in result) {    
             var pChars = ['B', 'T', 'E', 'A', 'C', 'D', 'F', 'Q', 'P', 'R', 'K', 'L'];
             var college = [1010, 1011, 1020, 1030, 1040, 1050, 1060, 1070, 1090, 2010, 2020, 2030, 2040, 2070, 2080, 2090, 3020, 3021, 3022, 3023, 3030, 3050, 3051, 3052, 3100, 4010, 4010, 4020, 4030, 4031, 4040, 4060, 4080, 4090, 5010, 5010, 5010, 5010, 5010, 5010, 5020, 5040, 5050, 5050, 5050, 5050, 5050, 5070, 6010, 6020, 6030, 6031, 6032, 6050, 6050, 6050, 6050, 6050, 6051, 6052, 6053, 6054, 6060, 6060, 6060, 6070, 6080, 6080, 6080, 6080, 6080, 6090, 6100, 6100, 6100, 6101, 6102, 6110, 6110, 6110, 6110, 6120, 6130, 7010, 7011, 7011, 7012, 7020, 7030, 7040, 7050, 8010, 9010, 9020];
@@ -71,8 +71,7 @@ app.post('/seqServices/stuinfoByCardno', function(req, res, next) {
         }
     });
 
-    console.log("Resonse: ");
-    console.log(resp);
+    console.log(resp.STUINFO);
 
     var builder = new xml2js.Builder({xmldec : { 'version': '1.0', 'encoding': 'Big5'} } );
     var xml = builder.buildObject(resp);
