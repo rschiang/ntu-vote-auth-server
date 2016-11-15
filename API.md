@@ -1,44 +1,118 @@
 # Voteing API version 2
-## API requirements
-General requirements:  
+Each 
+#####request
+ cotains a json object with specified column.
+## API Argument
+General argument, all API call should cotains following arguments: 
 
 - version (the api version)
 - api_key (the api key)
 
-### register
+## register
+POST
+#####Request
+
 - username
 - password
 
-### ping
-GET
+#####Response
+
+- status
+- name
+- station_id
 - token
 
-### status
+## ping
 GET
+
+#####Request
+
 - token
 
-### authenticate
+#####Response
+
+- status
+- timestamp
+
+## status
+GET
+
+#####Request
+
+
+- token
+
+#####Response
+
+
+- status
+- ballot
+ - used
+ - remain
+- stations(:array)
+ - name
+ - id 
+ - status
+
+## authenticate
+POST
+
+#####Request
+
 - token
 - cid
 - uid
 
-### confirm
+#####Response
+
+- status
+- uid
+- type
+- vote_token
+
+## confirm
+POST
+
+#####Request
+
 - token
 - uid
 - vote_token
 
-### report
+#####Response
+
+- status
+- ballot
+- callback
+
+## report
+POST
+#####Request
+
 - token
 - uid
 
-### complete
-nothing but a callback api
+#####Response
 
-### reset
+- status
+
+## complete
+GET  
+nothing but a callback api.
+Require a GET argument `callback`.
+
+#####Response
+
+- status
+- message
+
+## reset
 TBD
+
 - token
 
-### migration
+## migration
 TBD
+
 - token
 
