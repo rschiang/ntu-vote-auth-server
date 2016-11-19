@@ -86,6 +86,20 @@
 - station_error
 - service_closed
 
+| 名稱                   | URL                     |
+|------------------------|-------------------------|
+| Register               | /general/login          |
+| Ping                   | /general/login          |
+| Status                 | /status                 |
+| Authenticate           | /voter/authenticate     |
+| Confirm                | /voter/confirm          |
+| Report                 | /voter/report           |
+| Callback               | /voter/complete         |
+| List Reset Request     | /resets/                |
+| Apply Reset Request    | /resets/apply           |
+| Confirm Reset Request  | /resets/confirm         |
+| Reject Reset Reques    | /resets/reject          |
+
 ### Register
 - `G01`
 
@@ -235,11 +249,11 @@ None
 #### error response
 - token_invalid
 
-### Callback
+### Complete
 - `A04`
 
 #### url
-`GET /voter/callback`
+`GET /voter/complete`
 #### argument
 - callback
 #### success response
@@ -259,7 +273,8 @@ None
 #### url
 `GET /resets/`
 #### argument
-None
+- token
+
 #### success response
 - Code: 200
 ```json
@@ -279,6 +294,7 @@ None
 `POST /resets/apply`
 #### argument
 - uid
+- token
 
 #### success response
 - Code: 200
@@ -299,6 +315,7 @@ None
 `GET /resets/confirm`
 #### argument
 - uid
+- token
 
 #### success response
 - Code: 200
@@ -319,6 +336,7 @@ None
 `GET /resets/reject`
 #### argument
 - uid
+- token
 
 #### success response
 - Code: 200
@@ -333,5 +351,3 @@ None
 - student_not_found
 
 
-### Reset Application
-- R03
