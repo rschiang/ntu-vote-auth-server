@@ -3,7 +3,12 @@
 - 為辦理台大學生會所舉辦之學生自治投票，本系統為身份驗證子系統，只提供學生證的查詢、認證、電子選票之派發。
 
 - Version 3.0
-- Based on Python
+- Based on Python 3.5
+
+## 相依套件
+- Django: 1.9.5
+- djangorestframework: 3.3.3
+- gunicorn: 19.3.0
 
 ## 角色
 - Station: 投票站

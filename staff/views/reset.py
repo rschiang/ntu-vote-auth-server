@@ -64,16 +64,46 @@ def confirm_reset(request):
         return error('reset_request_not_found')
 
     # Log this event
-    logger.info('Resetting event (%s) accepted by %s', uid, request.user.username)
+    logger.info('Reset Request (%s) accepted by %s', uid, request.user.username)
 
     # Reset to state AVAILABLE
     record.state = Record.AVAILABLE
     record.save()
 
-    # Log this event
-    logger.info('Supervisor %s apply the reset request (%s)', request.user.username, uid)
-
     return Response({
         'status': 'success',
         'message': 'reset request confirmed',
     })
+
+@api_view(['POST'])
+@login_required
+@permission(User.SUPERVISOR)
+@check_prerequisites('uid')
+def reject_reset(request):
+    uid = request.data['uid']
+
+    # Fetch Elector
+    try:
+        record = Record.objects.get(student_id=uid)
+
+    except Record.DoesNotExist:
+        logger.error('student (%s) not found', uid)
+        return error('student_not_found')
+
+    # Checking elector state
+    if record.state != Record.RESETTING:
+        logger.info('reset request (%s) not found', uid)
+        return error('reset_request_not_found')
+
+    # Log this event
+    logger.info('Reset request (%s) rejected by %s', uid, request.user.username)
+
+    # Reset to state AVAILABLE
+    record.state = Record.UNAVAILABLE
+    record.save()
+
+    return Response({
+        'status': 'success',
+        'message': 'reset request rejected',
+    })
+
