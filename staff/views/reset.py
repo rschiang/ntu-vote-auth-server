@@ -29,7 +29,7 @@ def apply_reset(request):
 
     except Record.DoesNotExist:
         logger.error('reset target (%s) not found', uid)
-        return error('student not found')
+        return error('student_not_found')
 
     # Log this event
     logger.info('Admin %s create a reset request (%s - %s)', request.user.username, uid, record.state)
@@ -56,12 +56,12 @@ def confirm_reset(request):
 
     except Record.DoesNotExist:
         logger.error('student (%s) not found', uid)
-        return error('student not found')
+        return error('student_not_found')
 
     # Checking elector state
     if record.state != Record.RESETTING:
         logger.info('reset request (%s) not found', uid)
-        return error('reset request (%s) not found', uid)
+        return error('reset_request_not_found')
 
     # Log this event
     logger.info('Resetting event (%s) accepted by %s', uid, request.user.username)
