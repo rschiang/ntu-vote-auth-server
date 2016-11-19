@@ -73,7 +73,7 @@
 ```json
     {
         "status": "error",
-        "message": <string:message>
+        "message": "<string:message>"
     }
 ```
 #### 通用錯誤訊息
@@ -101,9 +101,9 @@
 ```json
 {
     "status": "success",
-    "name": <string>,
-    "station_id": <int>,
-    "token": <string>
+    "name": "<string>",
+    "station_id": "<int>",
+    "token": "<string>"
 }
 ```
 
@@ -125,7 +125,7 @@
 ```json
     {
         "status": "success",
-        "timestamp": <string:isoformat>
+        "timestamp": "<string:isoformat>"
     }
 ```
 
@@ -147,12 +147,12 @@ None
     {
         "status": "success",
             "ballot": {
-                "used": <int>,
-                "remain": <int>
+                "used": "<int>",
+                "remain": "<int>"
             },
             "stations": [{
-                "name": <string>,
-                "id": <int>,
+                "name": "<string>",
+                "id": "<int>",
                 "status": <string: isoformat>
             }]
     }
@@ -176,10 +176,10 @@ None
 ```json
 {
     "status": "success",
-    "uid": <string:student_id>,
-    "type": <string>, 
-    "college": <string>,
-    "vote_token": <string>
+    "uid": "<string:student_id>",
+    "type": "<string>",
+    "college": "<string>",
+    "vote_token": "<string>"
 }
 ```
 
@@ -206,8 +206,8 @@ None
 ```json
 {
     "status": "success",
-    "ballot": <string>,
-    "callback": <string:url>
+    "ballot": "<string>",
+    "callback": "<string:url>"
 }
 ```
 
@@ -267,7 +267,7 @@ None
     "status": "success",
     "target": [
         {
-            "student_id": <string>
+            "student_id": "<string>"
         }
     ]
 }
