@@ -153,7 +153,7 @@ None
             "stations": [{
                 "name": "<string>",
                 "id": "<int>",
-                "status": <string: isoformat>
+                "status": "<string:isoformat>"
             }]
     }
 ```
