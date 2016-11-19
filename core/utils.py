@@ -33,7 +33,8 @@ def generate_auth_code(kind=None, amount=1000):
         for i in range(amount):
             code[1] = get_random_string(length=9, allowed_chars=UPPERCASE)
             code[2] = get_random_string(length=9, allowed_chars=UPPERCASE)
-            code[3] = md5(code[1] + md5(code[2]))[:5]
+            code[3] = code[1] + md5(code[2].encode()).hexdigest()
+            code[3] = md5(code[3].encode()).hexdigest()[:5].upper()
             auth_code = AuthCode()
             auth_code.kind = kind
             auth_code.code = '-'.join(code)
