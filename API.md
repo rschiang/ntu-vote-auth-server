@@ -31,11 +31,10 @@
 | R04 | 駁回重設選舉人狀態     |   | v |   |
 | C01 | 新增 Entry 對應        |   | v |   |
 | C02 | 修改 Entry 對應        |   | v |   |
-| C03 | 更新 Entry 對應        |   | v |   |
-| C04 | 刪除 Entry 對應        |   | v |   |
-| C05 | 列出 Entry 對應        |   | v |   |
-| C06 | 設定投票時間           |   | v |   |
-| C07 | 下載選票檔案           |   | v |   |
+| C03 | 刪除 Entry 對應        |   | v |   |
+| C04 | 列出 Entry 對應        |   | v |   |
+| C05 | 設定投票時間           |   | v |   |
+| C06 | 下載選票檔案           |   | v |   |
 | T01 | 測試教務處系統         |   | v |   |
 | T02 | 測試計票子系統         |   | v |   |
 | T03 | 本系統獨立測試         |   |   |   |
@@ -102,6 +101,11 @@
 | Apply Reset Request    | /resets/apply           |
 | Confirm Reset Request  | /resets/confirm         |
 | Reject Reset Reques    | /resets/reject          |
+| List Entry             | /entry/                 |
+| Create Entry           | /entry/                 |
+| Retrieve Entry         | /entry/:dpt_code        |
+| Update Entry           | /entry/:dpt_code        |
+| Delete Entry           | /entry/:dpt_code        |
 
 ### Register
 - `G01`
@@ -353,4 +357,57 @@ None
 #### error response
 - student_not_found
 
+### List Entry
+- `C05`
+#### url
+- `GET /entry/`
+
+#### argument
+- token
+
+#### success response
+- Code: 200
+```
+{
+    "status": "success",
+    "entrys": [
+        {
+            "dpt_code": "<string>",
+            "name": "<string>",
+            "kind": "<string>",
+        }
+    ]
+}
+```
+
+#### error response
+None
+
+### Add Entry
+- `C01`
+
+#### url
+- `POST /entry/`
+
+#### argument
+- token
+- name
+- dpt_code
+- kind
+
+#### success response
+- Code: 200
+```
+{
+    "status": "success",
+    "entry": {
+        "name": "<string>",
+        "dpt_code": "<string>",
+        "kind": "<string>",
+    }
+}
+```
+
+#### error response
+None
 
