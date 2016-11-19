@@ -20,9 +20,10 @@
 | A02 | 確認選舉人並派發選票   |   |   | v |
 | A03 | 否決選舉人             |   |   | v |
 | A04 | 確認選票抵達(公開端點) |   |   |   |
-| R01 | 申請重設選舉人狀態     | v |   |   |
-| R02 | 確認重設選舉人狀態     |   | v |   |
-| R03 | 駁回重設選舉人狀態     |   | v |   |
+| R01 | 列出重設選舉人請求     | v | v |   |
+| R02 | 申請重設選舉人狀態     | v |   |   |
+| R03 | 確認重設選舉人狀態     |   | v |   |
+| R04 | 駁回重設選舉人狀態     |   | v |   |
 | C01 | 新增 Entry 對應        |   | v |   |
 | C02 | 修改 Entry 對應        |   | v |   |
 | C03 | 更新 Entry 對應        |   | v |   |
@@ -64,7 +65,7 @@
 - api_key (the api key)
 
 #### 通用錯誤訊息格式
-```
+```json
     {
         "status": "error",
         "message": <string:message>
@@ -81,7 +82,7 @@
 - service_closed
 
 ### Register
-- G01
+- `G01`
 
 #### url 
 `POST /general/login`
@@ -91,8 +92,8 @@
 - password
 
 #### success response
-- Code: 200
-```
+- Code: `200`
+```json
 {
     "status": "success",
     "name": <string>,
@@ -106,7 +107,7 @@
  - unauthorized
 
 ### Ping
-- G02
+- `G02`
 
 #### url
 `/general/login`
@@ -116,7 +117,7 @@
 
 #### success response
 - Code: 200
-```
+```json
     {
         "status": "success",
         "timestamp": <string:isoformat>
@@ -127,8 +128,8 @@
 None
 
 ### Status
-- M01
-- M02
+- `M01`
+- `M02`
 
 #### url
 `/status`
@@ -137,7 +138,7 @@ None
 
 #### success response
 - Code: 200
-```
+```json
     {
         "status": "success",
             "ballot": {
@@ -156,7 +157,7 @@ None
 None
 
 ### Authenticate
-- A01
+- `A01`
 
 #### url
 `/voter/authenticate`
@@ -167,7 +168,7 @@ None
 
 #### success response
 - Code: 200
-```
+```json
 {
     "status": "success",
     "uid": <string:student_id>,
@@ -186,7 +187,7 @@ None
 - unqualified
 
 ### Confirm
-- A02
+- `A02`
 
 #### url
 `/voter/confirm`
@@ -197,7 +198,7 @@ None
 
 #### success response
 - Code: 200
-```
+```json
 {
     "status": "success",
     "ballot": <string>,
@@ -210,17 +211,17 @@ None
 - token_invalid
 
 ### Report
-- A03
+- `A03`
 
 #### url
-`/voter/login`
+`/voter/report`
 #### argument
 - token
 - uid
 
 #### success response
 - Code: 200
-```
+```json
 {
     "status": "success"
 }
@@ -230,14 +231,15 @@ None
 - token_invalid
 
 ### Callback
-- A04
+- `A04`
 
 #### url
-`/general/callback`
+`GET /voter/callback`
 #### argument
+- callback
 #### success response
 - Code: 200
-```
+```json
 {
     "status": "success",
     "message": "all correct"
@@ -247,11 +249,84 @@ None
 #### error response
 None
 
-### Reset Application
-- R01
+### List Reset Request
+- `R01`
+#### url
+`GET /resets/`
+#### argument
+None
+#### success response
+- Code: 200
+```json
+{
+    "status": "success",
+    "target": [
+        {
+            "student_id": <string>
+        }
+    ]
+}
+```
 
-### Reset Application
-- R02
+### Apply Reset Request
+- `R02`
+#### url
+`POST /resets/apply`
+#### argument
+- uid
+
+#### success response
+- Code: 200
+```json
+{
+    "status": "success",
+    "message": "reset request created"
+}
+```
+
+#### error response
+- student_not_found
+
+### Confirm Reset Request
+- `R03`
+
+#### url
+`GET /resets/confirm`
+#### argument
+- uid
+
+#### success response
+- Code: 200
+```json
+{
+    "status": "success",
+    "message": "reset request confirmed"
+}
+```
+
+#### error response
+- student_not_found
+- reset_request_not_found
+
+### Reject Reset Request
+- `R04`
+#### url
+`GET /resets/reject`
+#### argument
+- uid
+
+#### success response
+- Code: 200
+```json
+{
+    "status": "success",
+    "message": "reset request rejected"
+}
+```
+
+#### error response
+- student_not_found
+
 
 ### Reset Application
 - R03
