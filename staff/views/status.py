@@ -2,9 +2,9 @@ from core.models import AuthCode
 from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .decorators import scheduled, login_required, permission
+from core.views.decorators import scheduled, login_required, permission
 from account.models import User, Station, Session
-from .utils import logger
+from core.views.utils import logger
 
 
 @api_view(['POST'])

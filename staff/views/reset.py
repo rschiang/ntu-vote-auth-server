@@ -1,9 +1,9 @@
 from core.models import Record
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .decorators import login_required, permission, check_prerequisites
+from core.views.decorators import login_required, permission, check_prerequisites
 from account.models import User
-from .utils import logger, error
+from core.views.utils import logger, error
 
 
 @api_view(['GET'])
