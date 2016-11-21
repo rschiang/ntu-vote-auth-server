@@ -48,7 +48,6 @@
 - AuthToken
 - Entry
 - OverrideEntry
-
 - User
 - Station
 
@@ -68,6 +67,14 @@
 
 - version (the api version)
 - api_key (the api key)
+
+#### HTTP Request Example
+```json
+{
+    "username": "MY_USER_NAME",
+    "password": "MY_SUPER_SECRET_PASSWORK"
+}
+```
 
 #### 通用錯誤訊息格式
 ```json
