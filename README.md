@@ -1,6 +1,8 @@
 NTUVote 身分驗證系統
 ===================
 
+![TravisCI](https://travis-ci.org/azdkj532/ntu-vote-auth-server.svg?branch=master)
+
 這是用於電子投票的身分驗證系統伺服器，將在臺灣大學 103 學年度第一學期學代會學生代表選舉使用。系統架構以 Django REST Framework 為基礎，藉由讀取卡片資訊、並與校務系統連線，使得此次電子投票得以透過自動化的方式驗證身分、派發選票，並有效過濾偽卡。
 
 完整電子投票系統架構分為驗證與投票兩部分，其中裝置整合與身分驗證系統由[臺灣大學學生會選舉罷免執行委員會](https://www.facebook.com/NTUVote)委託[臺灣大學開源社](https://ntuosc.org) [RSChiang](https://github.com/rschiang/ntu-vote-auth-server) 規劃研發；投票系統則延請 [MouseMs](https://github.com/mousems/NTUvoteV2) 實作。
