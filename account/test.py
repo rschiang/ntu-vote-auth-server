@@ -121,5 +121,5 @@ class PingTestCase(APITestCase):
         data = {'token': session.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         response = self.client.post(self.url, data)
-        self.assertEqual(response.data, {'status': 'error', 'reason': 'station error'})
+        self.assertEqual(response.data, {'status': 'error', 'reason': 'station_error'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

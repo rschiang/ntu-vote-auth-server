@@ -78,7 +78,8 @@ class AuthToken(models.Model):
 
 class Entry(models.Model):
     dpt_code = models.CharField(max_length=4, unique=True)
-    kind = models.CharField(max_length=2, null=True)
+    kind = models.CharField(max_length=5, null=True)
+    name = models.CharField(max_length=256, null=True)
 
 
 class OverrideEntry(models.Model):

@@ -1,5 +1,9 @@
 import logging
-from .models import AuthCode, AuthToken, Record
+from hashlib import md5
+from string import ascii_uppercase as UPPERCASE
+from django.utils.crypto import get_random_string
+from django.db import transaction
+from .models import AuthCode, AuthToken, Record, Entry
 
 def import_auth_code(filename=None):
     '''
@@ -17,6 +21,24 @@ def import_auth_code(filename=None):
             codes.append(code)
 
         AuthCode.objects.bulk_create(codes)
+
+def generate_auth_code(kind=None, amount=1000):
+    """
+    Generate auth code
+    """
+    if kind is None:
+        kind = '$$'
+    code = [kind, '', '', '']
+    with transaction.atomic():
+        for i in range(amount):
+            code[1] = get_random_string(length=9, allowed_chars=UPPERCASE)
+            code[2] = get_random_string(length=9, allowed_chars=UPPERCASE)
+            code[3] = code[1] + md5(code[2].encode()).hexdigest()
+            code[3] = md5(code[3].encode()).hexdigest()[:5].upper()
+            auth_code = AuthCode()
+            auth_code.kind = kind
+            auth_code.code = '-'.join(code)
+            auth_code.save()
 
 def reset_server_state():
     auth_codes = AuthCode.objects.filter(issued=True)
