@@ -57,7 +57,7 @@
 | 名稱       | 說明              |
 |------------|-------------------|
 | `general`  | 工作人員身份認證  |
-| `voter`    | 選舉人相關        |
+| `elector`  | 選舉人相關        |
 | `entry`    | 身份對應表        |
 | `reset`    | 重設選舉人狀態    |
 | `test`     | 測試              |
@@ -93,10 +93,10 @@
 | Register               | /general/login          |
 | Ping                   | /general/login          |
 | Status                 | /status                 |
-| Authenticate           | /voter/authenticate     |
-| Confirm                | /voter/confirm          |
-| Report                 | /voter/report           |
-| Callback               | /voter/complete         |
+| Authenticate           | /elector/authenticate   |
+| Confirm                | /elector/confirm        |
+| Report                 | /elector/report         |
+| Callback               | /elector/complete       |
 | List Reset Request     | /resets/                |
 | Apply Reset Request    | /resets/apply           |
 | Confirm Reset Request  | /resets/confirm         |
@@ -186,7 +186,7 @@ None
 - `A01`
 
 #### url
-`/voter/authenticate`
+`/elector/authenticate`
 #### argument
 - token
 - cid
@@ -216,7 +216,7 @@ None
 - `A02`
 
 #### url
-`/voter/confirm`
+`/elector/confirm`
 #### argument
 - token
 - uid
@@ -240,7 +240,7 @@ None
 - `A03`
 
 #### url
-`/voter/report`
+`/elector/report`
 #### argument
 - token
 - uid
@@ -260,7 +260,7 @@ None
 - `A04`
 
 #### url
-`GET /voter/complete`
+`GET /elector/complete`
 #### argument
 - callback
 #### success response
