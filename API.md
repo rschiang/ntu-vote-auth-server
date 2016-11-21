@@ -71,6 +71,8 @@
 #### HTTP Request Example
 ```json
 {
+    "version": 3,
+    "api_key": "test_api_key",
     "username": "MY_USER_NAME",
     "password": "MY_SUPER_SECRET_PASSWORK"
 }
