@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^api/elector/', include([
         url(r'^authenticate$', authenticate, name='authenticate'),
         url(r'^confirm$', confirm, name='confirm'),
-        url(r'^report$', report, name='report'),
+        url(r'^reject$', report, name='report'),
         url(r'^complete$', complete, name='callback'),
     ])),
     # R
