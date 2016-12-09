@@ -4,6 +4,7 @@ from string import ascii_uppercase as UPPERCASE
 from django.utils.crypto import get_random_string
 from django.db import transaction
 from .models import AuthCode, AuthToken, Record, Entry
+from core import meta
 
 def import_auth_code(filename=None):
     '''
@@ -21,6 +22,12 @@ def import_auth_code(filename=None):
             codes.append(code)
 
         AuthCode.objects.bulk_create(codes)
+
+def setup_entry():
+    for key in meta.DPTCODE_NAME:
+        entry, _ = Entry.objects.get_or_create(dpt_code=key)
+        entry.name = meta.DPTCODE_NAME[key]
+        entry.save()
 
 def generate_auth_code(kind=None, amount=1000):
     """
