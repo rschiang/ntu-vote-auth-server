@@ -51,6 +51,9 @@ def reset_server_state():
     auth_codes = AuthCode.objects.filter(issued=True)
     tokens = AuthToken.objects.all()
     records = Record.objects.all()
+    
+    logger.info('System state has been reset. Removed %d issued auth codes, %d tokens, %d records.',
+                auth_codes.count(), tokens.count(), records.count())
     print('Issued auth codes:', auth_codes.count())
     print('Generated tokens:', tokens.count())
     print('Record entries:', records.count())
@@ -61,7 +64,7 @@ def reset_server_state():
     tokens.delete()
     records.delete()
     print('... cleared.')
-
+    
 def wipe_auth_code():
     AuthCode.objects.all().delete()
 
