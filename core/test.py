@@ -90,8 +90,9 @@ class CoreTestCase(APITestCase):
                 'vote_token': vote_token.code, 'token': self.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         response = self.client.post(url, data)
-        callback = 'http://{0}{1}?callback={2}'.format(
-            settings.CALLBACK_DOMAIN, reverse('elector:callback'), vote_token.confirm_code)
+        callback = '{3}://{0}{1}?callback={2}'.format(
+            settings.CALLBACK_DOMAIN, reverse('elector:callback'), vote_token.confirm_code,
+            response.request['wsgi.url_scheme'])
         self.assertEqual(response.data, {
             'status': 'success',
             'ballot': self.authcode.code,
