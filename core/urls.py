@@ -6,30 +6,32 @@ from account.views import (register, ping)
 from staff.views import status
 
 urlpatterns = [
-    url(r'^api/$', index),
+    url(r'^api/', include([
+        url(r'^$', index),
 
-    # general G series
-    url(r'^api/general/', include([
-        url(r'^register$', register, name='register'),
-        url(r'^ping$', ping, name='ping'),
-    ])),
+        # general G series
+        url(r'^general/', include([
+            url(r'^register$', register, name='register'),
+            url(r'^ping$', ping, name='ping'),
+        ], namespace='general')),
 
-    # A series
-    url(r'^api/elector/', include([
-        url(r'^authenticate$', authenticate, name='authenticate'),
-        url(r'^confirm$', confirm, name='confirm'),
-        url(r'^reject$', report, name='report'),
-        url(r'^complete$', complete, name='callback'),
-    ])),
-    # R
-    url(r'^api/reset/', include([
-    ])),
-    # C
-    url(r'^api/entry/', include([
-    ])),
-    # T
-    url(r'^api/test/', include([
-    ])),
-    # M
-    url(r'^api/status$', status, name='status'),
+        # A series
+        url(r'^elector/', include([
+            url(r'^authenticate$', authenticate, name='authenticate'),
+            url(r'^confirm$', confirm, name='confirm'),
+            url(r'^reject$', report, name='report'),
+            url(r'^complete$', complete, name='callback'),
+        ], namespace='elector')),
+        # R
+        url(r'^resets/', include([
+            ], namespace='resets')),
+        # C
+        url(r'^entry/', include([
+            ], namespace='entry')),
+        # T
+        url(r'^test/', include([
+            ], 'test')),
+        # M
+        url(r'^status$', status, name='status'),
+    ]))
 ]

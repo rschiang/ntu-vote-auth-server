@@ -48,7 +48,7 @@ def confirm(request):
     logger.info('Auth code issued: %s', token.kind)
     callback = {
         'domain': settings.CALLBACK_DOMAIN,
-        'url': reverse('callback'),
+        'url': reverse('elector:callback'),
         'code': token.confirm_code,
     }
     return Response({

@@ -23,7 +23,7 @@ class RegisterTestCase(APITestCase):
         self.station.max_sessions = 3
         self.station.save()
 
-        self.url = reverse('register')
+        self.url = reverse('general:register')
 
     def test_register_success(self):
         """
@@ -74,12 +74,12 @@ class PingTestCase(APITestCase):
         self.station.max_sessions = 3
         self.station.save()
 
-        self.url = reverse('ping')
+        self.url = reverse('general:ping')
         # login
         data = {'username': self.username, 'password': self.password,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         client = APIClient()
-        client.post(reverse('register'), data, format='json')
+        client.post(reverse('general:register'), data, format='json')
 
         try:
             session = Session.objects.get(user=self.user)
@@ -111,7 +111,7 @@ class PingTestCase(APITestCase):
         data = {'username': username, 'password': password,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         client = APIClient()
-        client.post(reverse('register'), data, format='json')
+        client.post(reverse('general:register'), data, format='json')
 
         try:
             session = Session.objects.get(user=user)

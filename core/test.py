@@ -36,7 +36,7 @@ class CoreTestCase(APITestCase):
         data = {'username': self.username, 'password': self.password,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         client = APIClient()
-        client.post(reverse('register'), data, format='json')
+        client.post(reverse('general:register'), data, format='json')
 
         try:
             session = Session.objects.get(user=self.user)
@@ -63,7 +63,7 @@ class CoreTestCase(APITestCase):
         aca_info = service.to_student_id(cid)
         uid = aca_info.id
         uid = uid + '0'
-        url = reverse('authenticate')
+        url = reverse('elector:authenticate')
         data = {'cid': cid, 'uid': uid,
                 'token': self.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
@@ -85,13 +85,13 @@ class CoreTestCase(APITestCase):
         vote_token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
         vote_token.save()
 
-        url = reverse('confirm')
+        url = reverse('elector:confirm')
         data = {'uid': self.student_id,
                 'vote_token': vote_token.code, 'token': self.token,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         response = self.client.post(url, data)
         callback = 'https://{0}{1}?callback={2}'.format(
-            settings.CALLBACK_DOMAIN, reverse('callback'), vote_token.confirm_code)
+            settings.CALLBACK_DOMAIN, reverse('elector:callback'), vote_token.confirm_code)
         self.assertEqual(response.data, {
             'status': 'success',
             'ballot': self.authcode.code,
@@ -106,7 +106,7 @@ class CoreTestCase(APITestCase):
         token.save()
 
         url = 'https://{0}{1}?callback={2}'.format(
-            settings.CALLBACK_DOMAIN, reverse('callback'), token.confirm_code)
+                settings.CALLBACK_DOMAIN, reverse('elector:callback'), token.confirm_code)
         response = self.client.get(url)
         record = Record.objects.get(student_id=self.student_id)
         self.assertEqual(record.state, Record.USED)
@@ -123,7 +123,7 @@ class CoreTestCase(APITestCase):
         vote_token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
         vote_token.save()
 
-        url = reverse('report')
+        url = reverse('elector:report')
         data = {
             'uid': self.student_id,
             'vote_token': vote_token.code,
@@ -145,7 +145,7 @@ class CoreTestCase(APITestCase):
         data = {'username': username, 'password': password,
                 'api_key': settings.API_KEY, 'version': settings.API_VERSION}
         client = APIClient()
-        client.post(reverse('register'), data, format='json')
+        client.post(reverse('general:register'), data, format='json')
 
         try:
             session = Session.objects.get(user=user)
