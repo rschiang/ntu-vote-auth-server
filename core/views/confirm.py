@@ -47,11 +47,10 @@ def confirm(request):
 
     logger.info('Auth code issued: %s', token.kind)
     callback = {
-        'domain': settings.CALLBACK_DOMAIN,
-        'url': reverse('elector:callback'),
+        'uri': request.build_absolute_uri(reverse('elector:callback')),
         'code': token.confirm_code,
     }
     return Response({
         'status': 'success', 'ballot': code.code,
-        'callback': 'https://{domain}{url}?callback={code}'.format(**callback)
+        'callback': '{uri}?callback={code}'.format(**callback)
     })
