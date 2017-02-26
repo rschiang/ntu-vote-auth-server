@@ -113,7 +113,7 @@ ACA_API_PASSWORD = os.environ.get('ACA_API_PASSWORD')
 ACA_API_URL = os.environ.get('ACA_API_URL')
 
 # Callback domain
-CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN')
+CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN', 'localhost')
 
 # Security enforcements
 ENFORCE_CARD_VALIDATION = True
