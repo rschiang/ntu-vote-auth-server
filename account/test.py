@@ -39,7 +39,7 @@ class RegisterTestCase(APITestCase):
 
         # Testing Data
         data = {'username': self.username, 'password': self.password,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         response = self.client.post(self.url, data)
 
         # Get session object
@@ -77,7 +77,7 @@ class PingTestCase(APITestCase):
         self.url = reverse('general:ping')
         # login
         data = {'username': self.username, 'password': self.password,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         client = APIClient()
         client.post(reverse('general:register'), data, format='json')
 
@@ -90,7 +90,7 @@ class PingTestCase(APITestCase):
 
     def test_ping_success(self):
         data = {'token': self.token,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         response = self.client.post(self.url, data)
         self.assertEqual(response.data['status'], 'success')
 
@@ -109,7 +109,7 @@ class PingTestCase(APITestCase):
         station.save()
         # login
         data = {'username': username, 'password': password,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         client = APIClient()
         client.post(reverse('general:register'), data, format='json')
 
@@ -119,7 +119,7 @@ class PingTestCase(APITestCase):
             session = None
 
         data = {'token': session.token,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         response = self.client.post(self.url, data)
         self.assertEqual(response.data, {'status': 'error', 'reason': 'station_error'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

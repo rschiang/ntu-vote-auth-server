@@ -34,7 +34,7 @@ class CoreTestCase(APITestCase):
 
         # login
         data = {'username': self.username, 'password': self.password,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         client = APIClient()
         client.post(reverse('general:register'), data, format='json')
 
@@ -66,7 +66,7 @@ class CoreTestCase(APITestCase):
         url = reverse('elector:authenticate')
         data = {'cid': cid, 'uid': uid,
                 'token': self.token,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         token = AuthToken.objects.get(student_id=aca_info.id)
@@ -88,7 +88,7 @@ class CoreTestCase(APITestCase):
         url = reverse('elector:confirm')
         data = {'uid': self.student_id,
                 'vote_token': vote_token.code, 'token': self.token,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         response = self.client.post(url, data)
         callback = '{3}://{0}{1}?callback={2}'.format(
             settings.CALLBACK_DOMAIN, reverse('elector:callback'), vote_token.confirm_code,
@@ -129,7 +129,7 @@ class CoreTestCase(APITestCase):
             'uid': self.student_id,
             'vote_token': vote_token.code,
             'token': self.token,
-            'api_key': settings.API_KEY, 'version': settings.API_VERSION,
+            'api_key': settings.API_KEY
         }
         response = self.client.post(url, data)
         self.assertEqual(response.data, {'status': 'success'})
@@ -144,7 +144,7 @@ class CoreTestCase(APITestCase):
 
         # login
         data = {'username': username, 'password': password,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION}
+                'api_key': settings.API_KEY}
         client = APIClient()
         client.post(reverse('general:register'), data, format='json')
 
@@ -156,7 +156,7 @@ class CoreTestCase(APITestCase):
             url = '/api/status'
             data = {
                 'token': session.token,
-                'api_key': settings.API_KEY, 'version': settings.API_VERSION,
+                'api_key': settings.API_KEY,
             }
             response = self.client.post(url, data)
 
