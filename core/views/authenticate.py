@@ -61,7 +61,7 @@ def authenticate(request):
         return error('external_error', status.HTTP_502_BAD_GATEWAY)
 
     else:
-        if settings.ENFORCE_CARD_VALIDATION:
+        if not settings.ENFORCE_CARD_VALIDATION:
             student_id = aca_info.id
             revision = 0
             logger.info('User %s (%s) checked', student_id, aca_info.type)
