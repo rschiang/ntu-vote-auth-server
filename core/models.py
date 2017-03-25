@@ -4,6 +4,7 @@ from django.utils.crypto import get_random_string
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.core.validators import RegexValidator
 
 
 class Record(models.Model):
@@ -86,5 +87,9 @@ class Entry(models.Model):
 
 
 class OverrideEntry(models.Model):
-    student_id = models.CharField(max_length=10, unique=True)
-    kind = models.CharField(max_length=2)
+    student_id = models.CharField(max_length=10, unique=True,
+            validators=[RegexValidator(regex=r'[A-Z]\d{2}[0-9A-Z]\d{5}'),])
+    entry = models.ForeignKey('Entry', on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return "{s.student_id} ({s.entry})".format(s=self)
