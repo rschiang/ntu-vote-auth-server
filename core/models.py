@@ -83,7 +83,7 @@ class Entry(models.Model):
     name = models.CharField(max_length=256, null=True)
 
     def __str__(self):
-        return "{s.dpt_code}-{s.kind} {s.name}".format(s=self)
+        return "{s.dpt_code}-{s.kind}-{s.name}".format(s=self)
 
 
 class OverrideEntry(models.Model):
