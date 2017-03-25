@@ -4,8 +4,15 @@ from django.contrib import admin, messages
 from .models import Entry, OverrideEntry, AuthCode, Record
 from . import utils
 
-admin.site.register(Entry)
-admin.site.register(OverrideEntry)
+class EntryAdmin(admin.ModelAdmin):
+    list_display = ('dpt_code', 'kind', 'name')
+    ordering = ('dpt_code',)
+
+
+class OverrideEntryAdmin(admin.ModelAdmin):
+    list_display = ('student_id', 'entry')
+    ordering = ('student_id',)
+
 
 logger = logging.getLogger('admin')
 
@@ -47,4 +54,6 @@ class RecordAdmin(admin.ModelAdmin):
         return actions
 
 
+admin.site.register(OverrideEntry, OverrideEntryAdmin)
+admin.site.register(Entry, EntryAdmin)
 admin.site.register(Record, RecordAdmin)
