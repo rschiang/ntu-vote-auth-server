@@ -53,7 +53,7 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': os.path.join(LOGGING_DIR, 'vote.log'),
             'formatter': 'default',
