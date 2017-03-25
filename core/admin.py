@@ -15,6 +15,9 @@ class RecordAdmin(admin.ModelAdmin):
     list_filter = ('state',)
 
     def unlock(self, request, records):
+        """
+        Unlock selected students which must be lock state. 
+        """
         for record in records:
             if record.state == Record.LOCKED:
                 record.delete()
@@ -23,6 +26,9 @@ class RecordAdmin(admin.ModelAdmin):
                 self.message_user(request, "Student [{}] is not in lock state.".format(record.student_id), level=messages.ERROR)
 
     def apply_blacklist(self, request, records):
+        """
+        Apply some student to black list.
+        """
         for record in records:
             record.state = Record.UNAVAILABLE
             record.save()
@@ -30,6 +36,15 @@ class RecordAdmin(admin.ModelAdmin):
                 record=record.student_id
                 )
             )
+
+    def get_actions(self, request):
+        """
+        disable default action 'delete_selected'
+        """
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
 
 
 admin.site.register(Record, RecordAdmin)
