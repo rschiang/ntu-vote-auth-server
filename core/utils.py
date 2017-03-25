@@ -75,6 +75,10 @@ def apply_blacklist(*student_ids):
         if record.state == Record.AVAILABLE:
             record.state = Record.UNAVAILABLE
             record.save()
+            logger.info('Record [{record}] was blacklisted.'.format(
+                record=record.student_id
+                )
+            )
         else:
             print('SKIPPED: [{}] bears another state ʻ{}ʻ'.format(student_id, record.state))
             continue
@@ -97,7 +101,7 @@ def unlock_student(student_id, force=False):
 
     record.delete()
     if force:
-        logger.info('Record [%s] was forcibly deleted (was #%s, state ʻ%sʻ)', record.student_id, record.id, record.state)
+        logger.info('Record [%s] was forcibly deleted (was #%s, state ʻ%sʻ)', record.student_id, record.pk, record.state)
     else:
-        logger.info('Record [%s] deleted (was #%s)', record.student_id, record.id)
+        logger.info('Record [%s] deleted (was #%s)', record.student_id, record.pk)
     return True
