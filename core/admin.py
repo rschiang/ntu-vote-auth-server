@@ -20,6 +20,7 @@ class RecordAdmin(admin.ModelAdmin):
     readonly_fields = ('student_id', 'revision', 'state')
     actions = ('unlock', 'apply_blacklist')
     list_filter = ('state',)
+    search_fields  = ('student_id',)
 
     def unlock(self, request, records):
         """
