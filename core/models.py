@@ -81,6 +81,9 @@ class Entry(models.Model):
     kind = models.CharField(max_length=5, null=True)
     name = models.CharField(max_length=256, null=True)
 
+    def __str__(self):
+        return "{s.dpt_code}-{s.kind} {s.name}".format(s=self)
+
 
 class OverrideEntry(models.Model):
     student_id = models.CharField(max_length=10, unique=True)
