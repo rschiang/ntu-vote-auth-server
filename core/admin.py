@@ -13,6 +13,7 @@ class EntryAdmin(admin.ModelAdmin):
 class OverrideEntryAdmin(admin.ModelAdmin):
     list_display = ('student_id', 'entry')
     ordering = ('student_id',)
+    search_fields  = ('student_id',)
 
 
 logger = logging.getLogger('admin')
