@@ -88,7 +88,7 @@ class Entry(models.Model):
 
 class OverrideEntry(models.Model):
     student_id = models.CharField(max_length=10, unique=True,
-            validators=[RegexValidator(regex=r'[A-Z]\d{2}[0-9A-Z]\d{5}'),]
+            validators=[RegexValidator(regex=r'[A-Z]\d{2}[0-9A-Z]\d{5}'), ],
             null=False, blank=False)
     entry = models.ForeignKey('Entry', on_delete=models.SET_NULL, null=True, blank=True)
 
