@@ -26,12 +26,9 @@ class RecordAdmin(admin.ModelAdmin):
         """
         Unlock selected students which must be lock state. 
         """
+        records.update(state=Record.AVAILABLE)
         for record in records:
-            if record.state == Record.LOCKED:
-                record.delete()
-                logger.info('Record [%s] deleted (was #%s)', record.student_id, record.pk)
-            else:
-                self.message_user(request, "Student [{}] is not in lock state.".format(record.student_id), level=messages.ERROR)
+            logger.info('Record [%s] was set to available (was #%s)', record.student_id, record.pk)
 
     def apply_blacklist(self, request, records):
         """
