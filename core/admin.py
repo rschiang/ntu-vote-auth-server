@@ -1,6 +1,8 @@
 import logging
 
 from django.contrib import admin, messages
+from django.contrib.contenttypes.models import import ContentType
+
 from .models import Entry, OverrideEntry, AuthCode, Record
 from . import utils
 
@@ -30,6 +32,14 @@ class RecordAdmin(admin.ModelAdmin):
         """
         records.update(state=Record.AVAILABLE)
         for record in records:
+	    admin.models.LogEntry.objects.log_action(
+		user_id         = request.user.pk, 
+		content_type_id = ContentType.objects.get(models='Record').id
+		object_id       = record.pk,
+		object_repr     = force_unicode(record), 
+		action_flag     = admin.models.CHANGE
+                change_message  = 'Record was unlocked by {}'.format(request.user.username)
+	    )
             logger.info('Record [%s] was set to available (was #%s)', record.student_id, record.pk)
 
     def apply_blacklist(self, request, records):
@@ -39,6 +49,14 @@ class RecordAdmin(admin.ModelAdmin):
         for record in records:
             record.state = Record.UNAVAILABLE
             record.save()
+	    admin.models.LogEntry.objects.log_action(
+		user_id         = request.user.pk, 
+		content_type_id = ContentType.objects.get(models='Record').id
+		object_id       = record.pk,
+		object_repr     = force_unicode(record), 
+		action_flag     = admin.models.CHANGE
+                change_message  = 'Record was locked by {}'.format(request.user.username)
+	    )
             logger.info('Record [{record}] was blacklisted.'.format(
                 record=record.student_id
                 )
