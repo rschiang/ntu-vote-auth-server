@@ -1,7 +1,7 @@
 import logging
 
 from django.contrib import admin, messages
-from django.contrib.contenttypes.models import import ContentType
+from django.contrib.contenttypes.models import ContentType
 
 from .models import Entry, OverrideEntry, AuthCode, Record
 from . import utils
