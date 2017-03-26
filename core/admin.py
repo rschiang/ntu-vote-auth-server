@@ -7,6 +7,7 @@ from . import utils
 class EntryAdmin(admin.ModelAdmin):
     list_display = ('dpt_code', 'kind', 'name')
     ordering = ('dpt_code',)
+    search_fields  = ('name',)
 
 
 class OverrideEntryAdmin(admin.ModelAdmin):
