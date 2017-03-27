@@ -11,8 +11,6 @@ from django.test import override_settings
 
 class CoreTestCase(APITestCase):
 
-    fixtures = ['fixtures/entry.json']
-
     @classmethod
     def setUpTestData(self):
         self.student_id = 'B03705024'
