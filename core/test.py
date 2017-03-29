@@ -106,7 +106,7 @@ class CoreTestCase(APITestCase):
         token.save()
 
         url = 'https://{0}{1}?callback={2}'.format(
-                settings.CALLBACK_DOMAIN, reverse('elector:callback'), token.confirm_code)
+            settings.CALLBACK_DOMAIN, reverse('elector:callback'), token.confirm_code)
         response = self.client.get(url)
         record = Record.objects.get(student_id=self.student_id)
         self.assertEqual(record.state, Record.USED)
@@ -158,6 +158,7 @@ class CoreTestCase(APITestCase):
                 'api_key': settings.API_KEY,
             }
             response = self.client.post(url, data)
+# TODO
 
 
 class ACATestCase(APITestCase):

@@ -6,8 +6,10 @@ from xml.etree import ElementTree as et
 
 logger = logging.getLogger('vote.service')
 
+
 def reverse_indian(i):
     return struct.unpack('<I', struct.pack('>I', i))
+
 
 def to_student_id(internal_id):
     # Build up the clumsy request entity
@@ -73,6 +75,7 @@ def to_student_id(internal_id):
     logger.info(str(info))
     return info
 
+
 class StudentInfo(object):
 
     def __init__(self, id=None, type=None, valid=False, college=None, department=None):
@@ -88,8 +91,10 @@ class StudentInfo(object):
     def __str__(self):
         return '<StudentInfo: {id} ({college} {type} {department}){0}>'.format('' if self.valid else '*', **self.__dict__)
 
+
 class ExternalError(Exception):
     def __init__(self, reason):
         self.reason = reason
+
     def __str__(self):
         return repr(self.reason)
