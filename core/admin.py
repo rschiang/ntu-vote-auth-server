@@ -2,7 +2,7 @@ import logging
 
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from .models import Entry, OverrideEntry, Record
 
@@ -37,7 +37,7 @@ class RecordAdmin(admin.ModelAdmin):
                 user_id=request.user.pk,
                 content_type_id=ContentType.objects.get(models='Record').id,
                 object_id=record.pk,
-                object_repr=force_unicode(record),
+                object_repr=force_text(record),
                 action_flag=admin.models.CHANGE,
                 change_message='Record was unlocked by {}'.format(request.user.username),
             )
@@ -54,7 +54,7 @@ class RecordAdmin(admin.ModelAdmin):
                 user_id=request.user.pk,
                 content_type_id=ContentType.objects.get(models='Record').id,
                 object_id=record.pk,
-                object_repr=force_unicode(record),
+                object_repr=force_text(record),
                 action_flag=admin.models.CHANGE,
                 change_message='Record was locked by {}'.format(request.user.username),
             )
