@@ -1,6 +1,7 @@
 import logging
 import struct
 from django.conf import settings
+from django.db.models.query import QuerySet
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as et
 
@@ -88,8 +89,41 @@ class StudentInfo(object):
     def __str__(self):
         return '<StudentInfo: {id} ({college} {type} {department}){0}>'.format('' if self.valid else '*', **self.__dict__)
 
+
 class ExternalError(Exception):
     def __init__(self, reason):
         self.reason = reason
+
     def __str__(self):
         return repr(self.reason)
+
+
+class BaseEntryRule(object):
+    queryset = None
+
+    lookup_field = None
+    entry_field = None
+
+    def get_queryset(self):
+        """
+        Get list of entry for this rule.
+        This must be iterable, and maybe a queryset.
+        Defaults to use `self.queryset`
+
+        You may want to override this, if you need to provide
+        different querysets depending on the income.
+        """
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
+
+        queryset = self.queryset
+        if isinstance(queryset, QuerySet):
+            # Ensure queryset is re-evaluated on each request.
+            queryset = queryset.all()
+        return queryset
+
+    def get_object(self, student_info):
+        return None
