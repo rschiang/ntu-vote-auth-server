@@ -23,11 +23,15 @@ class OverrideEntryRule(BaseEntryRule):
 
     def get_object(self, student_info):
         try:
-            entry = self.get_queryset().get(student_id=student_info.id)
-            return entry.kind
+            override_entry = self.get_queryset().get(student_id=student_info.id)
+            return override_entry.entry.kind
         except OverrideEntry.DoesNotExist:
             return None
 
 
-entry_provider.register('normal', NormalEntryRule)
+# The order is importent
 entry_provider.register('override', OverrideEntryRule)
+
+# put department specific rule here
+
+entry_provider.register('normal', NormalEntryRule)
