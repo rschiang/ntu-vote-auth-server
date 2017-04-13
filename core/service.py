@@ -103,6 +103,7 @@ class BaseEntryRule(object):
     queryset = None
 
     lookup_field = None
+    lookup_info_kwarg = None
     entry_field = None
 
     def get_queryset(self):
@@ -127,7 +128,9 @@ class BaseEntryRule(object):
         return queryset
 
     def get_object(self, student_info):
-        return None
+        filter_kwargs = {self.lookup_field: getattr(student_info, self.lookup_info_kwarg)}
+        obj = self.get_queryset().get(**filter_kwargs)
+        return getattr(obj, self.entry_field)
 
 
 class EntryProvider(object):
@@ -155,3 +158,4 @@ class EntryProvider(object):
 
 # Global instance of entry providor
 entry_provider = EntryProvider()
+from core import entry as entry_impl
