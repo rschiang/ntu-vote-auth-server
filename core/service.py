@@ -1,5 +1,6 @@
 import logging
 import struct
+from collections import OrderedDict
 from django.conf import settings
 from django.db.models.query import QuerySet
 from urllib.request import Request, urlopen
@@ -127,3 +128,30 @@ class BaseEntryRule(object):
 
     def get_object(self, student_info):
         return None
+
+
+class EntryProvider(object):
+    # TODO: read seettings from config
+    entry_rule_classes = OrderedDict()
+
+    def get_entry(self, student_info):
+        """
+        Evaluate each entry rule in the list, and use the first
+        non-None value as final result.
+        """
+        er_classes = [er_class() for er_class in self.entry_rule_classes.values()]
+        entrys = [er_class.get_object(student_info) for er_class in er_classes]
+        return next((entry for entry in entrys if entry is not None), None)
+
+    def register(self, name, entry_rule):
+        if name not in self.entry_rule_classes:
+            self.entry_rule_classes[name] = entry_rule
+
+    def unregister(self, name):
+        if name not in self.entry_rule_classes:
+            raise ValueError('{} Not found'.format(name))
+        del self.entry_rule_classes[name]
+
+
+# Global instance of entry providor
+entry_provider = EntryProvider()
