@@ -24,11 +24,3 @@ class OverrideEntryRule(BaseEntryRule):
             return super().get_kind(student_info).kind
         except:
             return None
-
-
-# The order is importent
-kind_classifier.register('override', OverrideEntryRule)
-
-# put department specific rule here
-
-kind_classifier.register('normal', NormalEntryRule)
