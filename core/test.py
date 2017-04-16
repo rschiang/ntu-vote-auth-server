@@ -176,9 +176,11 @@ class EntryRuleTestCase(APITestCase):
     def setUp(self):
         from . import entry as rule
         self.rule = rule
-        entry = Entry.objects.create(dpt_code='1010', kind='A0')
+        entry, _ = Entry.objects.get_or_create(dpt_code='1010')
+        entry.kind = 'A0'
         entry.save()
-        entry = Entry.objects.create(dpt_code='1020', kind='B0')
+        entry, _ = Entry.objects.get_or_create(dpt_code='1020')
+        entry.kind = 'B0'
         entry.save()
 
         OverrideEntry.objects.create(student_id='B03705024', entry=entry).save()
