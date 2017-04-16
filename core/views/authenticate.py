@@ -1,7 +1,7 @@
 import re
 from core import service
 from core.models import Record, AuthToken
-from core.service import entry_provider
+from core.service import kind_classifier
 from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -92,7 +92,10 @@ def authenticate(request):
         record = Record(student_id=student_id, revision=revision)
 
     # Determine graduate status
-    kind = entry_provider.get_entry(aca_info)
+    from core.entry import NormalEntryRule, OverrideEntryRule
+    kind_classifier.register('override', OverrideEntryRule)
+    kind_classifier.register('normal', NormalEntryRule)
+    kind = kind_classifier.get_kind(aca_info)
 
     if kind is None:
         return error('unqualified')

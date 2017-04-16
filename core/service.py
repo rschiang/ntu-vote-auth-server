@@ -1,3 +1,4 @@
+import re
 import logging
 import struct
 from collections import OrderedDict
@@ -8,8 +9,10 @@ from xml.etree import ElementTree as et
 
 logger = logging.getLogger('vote.service')
 
+
 def reverse_indian(i):
     return struct.unpack('<I', struct.pack('>I', i))
+
 
 def to_student_id(internal_id):
     # Build up the clumsy request entity
@@ -75,6 +78,7 @@ def to_student_id(internal_id):
     logger.info(str(info))
     return info
 
+
 class StudentInfo(object):
 
     def __init__(self, id=None, type=None, valid=False, college=None, department=None):
@@ -102,6 +106,8 @@ class ExternalError(Exception):
 class BaseEntryRule(object):
     queryset = None
 
+    target_department = None
+
     lookup_field = None
     lookup_info_kwarg = None
     entry_field = None
@@ -128,23 +134,34 @@ class BaseEntryRule(object):
         return queryset
 
     def get_object(self, student_info):
-        filter_kwargs = {self.lookup_field: getattr(student_info, self.lookup_info_kwarg)}
-        obj = self.get_queryset().get(**filter_kwargs)
-        return getattr(obj, self.entry_field)
+        if self.target_department is not None:
+            if re.match(self.target_department, student_info.department) is None:
+                return None
+        return self.get_kind(student_info)
+
+    def get_kind(self, student_info):
+        try:
+            filter_kwargs = {self.lookup_field: getattr(student_info, self.lookup_info_kwarg)}
+            obj = self.get_queryset().get(**filter_kwargs)
+            return getattr(obj, self.entry_field)
+        except:
+            return None
 
 
-class EntryProvider(object):
+class KindiClassifier(object):
     # TODO: read seettings from config
     entry_rule_classes = OrderedDict()
 
-    def get_entry(self, student_info):
+    def get_kind(self, student_info):
         """
         Evaluate each entry rule in the list, and use the first
         non-None value as final result.
         """
         er_classes = [er_class() for er_class in self.entry_rule_classes.values()]
         entrys = [er_class.get_object(student_info) for er_class in er_classes]
-        return next((entry for entry in entrys if entry is not None), None)
+        # return the first non-None value or None
+        kind = next((entry for entry in entrys if entry is not None), None)
+        return kind
 
     def register(self, name, entry_rule):
         if name not in self.entry_rule_classes:
@@ -157,5 +174,4 @@ class EntryProvider(object):
 
 
 # Global instance of entry providor
-entry_provider = EntryProvider()
-from core import entry as entry_impl
+kind_classifier = KindiClassifier()

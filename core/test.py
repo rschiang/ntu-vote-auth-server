@@ -1,7 +1,7 @@
 from account.models import User, Station, Session
 from core.models import Record, AuthToken, AuthCode, Entry, OverrideEntry
 from core import service, meta
-from core.service import StudentInfo, entry_provider
+from core.service import StudentInfo, kind_classifier
 
 from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
@@ -173,6 +173,8 @@ class ACATestCase(APITestCase):
 class EntryRuleTestCase(APITestCase):
 
     def setUp(self):
+        from . import entry as rule
+        self.rule = rule
         entry = Entry.objects.create(dpt_code='1010', kind='A0')
         entry.save()
         entry = Entry.objects.create(dpt_code='1020', kind='B0')
@@ -183,10 +185,16 @@ class EntryRuleTestCase(APITestCase):
     def test_normal_entry(self):
         info = StudentInfo()
         info.department = '1010'
-        self.assertEqual(entry_provider.get_entry(info), 'A0')
+        expect_kind = 'A0'
+        normal_rule = self.rule.NormalEntryRule()
+        self.assertEqual(normal_rule.get_kind(info), expect_kind)
+        self.assertEqual(service.kind_classifier.get_kind(info), expect_kind)
 
     def test_override_entry(self):
         info = StudentInfo()
         info.id = 'B03705024'
         info.department = '1010'
-        self.assertEqual(entry_provider.get_entry(info), 'B0')
+        expect_kind = 'B0'
+        override_rule = self.rule.OverrideEntryRule()
+        self.assertEqual(override_rule.get_kind(info), expect_kind)
+        self.assertEqual(service.kind_classifier.get_kind(info), expect_kind)

@@ -1,6 +1,9 @@
 from core.service import BaseEntryRule
-from core.service import entry_provider
+from core.service import kind_classifier
 from core.models import Entry, OverrideEntry
+
+import logging
+logger = logging.getLogger('vote.service')
 
 
 class NormalEntryRule(BaseEntryRule):
@@ -12,18 +15,20 @@ class NormalEntryRule(BaseEntryRule):
 
 class OverrideEntryRule(BaseEntryRule):
     queryset = OverrideEntry.objects.all()
+    lookup_field = 'student_id'
+    lookup_info_kwarg = 'id'
+    entry_field = 'entry'
 
-    def get_object(self, student_info):
+    def get_kind(self, student_info):
         try:
-            override_entry = self.get_queryset().get(student_id=student_info.id)
-            return override_entry.entry.kind
-        except OverrideEntry.DoesNotExist:
+            return super().get_kind(student_info).kind
+        except:
             return None
 
 
 # The order is importent
-entry_provider.register('override', OverrideEntryRule)
+kind_classifier.register('override', OverrideEntryRule)
 
 # put department specific rule here
 
-entry_provider.register('normal', NormalEntryRule)
+kind_classifier.register('normal', NormalEntryRule)
