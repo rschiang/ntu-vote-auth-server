@@ -12,8 +12,6 @@ from django.test import override_settings
 
 class CoreTestCase(APITestCase):
 
-    fixtures = ['fixtures/entry.json']
-
     @classmethod
     def setUpTestData(self):
         self.student_id = 'B03705024'
@@ -50,7 +48,8 @@ class CoreTestCase(APITestCase):
         self.authcode.save()
 
     def test_entry_loaded(self):
-        self.assertEqual(Entry.objects.count(), 216)
+        from core.meta import DPTCODE_NAME
+        self.assertEqual(Entry.objects.count(), len(DPTCODE_NAME))
 
     @override_settings(
         ACA_API_URL='http://localhost:3000/seqServices/stuinfoByCardno',

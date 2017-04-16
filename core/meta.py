@@ -1,7 +1,6 @@
 # Meta
 # Define all election (per-event) related information
 
-import os
 import datetime
 
 DPTCODE_NAME = {
