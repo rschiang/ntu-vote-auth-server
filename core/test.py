@@ -100,6 +100,7 @@ class CoreTestCase(APITestCase):
             'callback': callback,
         })
 
+    @override_settings(CALLBACK_DOMAIN='testserver')
     def test_complete_success(self):
         record = Record(student_id=self.student_id)
         record.state = Record.VOTING
@@ -107,7 +108,7 @@ class CoreTestCase(APITestCase):
         token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
         token.save()
 
-        url = 'https://{0}{1}?callback={2}'.format(
+        url = 'http://{0}{1}?callback={2}'.format(
             settings.CALLBACK_DOMAIN, reverse('elector:callback'), token.confirm_code)
         response = self.client.get(url)
         record = Record.objects.get(student_id=self.student_id)
