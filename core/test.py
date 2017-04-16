@@ -79,6 +79,7 @@ class CoreTestCase(APITestCase):
             'status': 'success'
         })
 
+    @override_settings(CALLBACK_DOMAIN='testserver')
     def test_confirm_success(self):
         record = Record(student_id=self.student_id)
         record.state = Record.LOCKED
@@ -108,7 +109,7 @@ class CoreTestCase(APITestCase):
         token.save()
 
         url = 'https://{0}{1}?callback={2}'.format(
-                settings.CALLBACK_DOMAIN, reverse('elector:callback'), token.confirm_code)
+            settings.CALLBACK_DOMAIN, reverse('elector:callback'), token.confirm_code)
         response = self.client.get(url)
         record = Record.objects.get(student_id=self.student_id)
         self.assertEqual(record.state, Record.USED)
@@ -160,6 +161,7 @@ class CoreTestCase(APITestCase):
                 'api_key': settings.API_KEY,
             }
             response = self.client.post(url, data)
+            self.assertEqual(response.data['status'], "success")
 
 
 class ACATestCase(APITestCase):
