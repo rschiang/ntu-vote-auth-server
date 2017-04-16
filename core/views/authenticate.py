@@ -92,9 +92,6 @@ def authenticate(request):
         record = Record(student_id=student_id, revision=revision)
 
     # Determine graduate status
-    from core.entry import NormalEntryRule, OverrideEntryRule
-    kind_classifier.register('override', OverrideEntryRule)
-    kind_classifier.register('normal', NormalEntryRule)
     kind = kind_classifier.get_kind(aca_info)
 
     if kind is None:
