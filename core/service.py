@@ -83,7 +83,7 @@ class StudentInfo(object):
 
     def __init__(self, id=None, type=None, valid=False, college=None, department=None):
         self.id = id
-        self.type = type
+        self.type = type  # chinese value returned from ACA server
         self.valid = valid
         self.college = college
         self.department = department
@@ -93,6 +93,10 @@ class StudentInfo(object):
 
     def __str__(self):
         return '<StudentInfo: {id} ({college} {type} {department}){0}>'.format('' if self.valid else '*', **self.__dict__)
+
+    @property
+    def type_code(self):
+        return self.id[0]
 
 
 class ExternalError(Exception):

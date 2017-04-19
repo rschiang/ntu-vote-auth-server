@@ -15,6 +15,9 @@ class NormalEntryRule(BaseEntryRule):
 
 
 class OverrideEntryRule(BaseEntryRule):
+    """
+    mapping kind code and student id
+    """
     queryset = OverrideEntry.objects.all()
     lookup_field = 'student_id'
     lookup_info_kwarg = 'id'
@@ -35,7 +38,7 @@ class UndergraduateEntryRule(BaseEntryRule):
     normal_rule = NormalEntryRule()
 
     def get_kind(self, student_info):
-        if student_info.type in UNDERGRADUATE_CODE:
+        if student_info.type_code in UNDERGRADUATE_CODE:
             ret = self.normal_rule.get_kind(student_info)
             return 'NU' if ret is None else ret
         else:
@@ -50,7 +53,7 @@ class GraduateEntryRule(BaseEntryRule):
     normal_rule = NormalEntryRule()
 
     def get_kind(self, student_info):
-        if student_info.type in GRADUATE_CODE:
+        if student_info.type_code in GRADUATE_CODE:
             ret = self.normal_rule.get_kind(student_info)
             return 'NG' if ret is None else ret
         else:
@@ -64,13 +67,13 @@ class COSSEntryRule(BaseEntryRule):
     target_department = "3\w{3}"
 
     def get_kind(self, student_info):
-        if student_info.type in UNDERGRADUATE_CODE:
-            if student_info.type in GENERAL_CODE:
+        if student_info.type_code in UNDERGRADUATE_CODE:
+            if student_info.type_code in GENERAL_CODE:
                 return '31'
             else:
                 return '3U'
         else:
-            if student_info.type in GENERAL_CODE:
+            if student_info.type_code in GENERAL_CODE:
                 return '32'
             else:
                 return '3G'
@@ -83,7 +86,7 @@ class MedicineEntryRule(BaseEntryRule):
     target_department = "4010"
 
     def get_kind(self, student_info):
-        if student_info.type in GENERAL_CODE:
+        if student_info.type_code in GENERAL_CODE:
             return "T0"
         else:
             return "4U"

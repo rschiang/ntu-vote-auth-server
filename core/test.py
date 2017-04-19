@@ -189,6 +189,8 @@ class EntryRuleTestCase(APITestCase):
     def test_normal_entry(self):
         info = StudentInfo()
         info.department = '1010'
+        info.id = 'B03705023'
+        info.type = meta.UNDERGRADUATE_CODE[0]
         expect_kind = 'A0'
         normal_rule = self.rule.NormalEntryRule()
         self.assertEqual(normal_rule.get_kind(info), expect_kind)
