@@ -1,6 +1,7 @@
 from account.models import User, Station, Session
-from core.models import Record, AuthToken, AuthCode, Entry
+from core.models import Record, AuthToken, AuthCode, Entry, OverrideEntry
 from core import service, meta
+from core.service import StudentInfo, kind_classifier
 
 from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
@@ -77,6 +78,7 @@ class CoreTestCase(APITestCase):
             'status': 'success'
         })
 
+    @override_settings(CALLBACK_DOMAIN='testserver')
     def test_confirm_success(self):
         record = Record(student_id=self.student_id)
         record.state = Record.LOCKED
@@ -98,6 +100,7 @@ class CoreTestCase(APITestCase):
             'callback': callback,
         })
 
+    @override_settings(CALLBACK_DOMAIN='testserver')
     def test_complete_success(self):
         record = Record(student_id=self.student_id)
         record.state = Record.VOTING
@@ -105,7 +108,7 @@ class CoreTestCase(APITestCase):
         token = AuthToken.generate(self.student_id, str(self.station.external_id), '70')
         token.save()
 
-        url = 'https://{0}{1}?callback={2}'.format(
+        url = 'http://{0}{1}?callback={2}'.format(
             settings.CALLBACK_DOMAIN, reverse('elector:callback'), token.confirm_code)
         response = self.client.get(url)
         record = Record.objects.get(student_id=self.student_id)
@@ -158,7 +161,7 @@ class CoreTestCase(APITestCase):
                 'api_key': settings.API_KEY,
             }
             response = self.client.post(url, data)
-# TODO
+            self.assertEqual(response.data['status'], "success")
 
 
 class ACATestCase(APITestCase):
@@ -167,3 +170,35 @@ class ACATestCase(APITestCase):
         ACA_API_USER='aca_api_user', ACA_API_PASSWORD='password')
     def test_get_student_info(self):
             service.to_student_id('123456')
+
+
+class EntryRuleTestCase(APITestCase):
+
+    def setUp(self):
+        from . import entry as rule
+        self.rule = rule
+        entry, _ = Entry.objects.get_or_create(dpt_code='1010')
+        entry.kind = 'A0'
+        entry.save()
+        entry, _ = Entry.objects.get_or_create(dpt_code='1020')
+        entry.kind = 'B0'
+        entry.save()
+
+        OverrideEntry.objects.create(student_id='B03705024', entry=entry).save()
+
+    def test_normal_entry(self):
+        info = StudentInfo()
+        info.department = '1010'
+        expect_kind = 'A0'
+        normal_rule = self.rule.NormalEntryRule()
+        self.assertEqual(normal_rule.get_kind(info), expect_kind)
+        self.assertEqual(service.kind_classifier.get_kind(info), expect_kind)
+
+    def test_override_entry(self):
+        info = StudentInfo()
+        info.id = 'B03705024'
+        info.department = '1010'
+        expect_kind = 'B0'
+        override_rule = self.rule.OverrideEntryRule()
+        self.assertEqual(override_rule.get_kind(info), expect_kind)
+        self.assertEqual(service.kind_classifier.get_kind(info), expect_kind)

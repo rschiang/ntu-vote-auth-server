@@ -2,8 +2,8 @@ import re
 import logging
 import struct
 from collections import OrderedDict
-from django.db.models.query import QuerySet
 from django.conf import settings
+from django.db.models.query import QuerySet
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as et
 

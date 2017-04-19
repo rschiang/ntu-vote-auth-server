@@ -1,6 +1,7 @@
 import re
 from core import service
-from core.models import Record, AuthToken, OverrideEntry, Entry
+from core.models import Record, AuthToken
+from core.service import kind_classifier
 from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -91,20 +92,7 @@ def authenticate(request):
         record = Record(student_id=student_id, revision=revision)
 
     # Determine graduate status
-    kind = None
-    try:
-        entry = Entry.objects.get(dpt_code=aca_info.department)
-        kind = entry.kind
-        logger.debug('DPT_CODE %s', type(aca_info.department))
-    except Entry.DoesNotExist:
-        logger.error('Entry not found: %s', aca_info.department)
-        return error('entry_not_found')
-
-    try:
-        override = OverrideEntry.objects.get(student_id=student_id)
-        kind = override.kind
-    except OverrideEntry.DoesNotExist:
-        pass
+    kind = kind_classifier.get_kind(aca_info)
 
     if kind is None:
         return error('unqualified')
