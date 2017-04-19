@@ -164,11 +164,13 @@ class KindiClassifier(object):
         Evaluate each entry rule in the list, and use the first
         non-None value as final result.
         """
-        er_classes = [er_class() for er_class in self.entry_rule_classes.values()]
-        entrys = [er_class.get_object(student_info) for er_class in er_classes]
+        for er_class in self.entry_rule_classes.values():
+            rule = er_class()
+            kind = rule.get_object(student_info)
+            if kind is not None:
+                return kind
         # return the first non-None value or None
-        kind = next((entry for entry in entrys if entry is not None), None)
-        return kind
+        return None
 
     def register(self, name, entry_rule):
         if name not in self.entry_rule_classes:
