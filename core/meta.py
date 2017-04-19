@@ -3,6 +3,9 @@
 
 import datetime
 
+# department codes
+# The list can fetch from the site:
+# https://nol.ntu.edu.tw/nol/guest/index.php
 DPTCODE_NAME = {
     "1010": "中國文學系",
     "1011": "中國文學系國際學生學士班",
@@ -224,6 +227,10 @@ DPTCODE_NAME = {
     "H410": "統計碩士學位學程",
     "H420": "運動設施與健康管理碩士學位學程",
 }
+
+UNDERGRADUATE_CODE = "BTE"
+GRADUATE_CODE = "RAPJMDCFQ"
+GENERAL_CODE = "BRDMF"
 
 EVENT_START_DATE = datetime.datetime(2016, 12, 14, 8, 45, 0)
 EVENT_END_DATE = datetime.datetime(2016, 12, 14, 19, 15, 0)
