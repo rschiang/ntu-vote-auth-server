@@ -134,14 +134,21 @@ class BaseEntryRule(object):
         return queryset
 
     def get_object(self, student_info):
+        # Apply department filter (regular expression)
         if self.target_department is not None:
             if re.match(self.target_department, student_info.department) is None:
                 return None
         return self.get_kind(student_info)
 
     def get_kind(self, student_info):
+        """
+        return kinds related to @student_info, and it returns None if the student
+        does not be accepted by rule. All rule class should follow this criterion.
+        """
         try:
-            filter_kwargs = {self.lookup_field: getattr(student_info, self.lookup_info_kwarg)}
+            filter_kwargs = {
+                self.lookup_field: getattr(student_info, self.lookup_info_kwarg)
+            }
             obj = self.get_queryset().get(**filter_kwargs)
             return getattr(obj, self.entry_field)
         except:
