@@ -1,5 +1,4 @@
 from core.service import BaseEntryRule
-from core.service import kind_classifier
 from core.models import Entry, OverrideEntry
 from core.meta import UNDERGRADUATE_CODE, GRADUATE_CODE, GENERAL_CODE
 

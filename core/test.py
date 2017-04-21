@@ -1,7 +1,7 @@
 from account.models import User, Station, Session
 from core.models import Record, AuthToken, AuthCode, Entry, OverrideEntry
 from core import service, meta
-from core.service import StudentInfo, kind_classifier
+from core.service import StudentInfo
 
 from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
@@ -190,7 +190,6 @@ class EntryRuleTestCase(APITestCase):
         info = StudentInfo()
         info.department = '1010'
         info.id = 'B03705023'
-        info.type = meta.UNDERGRADUATE_CODE[0]
         expect_kind = 'A0'
         normal_rule = self.rule.NormalEntryRule()
         self.assertEqual(normal_rule.get_kind(info), expect_kind)
