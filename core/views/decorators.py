@@ -1,6 +1,7 @@
 from .utils import error, event_available, logger
-from account.models import Session, User
+from account.models import Session
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.utils.decorators import available_attrs
 from django.utils import timezone
 from functools import wraps
@@ -36,6 +37,7 @@ def check_prerequisites(*params):
 
         return inner
     return decorator
+
 
 def login_required(f):
     @wraps(f, assigned=available_attrs(f))
@@ -78,7 +80,7 @@ def permission(*permission):
                 logger.error('Rejected %s to access %s', request.user, request.path)
                 return error('permission_denied', status.HTTP_403_FORBIDDEN)
 
-            if request.user.kind is User.STATION:
+            if request.user.kind is get_user_model().STATION:
                 if request.user.station.external_id:
                     request.station = str(request.user.station.external_id)
                 else:

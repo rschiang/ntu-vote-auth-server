@@ -1,16 +1,12 @@
 import hashlib
 
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
 
-class User(AbstractBaseUser):
-    # Meta information
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['kind']
-
+class User(AbstractUser):
     # Choices
     ADMIN = 'A'
     STATION = 'S'
@@ -22,11 +18,7 @@ class User(AbstractBaseUser):
         (SUPERVISOR, 'Supervisor'),
     )
 
-    username = models.CharField(max_length=32, unique=True)
     kind = models.CharField(max_length=1, choices=KIND_CHOICES)
-    description = models.CharField(max_length=256, blank=True)
-    is_active = models.BooleanField(default=True)
-    date_joined = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.username
