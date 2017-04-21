@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('student_id', models.CharField(max_length=10, unique=True, validators=[django.core.validators.RegexValidator(regex='[A-Z]\\d{2}[0-9A-Z]\\d{5}')])),
-                ('entry', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='core.Entry')),
+                ('kind', models.CharField(max_length=2, null=True))
             ],
         ),
         migrations.CreateModel(
