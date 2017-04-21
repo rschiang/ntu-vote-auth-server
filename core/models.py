@@ -94,4 +94,4 @@ class OverrideEntry(models.Model):
     kind = models.CharField(max_length=2, null=True)
 
     def __str__(self):
-        return "{s.student_id} ({s.entry})".format(s=self)
+        return "{s.student_id} ({s.kind})".format(s=self)
