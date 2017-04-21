@@ -3,15 +3,14 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-
-from core import meta
+from django.conf import settings
 
 
 def fowards_func(apps, schema_editor):
     Entry = apps.get_model('core', 'Entry')
     db_alias = schema_editor.connection.alias
     Entry.objects.using(db_alias).bulk_create([
-        Entry(dpt_code=key, name=meta.DPTCODE_NAME[key]) for key in meta.DPTCODE_NAME
+        Entry(dpt_code=key, name=settings.DPTCODE_NAME[key]) for key in settings.DPTCODE_NAME
     ])
 
 
@@ -19,7 +18,7 @@ def reverse_func(apps, schema_editor):
     Entry = apps.get_model('core', 'Entry')
     db_alias = schema_editor.connection.alias
     for entry in Entry.objects.using(db_alias).all():
-        if entry.dpt_code in meta.DPTCODE_NAME:
+        if entry.dpt_code in settings.DPTCODE_NAME:
             entry.delete()
 
 

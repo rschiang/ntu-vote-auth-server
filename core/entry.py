@@ -1,6 +1,7 @@
 from core.service import BaseEntryRule
 from core.models import Entry, OverrideEntry
-from core.meta import UNDERGRADUATE_CODE, GRADUATE_CODE, GENERAL_CODE
+from django.conf import settings
+
 
 import logging
 logger = logging.getLogger('vote.service')
@@ -31,7 +32,7 @@ class UndergraduateEntryRule(BaseEntryRule):
     normal_rule = NormalEntryRule()
 
     def get_kind(self, student_info):
-        if student_info.type_code in UNDERGRADUATE_CODE:
+        if student_info.type_code in settings.UNDERGRADUATE_CODE:
             ret = self.normal_rule.get_kind(student_info)
             return 'NU' if ret is None else ret
         else:
@@ -46,7 +47,7 @@ class GraduateEntryRule(BaseEntryRule):
     normal_rule = NormalEntryRule()
 
     def get_kind(self, student_info):
-        if student_info.type_code in GRADUATE_CODE:
+        if student_info.type_code in settings.GRADUATE_CODE:
             ret = self.normal_rule.get_kind(student_info)
             return 'NG' if ret is None else ret
         else:
@@ -60,13 +61,13 @@ class COSSEntryRule(BaseEntryRule):
     target_department = "3\w{3}"
 
     def get_kind(self, student_info):
-        if student_info.type_code in UNDERGRADUATE_CODE:
-            if student_info.type_code in GENERAL_CODE:
+        if student_info.type_code in settings.UNDERGRADUATE_CODE:
+            if student_info.type_code in settings.GENERAL_CODE:
                 return '31'
             else:
                 return '3U'
         else:
-            if student_info.type_code in GENERAL_CODE:
+            if student_info.type_code in settings.GENERAL_CODE:
                 return '32'
             else:
                 return '3G'
@@ -79,7 +80,7 @@ class MedicineEntryRule(BaseEntryRule):
     target_department = "4010"
 
     def get_kind(self, student_info):
-        if student_info.type_code in GENERAL_CODE:
+        if student_info.type_code in settings.GENERAL_CODE:
             return "T0"
         else:
             return "4U"

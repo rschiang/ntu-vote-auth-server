@@ -3,8 +3,8 @@ from hashlib import md5
 from string import ascii_uppercase as UPPERCASE
 from django.utils.crypto import get_random_string
 from django.db import transaction
+from django.conf import settings
 from .models import AuthCode, AuthToken, Record, Entry
-from core import meta
 
 
 def import_auth_code(filename=None):
@@ -26,9 +26,9 @@ def import_auth_code(filename=None):
 
 
 def setup_entry():
-    for key in meta.DPTCODE_NAME:
+    for key in settings.DPTCODE_NAME:
         entry, _ = Entry.objects.get_or_create(dpt_code=key)
-        entry.name = meta.DPTCODE_NAME[key]
+        entry.name = settings.DPTCODE_NAME[key]
         entry.save()
 
 

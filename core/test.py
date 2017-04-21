@@ -1,6 +1,6 @@
 from account.models import User, Station, Session
 from core.models import Record, AuthToken, AuthCode, Entry, OverrideEntry
-from core import service, meta
+from core import service
 from core.service import StudentInfo
 
 from rest_framework.test import APIClient, APITestCase
@@ -48,7 +48,7 @@ class CoreTestCase(APITestCase):
         self.authcode.save()
 
     def test_entry_loaded(self):
-        from core.meta import DPTCODE_NAME
+        from core.settings import DPTCODE_NAME
         self.assertEqual(Entry.objects.count(), len(DPTCODE_NAME))
 
     @override_settings(
@@ -74,7 +74,7 @@ class CoreTestCase(APITestCase):
             'vote_token': token.code,
             'uid': aca_info.id,
             'type': aca_info.college,
-            'college': meta.DPTCODE_NAME[aca_info.department],
+            'college': settings.DPTCODE_NAME[aca_info.department],
             'status': 'success'
         })
 
