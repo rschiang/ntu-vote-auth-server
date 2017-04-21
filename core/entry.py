@@ -20,13 +20,7 @@ class OverrideEntryRule(BaseEntryRule):
     queryset = OverrideEntry.objects.all()
     lookup_field = 'student_id'
     lookup_info_kwarg = 'id'
-    entry_field = 'entry'
-
-    def get_kind(self, student_info):
-        try:
-            return super().get_kind(student_info).kind
-        except:
-            return None
+    entry_field = 'kind'
 
 
 class UndergraduateEntryRule(BaseEntryRule):

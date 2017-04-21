@@ -16,7 +16,7 @@ class EntryAdmin(admin.ModelAdmin):
 
 
 class OverrideEntryAdmin(admin.ModelAdmin):
-    list_display = ('student_id', 'entry')
+    list_display = ('student_id', 'kind')
     ordering = ('student_id',)
     search_fields = ('student_id',)
 

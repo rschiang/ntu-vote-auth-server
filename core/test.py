@@ -180,11 +180,8 @@ class EntryRuleTestCase(APITestCase):
         entry, _ = Entry.objects.get_or_create(dpt_code='1010')
         entry.kind = 'A0'
         entry.save()
-        entry, _ = Entry.objects.get_or_create(dpt_code='1020')
-        entry.kind = 'B0'
-        entry.save()
 
-        OverrideEntry.objects.create(student_id='B03705024', entry=entry).save()
+        OverrideEntry.objects.create(student_id='B03705024', kind='B0').save()
 
     def test_normal_entry(self):
         info = StudentInfo()

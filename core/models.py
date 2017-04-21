@@ -79,7 +79,7 @@ class AuthToken(models.Model):
 
 class Entry(models.Model):
     dpt_code = models.CharField(max_length=4, unique=True)
-    kind = models.CharField(max_length=5, null=True)
+    kind = models.CharField(max_length=2, null=True)
     name = models.CharField(max_length=256, null=True)
 
     def __str__(self):
@@ -91,7 +91,7 @@ class OverrideEntry(models.Model):
         max_length=10, unique=True,
         validators=[RegexValidator(regex=r'[A-Z]\d{2}[0-9A-Z]\d{5}'), ],
         null=False, blank=False)
-    entry = models.ForeignKey('Entry', on_delete=models.SET_NULL, null=True, blank=True)
+    kind = models.CharField(max_length=2, null=True)
 
     def __str__(self):
         return "{s.student_id} ({s.entry})".format(s=self)
