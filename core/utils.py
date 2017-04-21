@@ -6,8 +6,6 @@ from django.db import transaction
 from .models import AuthCode, AuthToken, Record, Entry
 from core import meta
 
-logger = logging.getLogger('vote.utils')
-
 
 def import_auth_code(filename=None):
     '''
@@ -54,6 +52,7 @@ def generate_auth_code(kind=None, amount=1000):
 
 
 def reset_server_state():
+    logger = logging.getLogger('vote')
     auth_codes = AuthCode.objects.filter(issued=True)
     tokens = AuthToken.objects.all()
     records = Record.objects.all()
