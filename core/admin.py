@@ -35,7 +35,7 @@ class RecordAdmin(admin.ModelAdmin):
         for record in records:
             admin.models.LogEntry.objects.log_action(
                 user_id=request.user.pk,
-                content_type_id=ContentType.objects.get(models='Record').id,
+                content_type_id=ContentType.objects.get(model='record').id,
                 object_id=record.pk,
                 object_repr=force_text(record),
                 action_flag=admin.models.CHANGE,
@@ -52,7 +52,7 @@ class RecordAdmin(admin.ModelAdmin):
             record.save()
             admin.models.LogEntry.objects.log_action(
                 user_id=request.user.pk,
-                content_type_id=ContentType.objects.get(models='Record').id,
+                content_type_id=ContentType.objects.get(model='record').id,
                 object_id=record.pk,
                 object_repr=force_text(record),
                 action_flag=admin.models.CHANGE,
