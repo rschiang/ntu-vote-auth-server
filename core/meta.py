@@ -232,8 +232,8 @@ UNDERGRADUATE_CODE = "BTE"
 GRADUATE_CODE = "RAPJMDCFQ"
 GENERAL_CODE = "BRDMF"
 
-EVENT_START_DATE = datetime.datetime(2016, 12, 14, 8, 45, 0)
-EVENT_END_DATE = datetime.datetime(2016, 12, 14, 19, 15, 0)
+EVENT_START_DATE = datetime.datetime(2017, 5, 18, 9, 0, 0)
+EVENT_END_DATE = datetime.datetime(2017, 5, 18, 21, 0, 0)
 
 SESSION_MAX_RESPOND_TIME = datetime.timedelta(minutes=2)
 SESSION_EXPIRE_TIME = datetime.timedelta(hours=12)
