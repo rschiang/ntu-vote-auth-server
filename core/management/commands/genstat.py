@@ -23,12 +23,15 @@ class Table(object):
     def increase(self, x, y):
         self.data[x][y] += 1
 
-    def print_out(self, x_transform=None, y_transform=None, print_sum=False):
+    def print_out(self, x_transform=None, y_transform=None, do_sum=False, sort_rows=False, sort_cols=False):
         x_transform = x_transform or (lambda x: x)
         y_transform = y_transform or (lambda y: y)
-        if print_sum:
+        if do_sum:
             x_sum, y_sum = self.sum()
-            self.rows = sorted(self.rows, key=lambda i: x_sum[i], reverse=True)
+            if sort_rows:
+                self.rows = sorted(self.rows, key=lambda i: x_sum[i], reverse=True)
+            if sort_cols:
+                self.cols = sorted(self.cols, key=lambda i: y_sum[i], reverse=True)
 
         entity = {}
         entity['fields'] = [y_transform(y) for y in self.cols]
@@ -37,8 +40,8 @@ class Table(object):
             'values': [self.data[x][y] for y in self.cols],
             } for x in self.rows]
 
-        if print_sum:
-            entity['items'].append({'sum': [y_sum[y] for y in self.cols]})
+        if do_sum:
+            entity['items'].append({'sum_values': [y_sum[y] for y in self.cols]})
 
         return entity
 
@@ -143,20 +146,20 @@ class Command(BaseCommand):
             return COLLEGES[x]
 
         st_table = Table.generate(items, 'station_id', STATIONS.keys(), 'time_index', range(START_TIME_INDEX, END_TIME_INDEX + 1))
-        doc['station-time'] = st_table.print_out(station_key_func, time_index_to_str, print_sum=True)
+        doc['station-time'] = st_table.print_out(station_key_func, time_index_to_str, do_sum=True, sort_rows=True)
 
         st_table.aggregate()
-        doc['station-time-aggr'] = st_table.print_out(station_key_func, time_index_to_str, print_sum=False)
+        doc['station-time-aggr'] = st_table.print_out(station_key_func, time_index_to_str, do_sum=False)
 
-        sc_table = Table.generate(items, 'station_id', STATIONS.keys(), 'college', COLLEGES.keys())
-        doc['station-college'] = sc_table.print_out(station_key_func, college_key_func, print_sum=True)
+        sc_table = Table.generate(items, 'station_id', STATIONS.keys(), 'college', sorted(COLLEGES.keys()))
+        doc['station-college'] = sc_table.print_out(station_key_func, college_key_func, do_sum=True, sort_rows=True)
 
         sc_table.transpose()
-        doc['college-station'] = sc_table.print_out(college_key_func, station_key_func, print_sum=True)
+        doc['college-station'] = sc_table.print_out(college_key_func, station_key_func, do_sum=True)
 
-        ss_table = Table.generate(items, 'station_id', STATIONS.keys(), 'standing', STANDINGS.keys())
-        doc['station-standing'] = ss_table.print_out(station_key_func, lambda y: STANDINGS[y], print_sum=True)
+        ss_table = Table.generate(items, 'station_id', STATIONS.keys(), 'standing', list('BRDTP'))
+        doc['station-standing'] = ss_table.print_out(station_key_func, lambda y: STANDINGS[y], do_sum=True)
 
         buf = io.StringIO()
-        json.dump(doc, buf, ensure_ascii=False)
+        json.dump(doc, buf, ensure_ascii=False, sort_keys=True)
         self.stdout.write(buf.getvalue())
