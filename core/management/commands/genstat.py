@@ -1,5 +1,6 @@
 import json
 import io
+import math
 from account.models import Station
 from core.models import AuthToken
 from django.conf import settings
@@ -84,7 +85,7 @@ def calculate_time_index(t):
     return t.hour * 2 + (1 if t.minute >= 30 else 0)
 
 def time_index_to_str(i):
-    digit = ((i - 24) if i >= 26 else i) / 2
+    digit = math.floor(((i - 24) if i >= 26 else i) / 2)
     half = ':30' if i % 2 == 1 else ''
     noon = 'pm' if i >= 24 else 'am'
     return '{}{}{}'.format(digit, half, noon)
@@ -157,5 +158,5 @@ class Command(BaseCommand):
         doc['station-standing'] = ss_table.print_out(station_key_func, lambda y: STANDINGS[y], print_sum=True)
 
         buf = io.StringIO()
-        json.dump(doc, buf, ensure_ascii=False, indent=2)
+        json.dump(doc, buf, ensure_ascii=False)
         self.stdout.write(buf.getvalue())
