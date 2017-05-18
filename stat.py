@@ -71,7 +71,7 @@ class Table(object):
 
 class Item(object):
     def __init__(self, token=None):
-        self.standing = token.student_id[:3]
+        self.standing = normalize_standings(token.student_id[0])
         self.college = token.kind[0]
         self.station_id = token.station_id
         self.time_index = calculate_time_index(token.timestamp) - START_TIME_INDEX
@@ -93,6 +93,20 @@ def time_index_to_str(i):
     noon = 'pm' if i >= 24 else 'am'
     return '{}{}{}'.format(digit, half, noon)
 
+def normalize_standings(s):
+    if s in STANDINGS.keys():
+        return s
+    elif s in 'AC':
+        return 'T'
+    elif s in 'JEQ':
+        return 'P'
+    elif s == 'F':
+        return 'D'
+    elif s == 'M':
+        return 'R'
+    else:
+        sys.stderr.write('WARN: Unknown standing {}'.format(s))
+
 # Pre-generate constants
 STATIONS = { station.external_id: station.name for station in Station.objects.all() }  # noqa: E305
 START_TIME_INDEX = calculate_time_index(settings.EVENT_START_DATE) - 1
@@ -110,22 +124,37 @@ COLLEGES = {
     'A': '法律學院',
     'B': '生命科學院',
 }  # noqa: E133
-
+STANDINGS = {
+    'B': '大學部',
+    'R': '碩士班',
+    'D': '博士班',
+    'T': '交換/訪問生',
+    'P': '在職/進修生',
+}  # noqa: E133
 
 if __name__ == '__main__':
     doc = {}
     items = [Item(token) for token in AuthToken.objects.filter(issued=True)]
 
+    def station_key_func(x):
+        return STATIONS[x]
+
+    def college_key_func(x):
+        return COLLEGES[x]
+
     st_table = Table.generate(items, 'station_id', STATIONS.keys(), 'time_index', range(START_TIME_INDEX, END_TIME_INDEX + 1))
-    doc['station-time'] = st_table.print_out(lambda x: STATIONS[x], time_index_to_str, print_sum=True)
+    doc['station-time'] = st_table.print_out(station_key_func, time_index_to_str, print_sum=True)
 
     st_table.aggregate()
-    doc['station-time-aggr'] = st_table.print_out(lambda x: STATIONS[x], time_index_to_str, print_sum=False)
+    doc['station-time-aggr'] = st_table.print_out(station_key_func, time_index_to_str, print_sum=False)
 
     sc_table = Table.generate(items, 'station_id', STATIONS.keys(), 'college', COLLEGES.keys())
-    doc['station-college'] = sc_table.print_out(lambda x: STATIONS[x], lambda y: COLLEGES[y], print_sum=True)
+    doc['station-college'] = sc_table.print_out(station_key_func, college_key_func, print_sum=True)
 
     sc_table.transpose()
-    doc['college-station'] = sc_table.print_out(lambda x: STATIONS[x], lambda y: COLLEGES[y], print_sum=True)
+    doc['college-station'] = sc_table.print_out(college_key_func, station_key_func, print_sum=True)
+
+    ss_table = Table.generate(items, 'station_id', STATIONS.keys(), 'standing', STANDINGS.keys())
+    doc['station-standing'] = ss_table.print_out(station_key_func, lambda y: STANDINGS[y], print_sum=True)
 
     json.dump(doc, sys.stdout, ensure_ascii=False, indent=2)
