@@ -1,4 +1,5 @@
 import json
+import io
 from account.models import Station
 from core.models import AuthToken
 from django.conf import settings
@@ -71,9 +72,9 @@ class Table(object):
 class Item(object):
     def __init__(self, token=None):
         self.standing = normalize_standings(token.student_id[0])
-        self.college = token.kind[0]
+        self.college = token.student_id[3]
         self.station_id = token.station_id
-        self.time_index = calculate_time_index(localtime(token.timestamp)) - START_TIME_INDEX
+        self.time_index = calculate_time_index(localtime(token.timestamp))
 
 
 # Set up Django environment
@@ -155,4 +156,6 @@ class Command(BaseCommand):
         ss_table = Table.generate(items, 'station_id', STATIONS.keys(), 'standing', STANDINGS.keys())
         doc['station-standing'] = ss_table.print_out(station_key_func, lambda y: STANDINGS[y], print_sum=True)
 
-        json.dump(doc, self.stdout, ensure_ascii=False, indent=2)
+        buf = io.StringIO()
+        json.dump(doc, buf, ensure_ascii=False, indent=2)
+        self.stdout.write(buf.getvalue())
