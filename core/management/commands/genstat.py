@@ -1,9 +1,8 @@
-#!/usr/bin/env python
 import json
-import os
-import sys
 from account.models import Station
 from core.models import AuthToken
+from django.conf import settings
+from django.core.management.base import BaseCommand
 from django.utils.timezone import localtime
 
 # Helper classes
@@ -78,9 +77,6 @@ class Item(object):
 
 
 # Set up Django environment
-if __name__ == '__main__':
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-from django.conf import settings  # noqa: E402
 
 # Utility functions
 def calculate_time_index(t):
@@ -132,29 +128,32 @@ STANDINGS = {
     'P': '在職/進修生',
 }  # noqa: E133
 
-if __name__ == '__main__':
-    doc = {}
-    items = [Item(token) for token in AuthToken.objects.filter(issued=True)]
+class Command(BaseCommand):
+    help = 'Generates vote statistics'
 
-    def station_key_func(x):
-        return STATIONS[x]
+    def handle(self, *args, **options):
+        doc = {}
+        items = [Item(token) for token in AuthToken.objects.filter(issued=True)]
 
-    def college_key_func(x):
-        return COLLEGES[x]
+        def station_key_func(x):
+            return STATIONS[x]
 
-    st_table = Table.generate(items, 'station_id', STATIONS.keys(), 'time_index', range(START_TIME_INDEX, END_TIME_INDEX + 1))
-    doc['station-time'] = st_table.print_out(station_key_func, time_index_to_str, print_sum=True)
+        def college_key_func(x):
+            return COLLEGES[x]
 
-    st_table.aggregate()
-    doc['station-time-aggr'] = st_table.print_out(station_key_func, time_index_to_str, print_sum=False)
+        st_table = Table.generate(items, 'station_id', STATIONS.keys(), 'time_index', range(START_TIME_INDEX, END_TIME_INDEX + 1))
+        doc['station-time'] = st_table.print_out(station_key_func, time_index_to_str, print_sum=True)
 
-    sc_table = Table.generate(items, 'station_id', STATIONS.keys(), 'college', COLLEGES.keys())
-    doc['station-college'] = sc_table.print_out(station_key_func, college_key_func, print_sum=True)
+        st_table.aggregate()
+        doc['station-time-aggr'] = st_table.print_out(station_key_func, time_index_to_str, print_sum=False)
 
-    sc_table.transpose()
-    doc['college-station'] = sc_table.print_out(college_key_func, station_key_func, print_sum=True)
+        sc_table = Table.generate(items, 'station_id', STATIONS.keys(), 'college', COLLEGES.keys())
+        doc['station-college'] = sc_table.print_out(station_key_func, college_key_func, print_sum=True)
 
-    ss_table = Table.generate(items, 'station_id', STATIONS.keys(), 'standing', STANDINGS.keys())
-    doc['station-standing'] = ss_table.print_out(station_key_func, lambda y: STANDINGS[y], print_sum=True)
+        sc_table.transpose()
+        doc['college-station'] = sc_table.print_out(college_key_func, station_key_func, print_sum=True)
 
-    json.dump(doc, sys.stdout, ensure_ascii=False, indent=2)
+        ss_table = Table.generate(items, 'station_id', STATIONS.keys(), 'standing', STANDINGS.keys())
+        doc['station-standing'] = ss_table.print_out(station_key_func, lambda y: STANDINGS[y], print_sum=True)
+
+        json.dump(doc, self.stdout, ensure_ascii=False, indent=2)
