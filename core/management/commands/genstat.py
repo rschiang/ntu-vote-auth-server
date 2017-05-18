@@ -73,14 +73,13 @@ class Item(object):
         self.standing = normalize_standings(token.student_id[0])
         self.college = token.kind[0]
         self.station_id = token.station_id
-        self.time_index = calculate_time_index(token.timestamp) - START_TIME_INDEX
+        self.time_index = calculate_time_index(localtime(token.timestamp)) - START_TIME_INDEX
 
 
 # Set up Django environment
 
 # Utility functions
 def calculate_time_index(t):
-    t = localtime(t)
     return t.hour * 2 + (1 if t.minute >= 30 else 0)
 
 def time_index_to_str(i):
