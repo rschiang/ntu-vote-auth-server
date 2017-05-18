@@ -1,25 +1,8 @@
+#!/usr/bin/env python
+import os
 from account.models import Station
 from core.models import AuthToken
-from django.conf import settings
 from django.utils.timezone import localtime
-
-# Pre-generate constants
-STATIONS = { station.external_id: station.name for station in Station.objects.all() }  # noqa: E305
-START_TIME_INDEX = calculate_time_index(settings.EVENT_START_DATE) - 1
-END_TIME_INDEX = calculate_time_index(settings.EVENT_END_DATE) + 1
-COLLEGES = {
-    '1': '文學院',
-    '2': '理學院',
-    '3': '社會科學院',
-    '4': '醫學院',
-    '5': '工學院',
-    '6': '生物資源暨農學院',
-    '7': '管理學院',
-    '8': '公共衛生學院',
-    '9': '電機資訊學院',
-    'A': '法律學院',
-    'B': '生命科學院',
-}
 
 # Helper classes
 class Table(object):
@@ -69,7 +52,7 @@ class Table(object):
 
     def aggregate(self):
         for x in self.rows:
-            count = 0:
+            count = 0
             for y in self.cols:
                 count += self.data[x][y]
                 self.data[x][y] = count
@@ -92,6 +75,12 @@ class Item(object):
         self.station_id = token.station_id
         self.time_index = calculate_time_index(token.timestamp) - START_TIME_INDEX
 
+
+# Set up Django environment
+if __name__ == '__main__':
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+from django.conf import settings  # noqa: E402
+
 # Utility functions
 def calculate_time_index(t):
     t = localtime(t)
@@ -102,6 +91,24 @@ def time_index_to_str(i):
     half = ':30' if i % 2 == 1 else ''
     noon = 'pm' if i >= 24 else 'am'
     return '{}{}{}'.format(digit, half, noon)
+
+# Pre-generate constants
+STATIONS = { station.external_id: station.name for station in Station.objects.all() }  # noqa: E305
+START_TIME_INDEX = calculate_time_index(settings.EVENT_START_DATE) - 1
+END_TIME_INDEX = calculate_time_index(settings.EVENT_END_DATE) + 1
+COLLEGES = {
+    '1': '文學院',
+    '2': '理學院',
+    '3': '社會科學院',
+    '4': '醫學院',
+    '5': '工學院',
+    '6': '生物資源暨農學院',
+    '7': '管理學院',
+    '8': '公共衛生學院',
+    '9': '電機資訊學院',
+    'A': '法律學院',
+    'B': '生命科學院',
+}
 
 # Table generation
 def print_station_time_table():
@@ -128,4 +135,4 @@ if __name__ == '__main__':
     station_college_table = print_station_college_table()
     station_college_table.transpose()
     print('\n<College-Station>')
-    station_college_table.print_out(lambda x: STATION[x], lambda y: COLLEGES[y], print_sum=True)
+    station_college_table.print_out(lambda x: STATIONS[x], lambda y: COLLEGES[y], print_sum=True)
