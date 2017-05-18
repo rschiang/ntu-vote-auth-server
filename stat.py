@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+import json
 import os
+import sys
 from account.models import Station
 from core.models import AuthToken
 from django.utils.timezone import localtime
@@ -27,18 +29,17 @@ class Table(object):
             x_sum, y_sum = self.sum()
             self.rows = sorted(self.rows, key=lambda i: x_sum[i], reverse=True)
 
-        print('[', end='')
-        print(*(y_transform(y) for y in self.cols), ']', sep=', ')
-        print('{')
-        for x in self.rows:
-            print('  ', x_transform(x), ': [', end='')
-            print(*(self.data[x][y] for y in self.cols), sep=', ', end='')
-            print('],')
+        entity = {}
+        entity['fields'] = [y_transform(y) for y in self.cols]
+        entity['items'] = [{
+            'name': x_transform(x),
+            'values': [self.data[x][y] for y in self.cols],
+            } for x in self.rows]
+
         if print_sum:
-            print('sum: [', end='')
-            print(*(y_sum[y] for y in self.cols), sep=', ', end='')
-            print('],')
-        print('}')
+            entity['items'].append({'sum': [y_sum[y] for y in self.cols]})
+
+        return entity
 
     def sum(self):
         x_sum = { row: 0 for row in self.rows }
@@ -108,31 +109,23 @@ COLLEGES = {
     '9': '電機資訊學院',
     'A': '法律學院',
     'B': '生命科學院',
-}
-
-# Table generation
-def print_station_time_table():
-    table = Table.generate(items, 'station_id', STATIONS.keys(), 'time_index', range(START_TIME_INDEX, END_TIME_INDEX + 1))
-    table.print_out(lambda x: STATIONS[x], time_index_to_str, print_sum=True)
-    return table
-
-def print_station_college_table():
-    table = Table.generate(items, 'station_id', STATIONS.keys(), 'college', COLLEGES.keys())
-    table.print_out(lambda x: STATIONS[x], lambda y: COLLEGES[y], print_sum=True)
-    return table
+}  # noqa: E133
 
 
 if __name__ == '__main__':
+    doc = {}
     items = [Item(token) for token in AuthToken.objects.filter(issued=True)]
 
-    print('\n<Station-Time>')
-    station_time_table = print_station_time_table()
-    station_time_table.aggregate()
-    print('\n<Station-Time-Aggr>')
-    station_time_table.print_out(lambda x: STATIONS[x], time_index_to_str, print_sum=False)
+    st_table = Table.generate(items, 'station_id', STATIONS.keys(), 'time_index', range(START_TIME_INDEX, END_TIME_INDEX + 1))
+    doc['station-time'] = st_table.print_out(lambda x: STATIONS[x], time_index_to_str, print_sum=True)
 
-    print('\n<Station-College>')
-    station_college_table = print_station_college_table()
-    station_college_table.transpose()
-    print('\n<College-Station>')
-    station_college_table.print_out(lambda x: STATIONS[x], lambda y: COLLEGES[y], print_sum=True)
+    st_table.aggregate()
+    doc['station-time-aggr'] = st_table.print_out(lambda x: STATIONS[x], time_index_to_str, print_sum=False)
+
+    sc_table = Table.generate(items, 'station_id', STATIONS.keys(), 'college', COLLEGES.keys())
+    doc['station-college'] = sc_table.print_out(lambda x: STATIONS[x], lambda y: COLLEGES[y], print_sum=True)
+
+    sc_table.transpose()
+    doc['college-station'] = sc_table.print_out(lambda x: STATIONS[x], lambda y: COLLEGES[y], print_sum=True)
+
+    json.dump(doc, sys.stdout, ensure_ascii=False, indent=2)
