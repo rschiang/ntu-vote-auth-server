@@ -1,165 +1,97 @@
-import json
-import io
-import math
+import sys
 from account.models import Station
 from core.models import AuthToken
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.timezone import localtime
+from functools import reduce
 
 # Helper classes
 class Table(object):
-    def __init__(self, rows=None, cols=None, default=0):
-        self.data = { row: { col: default for col in cols } for row in rows }
-        self.rows = list(rows)
-        self.cols = list(cols)
+    def __init__(self, rows=None, cols=None):
+        self.data = { row: { col: 0 for col in cols } for row in rows }
 
     def get(self, x, y):
         return self.data[x][y]
 
     def set(self, x, y, value):
-        self.data[x][y] = value
+        try:
+            self.data[x][y] = value
+        except KeyError:
+            self.data[x] = { y: value }
 
     def increase(self, x, y):
-        self.data[x][y] += 1
-
-    def print_out(self, x_transform=None, y_transform=None, do_sum=False, sort_rows=False, sort_cols=False):
-        x_transform = x_transform or (lambda x: x)
-        y_transform = y_transform or (lambda y: y)
-        if do_sum:
-            x_sum, y_sum = self.sum()
-            if sort_rows:
-                self.rows = sorted(self.rows, key=lambda i: x_sum[i], reverse=True)
-            if sort_cols:
-                self.cols = sorted(self.cols, key=lambda i: y_sum[i], reverse=True)
-
-        entity = {}
-        entity['fields'] = [y_transform(y) for y in self.cols]
-        entity['items'] = [{
-            'name': x_transform(x),
-            'values': [self.data[x][y] for y in self.cols],
-            } for x in self.rows]
-
-        if do_sum:
-            entity['items'].append({'sum_values': [y_sum[y] for y in self.cols]})
-
-        return entity
-
-    def sum(self):
-        x_sum = { row: 0 for row in self.rows }
-        y_sum = { col: 0 for col in self.cols }
-        for x in self.rows:
-            for y in self.cols:
-                val = self.data[x][y]
-                x_sum[x] += val
-                y_sum[y] += val
-        return x_sum, y_sum
+        try:
+            self.data[x][y] += 1
+        except KeyError:
+            self.data[x] = { y: 1 }
 
     def aggregate(self):
-        for x in self.rows:
+        for x in self.data:
             count = 0
-            for y in self.cols:
+            for y in sorted(self.data[x].keys()):
                 count += self.data[x][y]
                 self.data[x][y] = count
 
     def transpose(self):
-        self.data = { y: { x: self.data[x][y] for x in self.rows } for y in self.cols }
-        self.rows, self.cols = self.cols, self.rows
+        data = self.data
+        y_keys = reduce((lambda a, b: set(a).union(b)), (data[x].keys() for x in data))
+        self.data = { y: { x: data[x][y] for x in data } for y in y_keys }
 
     @classmethod
-    def generate(cls, items, row_attr, rows, col_attr, cols, default=0):
-        table = cls(rows=rows, cols=cols, default=default)
+    def generate(cls, items, row_attr, col_attr):
+        table = cls()
         for item in items:
             table.increase(item.__dict__[row_attr], item.__dict__[col_attr])
         return table
 
 class Item(object):
-    def __init__(self, token=None):
-        self.standing = normalize_standings(token.student_id[0])
+    def __init__(self, token, stations):
+        self.standing = normalize_standings(token.student_id[:3])
         self.college = token.student_id[3]
-        self.station_id = token.station_id
-        self.time_index = calculate_time_index(localtime(token.timestamp))
-
-
-# Set up Django environment
+        self.station = stations[token.station_id]
+        t = localtime(token.timestamp)
+        self.time = '{:02}:{:02}'.format(t.hour, 30 if t.minute >= 30 else 0)
 
 # Utility functions
-def calculate_time_index(t):
-    return t.hour * 2 + (1 if t.minute >= 30 else 0)
-
-def time_index_to_str(i):
-    digit = math.floor(((i - 24) if i >= 26 else i) / 2)
-    half = ':30' if i % 2 == 1 else ''
-    noon = 'pm' if i >= 24 else 'am'
-    return '{}{}{}'.format(digit, half, noon)
-
-def normalize_standings(s):
-    if s in STANDINGS.keys():
-        return s
+def normalize_standings(standing):
+    s = standing[0]
+    if s == 'B':
+        return standing  # Include grade for better categorization
+    elif s in 'RDTP':
+        return s         # Standard standings
     elif s in 'AC':
-        return 'T'
+        return 'T'       # Merge graduate exchange students with bachelor
     elif s in 'JEQ':
-        return 'P'
+        return 'P'       # Various continuing studies
     elif s == 'F':
-        return 'D'
+        return 'D'       # Bachelors applied directly for doctors
     elif s == 'M':
-        return 'R'
+        return 'R'       # Doctors transfering to master classes
     else:
         sys.stderr.write('WARN: Unknown standing {}'.format(s))
-
-# Pre-generate constants
-STATIONS = { station.external_id: station.name for station in Station.objects.all() }  # noqa: E305
-START_TIME_INDEX = calculate_time_index(settings.EVENT_START_DATE) - 1
-END_TIME_INDEX = calculate_time_index(settings.EVENT_END_DATE) + 1
-COLLEGES = {
-    '1': '文學院',
-    '2': '理學院',
-    '3': '社會科學院',
-    '4': '醫學院',
-    '5': '工學院',
-    '6': '生物資源暨農學院',
-    '7': '管理學院',
-    '8': '公共衛生學院',
-    '9': '電機資訊學院',
-    'A': '法律學院',
-    'B': '生命科學院',
-}  # noqa: E133
-STANDINGS = {
-    'B': '大學部',
-    'R': '碩士班',
-    'D': '博士班',
-    'T': '交換/訪問生',
-    'P': '在職/進修生',
-}  # noqa: E133
 
 class Command(BaseCommand):
     help = 'Generates vote statistics'
 
+    def add_arguments(self, parser):
+        parser.add_argument('x', help='name of first dimensional data')
+        parser.add_argument('y', help='name of second dimensional data')
+
     def handle(self, *args, **options):
-        doc = {}
-        items = [Item(token) for token in AuthToken.objects.filter(issued=True)]
+        stations = { station.external_id: station.name for station in Station.objects.all() }
+        items = [Item(token, stations=stations) for token in AuthToken.objects.filter(issued=True)]
 
-        def station_key_func(x):
-            return STATIONS[x]
+        row_attr = args['x']
+        col_attr = args['y']
 
-        def college_key_func(x):
-            return COLLEGES[x]
-
-        st_table = Table.generate(items, 'station_id', STATIONS.keys(), 'time_index', range(START_TIME_INDEX, END_TIME_INDEX + 1))
-        doc['station-time'] = st_table.print_out(station_key_func, time_index_to_str, do_sum=True, sort_rows=True)
-
-        st_table.aggregate()
-        doc['station-time-aggr'] = st_table.print_out(station_key_func, time_index_to_str, do_sum=False)
-
-        sc_table = Table.generate(items, 'station_id', STATIONS.keys(), 'college', sorted(COLLEGES.keys()))
-        doc['station-college'] = sc_table.print_out(station_key_func, college_key_func, do_sum=True, sort_rows=True)
-
-        sc_table.transpose()
-        doc['college-station'] = sc_table.print_out(college_key_func, station_key_func, do_sum=True)
-
-        ss_table = Table.generate(items, 'station_id', STATIONS.keys(), 'standing', list('BRDTP'))
-        doc['station-standing'] = ss_table.print_out(station_key_func, lambda y: STANDINGS[y], do_sum=True)
-
-        buf = io.StringIO()
-        json.dump(doc, buf, ensure_ascii=False, sort_keys=True)
-        self.stdout.write(buf.getvalue())
+        table = Table.generate(items, row_attr, col_attr)
+        fp = self.stdout
+        fp.write(row_attr, end=',')
+        fp.write(col_attr, end=',')
+        fp.write('count')
+        for x in sorted(table.data.keys()):
+            inner = table.data[x]
+            for y in sorted(inner.keys()):
+                fp.write(x, end=',')
+                fp.write(y, end=',')
+                fp.write(inner[y])
