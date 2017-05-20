@@ -48,6 +48,8 @@ class Table(object):
         return table
 
 class Item(object):
+    CHOICES = ('standing', 'college', 'station', 'time')
+
     def __init__(self, token, stations):
         self.standing = normalize_standings(token.student_id[:3])
         self.college = token.student_id[3]
@@ -77,17 +79,33 @@ class Command(BaseCommand):
     help = 'Generates vote statistics'
 
     def add_arguments(self, parser):
-        parser.add_argument('x', help='name of first dimensional data')
-        parser.add_argument('y', help='name of second dimensional data')
+        parser.add_argument('x_axis', nargs='?', choices=Item.CHOICES)
+        parser.add_argument('y_axis', nargs='?', choices=Item.CHOICES)
 
     def handle(self, *args, **options):
-        stations = { station.external_id: station.name for station in Station.objects.all() }
-        items = [Item(token, stations=stations) for token in AuthToken.objects.filter(issued=True)]
+        self.stations = { station.external_id: station.name for station in Station.objects.all() }
+        self.items = [Item(token, stations=self.stations) for token in AuthToken.objects.filter(issued=True)]
 
-        row_attr = options['x']
-        col_attr = options['y']
+        x_axis = options.get('x_axis')
+        y_axis = options.get('y_axis')
+        if x_axis and y_axis:
+            self.handle_two_axes(x_axis, y_axis)
+        elif x_axis or y_axis:
+            self.stderr.write('Specify two axes to generate statistics for, or print out normalized entry if omitted.')
+        else:
+            self.handle_dump_items()
 
-        table = Table.generate(items, row_attr, col_attr)
+    def handle_dump_items(self):
+        fp = self.stdout
+        for attr in Item.CHOICES:
+            fp.write(attr, ending=',')
+        for item in self.items:
+            for attr in Item.CHOICES:
+                fp.write(item.__dict__[attr], ending=',')
+            fp.write('')
+
+    def handle_two_axes(self, row_attr, col_attr):
+        table = Table.generate(self.items, row_attr, col_attr)
         fp = self.stdout
         fp.write(row_attr, ending=',')
         fp.write(col_attr, ending=',')
