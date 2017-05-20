@@ -7,8 +7,8 @@ from functools import reduce
 
 # Helper classes
 class Table(object):
-    def __init__(self, rows=None, cols=None):
-        self.data = { row: { col: 0 for col in cols } for row in rows }
+    def __init__(self):
+        self.data = {}
 
     def get(self, x, y):
         return self.data[x][y]
@@ -23,7 +23,10 @@ class Table(object):
         try:
             self.data[x][y] += 1
         except KeyError:
-            self.data[x] = { y: 1 }
+            if x not in self.data:
+                self.data[x] = { y: 1 }
+            elif y not in self.data[x]:
+                self.data[x][y] = 1
 
     def aggregate(self):
         for x in self.data:
@@ -81,17 +84,17 @@ class Command(BaseCommand):
         stations = { station.external_id: station.name for station in Station.objects.all() }
         items = [Item(token, stations=stations) for token in AuthToken.objects.filter(issued=True)]
 
-        row_attr = args['x']
-        col_attr = args['y']
+        row_attr = options['x']
+        col_attr = options['y']
 
         table = Table.generate(items, row_attr, col_attr)
         fp = self.stdout
-        fp.write(row_attr, end=',')
-        fp.write(col_attr, end=',')
+        fp.write(row_attr, ending=',')
+        fp.write(col_attr, ending=',')
         fp.write('count')
         for x in sorted(table.data.keys()):
             inner = table.data[x]
             for y in sorted(inner.keys()):
-                fp.write(x, end=',')
-                fp.write(y, end=',')
-                fp.write(inner[y])
+                fp.write(x, ending=',')
+                fp.write(y, ending=',')
+                fp.write(str(inner[y]))
