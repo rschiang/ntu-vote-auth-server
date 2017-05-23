@@ -55,7 +55,7 @@ class Item(object):
         self.college = token.student_id[3]
         self.station = stations[token.station_id]
         t = localtime(token.timestamp)
-        self.time = '{:02}:{:02}'.format(t.hour, 30 if t.minute >= 30 else 0)
+        self.time = '{:02}:{:02}'.format(t.hour, (t.minute // 15) * 15)
 
 # Utility functions
 def normalize_standings(standing):
