@@ -5,6 +5,7 @@ from collections import OrderedDict
 from django.conf import settings
 from django.db.models.query import QuerySet
 from urllib.request import Request, urlopen
+from urllib.error import URLError
 from xml.etree import ElementTree as et
 
 logger = logging.getLogger('vote.service')
@@ -38,6 +39,9 @@ def to_student_id(internal_id):
     except (UnicodeDecodeError, et.ParseError):
         logger.exception('Failed to load server entity')
         raise ExternalError('entity_malformed')
+    except Exception as err:
+        logger.exception('Failed to connect the ACA server')
+        raise ExternalError('external_server_down') from err
 
     # Read the response entity
     try:

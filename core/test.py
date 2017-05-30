@@ -8,6 +8,7 @@ from rest_framework import status
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.test import override_settings
+import urllib
 
 
 class CoreTestCase(APITestCase):
@@ -169,7 +170,7 @@ class ACATestCase(APITestCase):
         ACA_API_URL='http://localhost:3000/seqServices/stuinfoByCardno',
         ACA_API_USER='aca_api_user', ACA_API_PASSWORD='password')
     def test_get_student_info(self):
-            service.to_student_id('123456')
+        service.to_student_id('123456')
 
 
 class EntryRuleTestCase(APITestCase):
