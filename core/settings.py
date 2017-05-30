@@ -143,6 +143,7 @@ CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN', 'localhost')
 
 # Security enforcements
 ENFORCE_CARD_VALIDATION = True
+# TODO: use boolen value to activiate this option
 ENFORCE_EVENT_DATE = (os.environ.get('ENFORCE_EVENT') == '1')
 
 # Meta

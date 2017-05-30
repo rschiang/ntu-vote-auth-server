@@ -4,11 +4,11 @@
     "DATABASE_USER": "vote",
     "DATABASE_PASSWORD": "vote",
     "DATABASE_HOST": "localhost",
-    "DATABASE_PORT": 5432,
+    "DATABASE_PORT": "5432",
     "VOTE_API_KEY": "<Specify API key here>",
     "ACA_API_USER": "ntusa",
     "ACA_API_PASSWORD": "ntusa",
     "ACA_API_URL": "http://localhost:9527/",
     "CALLBACK_DOMAIN": "vote.ntuosc.org",
-    "ENFORCE_EVENT": false
+    "ENFORCE_EVENT": "false"
 }
