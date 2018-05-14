@@ -1,12 +1,16 @@
 from core.models import Record
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .decorators import check_prerequisites, scheduled
+from .decorators import check_prerequisites, scheduled, login_required, permission
 from .utils import error, exchange_token, logger
+from account.models import User
+
 
 @api_view(['POST'])
 @scheduled
-@check_prerequisites('uid', 'station', 'token')
+@login_required
+@permission(User.STATION)
+@check_prerequisites('uid', 'vote_token')
 def report(request):
     token = exchange_token(request)
     if not token:

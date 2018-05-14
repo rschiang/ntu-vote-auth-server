@@ -1,4 +1,4 @@
-from account.models import User, Session, Station
+from account.models import User, Session
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -6,11 +6,12 @@ from rest_framework.response import Response
 from core.views.decorators import check_prerequisites
 from core.views.utils import error, logger
 
+
 @api_view(['POST'])
 @check_prerequisites('username', 'password')
 def register(request):
-    username = request.DATA['username']
-    password = request.DATA['password']
+    username = request.data['username']
+    password = request.data['password']
 
     # Authentication
     user = None
@@ -29,27 +30,35 @@ def register(request):
         logger.error('Login attempt failed for "%s":"%s"', username, password)
         return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
 
-    # Authorization, check user identity type
-    if not user.kind == User.STATION or not user.station.is_active:
-        logger.error('User %s improperly attempted to register session', username)
-        return error('forbidden', status=status.HTTP_403_FORBIDDEN)
+    current_time = timezone.now()
+    station_id = None
 
     # Expire older sessions
-    station = user.station
-    current_time = timezone.now()
-    sessions = Session.objects.filter(station=station, expired_on__gte=current_time).order_by('created_on')
-    if len(sessions) >= station.max_sessions:
-        old_session = sessions.first()
-        old_session.expired_on = current_time
-        old_session.save()
+    if user.kind == User.STATION:
+        station = user.station
+        sessions = Session.objects.filter(user=user, expired_on__gte=current_time).order_by('created_on')
+        if len(sessions) >= station.max_sessions:
+            old_session = sessions.first()
+            old_session.expired_on = current_time
+            old_session.save()
+        name = station.name
+        station_id = station.external_id
+
+    else:
+        # ADMIN and SUPERVISOR
+        old_sessions = Session.objects.filter(user=user, expired_on__gte=current_time)
+        for s in old_sessions:
+            s.expired_on = current_time
+            s.save()
+        name = username
 
     # Issue session token
-    session = Session.generate(station=station)
+    session = Session.generate(user=user)
     session.save()
 
     return Response({
         'status': 'success',
-        'station': station.external_id or station.id,
-        'name': station.name,
+        'name': name,
+        'station_id': 0 if station_id is None else station_id,
         'token': session.token,
     })

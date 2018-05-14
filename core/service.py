@@ -1,13 +1,19 @@
+import re
 import logging
 import struct
+from collections import OrderedDict
 from django.conf import settings
+from django.db.models.query import QuerySet
 from urllib.request import Request, urlopen
+from urllib.error import URLError
 from xml.etree import ElementTree as et
 
 logger = logging.getLogger('vote.service')
 
+
 def reverse_indian(i):
     return struct.unpack('<I', struct.pack('>I', i))
+
 
 def to_student_id(internal_id):
     # Build up the clumsy request entity
@@ -33,6 +39,9 @@ def to_student_id(internal_id):
     except (UnicodeDecodeError, et.ParseError):
         logger.exception('Failed to load server entity')
         raise ExternalError('entity_malformed')
+    except Exception as err:
+        logger.exception('Failed to connect the ACA server')
+        raise ExternalError('external_server_down') from err
 
     # Read the response entity
     try:
@@ -73,11 +82,12 @@ def to_student_id(internal_id):
     logger.info(str(info))
     return info
 
+
 class StudentInfo(object):
 
     def __init__(self, id=None, type=None, valid=False, college=None, department=None):
         self.id = id
-        self.type = type
+        self.type = type  # chinese value returned from ACA server
         self.valid = valid
         self.college = college
         self.department = department
@@ -88,8 +98,97 @@ class StudentInfo(object):
     def __str__(self):
         return '<StudentInfo: {id} ({college} {type} {department}){0}>'.format('' if self.valid else '*', **self.__dict__)
 
+    @property
+    def type_code(self):
+        return self.id[0]
+
+
 class ExternalError(Exception):
     def __init__(self, reason):
         self.reason = reason
+
     def __str__(self):
         return repr(self.reason)
+
+
+class BaseEntryRule(object):
+    queryset = None
+
+    target_department = None
+
+    lookup_field = None
+    lookup_info_kwarg = None
+    entry_field = None
+
+    def get_queryset(self):
+        """
+        Get list of entry for this rule.
+        This must be iterable, and maybe a queryset.
+        Defaults to use `self.queryset`
+
+        You may want to override this, if you need to provide
+        different querysets depending on the income.
+        """
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
+
+        queryset = self.queryset
+        if isinstance(queryset, QuerySet):
+            # Ensure queryset is re-evaluated on each request.
+            queryset = queryset.all()
+        return queryset
+
+    def get_object(self, student_info):
+        # Apply department filter (regular expression)
+        if self.target_department is not None:
+            if re.match(self.target_department, student_info.department) is None:
+                return None
+        return self.get_kind(student_info)
+
+    def get_kind(self, student_info):
+        """
+        return kinds related to @student_info, and it returns None if the student
+        does not be accepted by rule. All rule class should follow this criterion.
+        """
+        try:
+            filter_kwargs = {
+                self.lookup_field: getattr(student_info, self.lookup_info_kwarg)
+            }
+            obj = self.get_queryset().get(**filter_kwargs)
+            return getattr(obj, self.entry_field)
+        except:
+            return None
+
+
+class KindiClassifier(object):
+    # TODO: read seettings from config
+    entry_rule_classes = OrderedDict()
+
+    def get_kind(self, student_info):
+        """
+        Evaluate each entry rule in the list, and use the first
+        non-None value as final result.
+        """
+        for er_class in self.entry_rule_classes.values():
+            rule = er_class()
+            kind = rule.get_object(student_info)
+            if kind is not None:
+                return kind
+        # return the first non-None value or None
+        return None
+
+    def register(self, name, entry_rule):
+        if name not in self.entry_rule_classes:
+            self.entry_rule_classes[name] = entry_rule
+
+    def unregister(self, name):
+        if name not in self.entry_rule_classes:
+            raise ValueError('{} Not found'.format(name))
+        del self.entry_rule_classes[name]
+
+
+# Global instance of entry providor
+kind_classifier = KindiClassifier()

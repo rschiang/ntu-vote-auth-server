@@ -1,0 +1,1946 @@
+[
+  {
+    "model": "core.entry",
+    "pk": 1,
+    "fields": {
+      "dpt_code": "1010",
+      "kind": null,
+      "name": "中國文學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 2,
+    "fields": {
+      "dpt_code": "1011",
+      "kind": null,
+      "name": "中國文學系國際學生學士班"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 3,
+    "fields": {
+      "dpt_code": "1020",
+      "kind": null,
+      "name": "外國語文學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 4,
+    "fields": {
+      "dpt_code": "1030",
+      "kind": null,
+      "name": "歷史學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 5,
+    "fields": {
+      "dpt_code": "1040",
+      "kind": null,
+      "name": "哲學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 6,
+    "fields": {
+      "dpt_code": "1050",
+      "kind": null,
+      "name": "人類學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 7,
+    "fields": {
+      "dpt_code": "1060",
+      "kind": null,
+      "name": "圖書資訊學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 8,
+    "fields": {
+      "dpt_code": "1070",
+      "kind": null,
+      "name": "日本語文學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 9,
+    "fields": {
+      "dpt_code": "1090",
+      "kind": null,
+      "name": "戲劇學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 10,
+    "fields": {
+      "dpt_code": "1210",
+      "kind": null,
+      "name": "中國文學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 11,
+    "fields": {
+      "dpt_code": "1220",
+      "kind": null,
+      "name": "外國語文學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 12,
+    "fields": {
+      "dpt_code": "1230",
+      "kind": null,
+      "name": "歷史學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 13,
+    "fields": {
+      "dpt_code": "1240",
+      "kind": null,
+      "name": "哲學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 14,
+    "fields": {
+      "dpt_code": "1250",
+      "kind": null,
+      "name": "人類學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 15,
+    "fields": {
+      "dpt_code": "1260",
+      "kind": null,
+      "name": "圖書資訊學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 16,
+    "fields": {
+      "dpt_code": "1270",
+      "kind": null,
+      "name": "日本語文學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 17,
+    "fields": {
+      "dpt_code": "1290",
+      "kind": null,
+      "name": "戲劇學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 18,
+    "fields": {
+      "dpt_code": "1410",
+      "kind": null,
+      "name": "藝術史研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 19,
+    "fields": {
+      "dpt_code": "1420",
+      "kind": null,
+      "name": "語言學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 20,
+    "fields": {
+      "dpt_code": "1440",
+      "kind": null,
+      "name": "音樂學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 21,
+    "fields": {
+      "dpt_code": "1450",
+      "kind": null,
+      "name": "臺灣文學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 22,
+    "fields": {
+      "dpt_code": "1460",
+      "kind": null,
+      "name": "華語教學碩士學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 23,
+    "fields": {
+      "dpt_code": "1470",
+      "kind": null,
+      "name": "翻譯碩士學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 24,
+    "fields": {
+      "dpt_code": "2010",
+      "kind": null,
+      "name": "數學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 25,
+    "fields": {
+      "dpt_code": "2020",
+      "kind": null,
+      "name": "物理學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 26,
+    "fields": {
+      "dpt_code": "2030",
+      "kind": null,
+      "name": "化學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 27,
+    "fields": {
+      "dpt_code": "2040",
+      "kind": null,
+      "name": "地質科學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 28,
+    "fields": {
+      "dpt_code": "2070",
+      "kind": null,
+      "name": "心理學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 29,
+    "fields": {
+      "dpt_code": "2080",
+      "kind": null,
+      "name": "地理環境資源學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 30,
+    "fields": {
+      "dpt_code": "2090",
+      "kind": null,
+      "name": "大氣科學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 31,
+    "fields": {
+      "dpt_code": "2210",
+      "kind": null,
+      "name": "數學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 32,
+    "fields": {
+      "dpt_code": "2220",
+      "kind": null,
+      "name": "物理學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 33,
+    "fields": {
+      "dpt_code": "2231",
+      "kind": null,
+      "name": "化學所化學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 34,
+    "fields": {
+      "dpt_code": "2232",
+      "kind": null,
+      "name": "化學所化學生物學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 35,
+    "fields": {
+      "dpt_code": "2240",
+      "kind": null,
+      "name": "地質科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 36,
+    "fields": {
+      "dpt_code": "2241",
+      "kind": null,
+      "name": "地質組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 37,
+    "fields": {
+      "dpt_code": "2242",
+      "kind": null,
+      "name": "應用地質組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 38,
+    "fields": {
+      "dpt_code": "2271",
+      "kind": null,
+      "name": "一般心理學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 39,
+    "fields": {
+      "dpt_code": "2272",
+      "kind": null,
+      "name": "臨床心理學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 40,
+    "fields": {
+      "dpt_code": "2280",
+      "kind": null,
+      "name": "地理環境資源學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 41,
+    "fields": {
+      "dpt_code": "2290",
+      "kind": null,
+      "name": "大氣科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 42,
+    "fields": {
+      "dpt_code": "2410",
+      "kind": null,
+      "name": "海洋研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 43,
+    "fields": {
+      "dpt_code": "2411",
+      "kind": null,
+      "name": "海洋物理組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 44,
+    "fields": {
+      "dpt_code": "2412",
+      "kind": null,
+      "name": "海洋生物及漁業組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 45,
+    "fields": {
+      "dpt_code": "2413",
+      "kind": null,
+      "name": "海洋地質及地球物理"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 46,
+    "fields": {
+      "dpt_code": "2414",
+      "kind": null,
+      "name": "海洋化學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 47,
+    "fields": {
+      "dpt_code": "2440",
+      "kind": null,
+      "name": "天文物理研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 48,
+    "fields": {
+      "dpt_code": "2450",
+      "kind": null,
+      "name": "應用物理學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 49,
+    "fields": {
+      "dpt_code": "2460",
+      "kind": null,
+      "name": "應用數學科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 50,
+    "fields": {
+      "dpt_code": "3021",
+      "kind": null,
+      "name": "政治理論組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 51,
+    "fields": {
+      "dpt_code": "3022",
+      "kind": null,
+      "name": "國際關係組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 52,
+    "fields": {
+      "dpt_code": "3023",
+      "kind": null,
+      "name": "公共行政組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 53,
+    "fields": {
+      "dpt_code": "3030",
+      "kind": null,
+      "name": "經濟學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 54,
+    "fields": {
+      "dpt_code": "3050",
+      "kind": null,
+      "name": "社會學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 55,
+    "fields": {
+      "dpt_code": "3100",
+      "kind": null,
+      "name": "社會工作學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 56,
+    "fields": {
+      "dpt_code": "3220",
+      "kind": null,
+      "name": "政治學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 57,
+    "fields": {
+      "dpt_code": "3230",
+      "kind": null,
+      "name": "經濟學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 58,
+    "fields": {
+      "dpt_code": "3250",
+      "kind": null,
+      "name": "社會學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 59,
+    "fields": {
+      "dpt_code": "3300",
+      "kind": null,
+      "name": "社會工作學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 60,
+    "fields": {
+      "dpt_code": "3410",
+      "kind": null,
+      "name": "國家發展研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 61,
+    "fields": {
+      "dpt_code": "3420",
+      "kind": null,
+      "name": "新聞研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 62,
+    "fields": {
+      "dpt_code": "3430",
+      "kind": null,
+      "name": "公共事務研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 63,
+    "fields": {
+      "dpt_code": "4010",
+      "kind": null,
+      "name": "醫學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 64,
+    "fields": {
+      "dpt_code": "4020",
+      "kind": null,
+      "name": "牙醫學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 65,
+    "fields": {
+      "dpt_code": "4030",
+      "kind": null,
+      "name": "藥學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 66,
+    "fields": {
+      "dpt_code": "4031",
+      "kind": null,
+      "name": "藥學系六年制"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 67,
+    "fields": {
+      "dpt_code": "4040",
+      "kind": null,
+      "name": "醫學檢驗暨生物技術學系(原醫事技術學系)"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 68,
+    "fields": {
+      "dpt_code": "4060",
+      "kind": null,
+      "name": "護理學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 69,
+    "fields": {
+      "dpt_code": "4080",
+      "kind": null,
+      "name": "物理治療學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 70,
+    "fields": {
+      "dpt_code": "4090",
+      "kind": null,
+      "name": "職能治療學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 71,
+    "fields": {
+      "dpt_code": "4210",
+      "kind": null,
+      "name": "臨床醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 72,
+    "fields": {
+      "dpt_code": "4220",
+      "kind": null,
+      "name": "臨床牙醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 73,
+    "fields": {
+      "dpt_code": "4230",
+      "kind": null,
+      "name": "藥學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 74,
+    "fields": {
+      "dpt_code": "4231",
+      "kind": null,
+      "name": "藥學系博士班藥物科技組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 75,
+    "fields": {
+      "dpt_code": "4232",
+      "kind": null,
+      "name": "藥學系博士班分子醫藥組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 76,
+    "fields": {
+      "dpt_code": "4240",
+      "kind": null,
+      "name": "醫事技術學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 77,
+    "fields": {
+      "dpt_code": "4260",
+      "kind": null,
+      "name": "護理學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 78,
+    "fields": {
+      "dpt_code": "4280",
+      "kind": null,
+      "name": "物理治療學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 79,
+    "fields": {
+      "dpt_code": "4290",
+      "kind": null,
+      "name": "職能治療學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 80,
+    "fields": {
+      "dpt_code": "4410",
+      "kind": null,
+      "name": "生理學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 81,
+    "fields": {
+      "dpt_code": "4420",
+      "kind": null,
+      "name": "生化學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 82,
+    "fields": {
+      "dpt_code": "4430",
+      "kind": null,
+      "name": "藥理學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 83,
+    "fields": {
+      "dpt_code": "4440",
+      "kind": null,
+      "name": "病理學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 84,
+    "fields": {
+      "dpt_code": "4450",
+      "kind": null,
+      "name": "微生物學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 85,
+    "fields": {
+      "dpt_code": "4451",
+      "kind": null,
+      "name": "微生物及免疫學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 86,
+    "fields": {
+      "dpt_code": "4452",
+      "kind": null,
+      "name": "寄生蟲組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 87,
+    "fields": {
+      "dpt_code": "4460",
+      "kind": null,
+      "name": "解剖學暨細胞生物學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 88,
+    "fields": {
+      "dpt_code": "4470",
+      "kind": null,
+      "name": "毒理學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 89,
+    "fields": {
+      "dpt_code": "4480",
+      "kind": null,
+      "name": "分子醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 90,
+    "fields": {
+      "dpt_code": "4490",
+      "kind": null,
+      "name": "免疫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 91,
+    "fields": {
+      "dpt_code": "4500",
+      "kind": null,
+      "name": "口腔生物科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 92,
+    "fields": {
+      "dpt_code": "4510",
+      "kind": null,
+      "name": "臨床藥學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 93,
+    "fields": {
+      "dpt_code": "4520",
+      "kind": null,
+      "name": "法醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 94,
+    "fields": {
+      "dpt_code": "4530",
+      "kind": null,
+      "name": "腫瘤醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 95,
+    "fields": {
+      "dpt_code": "4540",
+      "kind": null,
+      "name": "腦與心智科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 96,
+    "fields": {
+      "dpt_code": "4550",
+      "kind": null,
+      "name": "基因體暨蛋白體醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 97,
+    "fields": {
+      "dpt_code": "4560",
+      "kind": null,
+      "name": "轉譯醫學博士學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 98,
+    "fields": {
+      "dpt_code": "4570",
+      "kind": null,
+      "name": "醫學教育暨生醫倫理研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 99,
+    "fields": {
+      "dpt_code": "4580",
+      "kind": null,
+      "name": "醫療器材與醫學影像研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 100,
+    "fields": {
+      "dpt_code": "5010",
+      "kind": null,
+      "name": "土木工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 101,
+    "fields": {
+      "dpt_code": "5020",
+      "kind": null,
+      "name": "機械工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 102,
+    "fields": {
+      "dpt_code": "5040",
+      "kind": null,
+      "name": "化學工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 103,
+    "fields": {
+      "dpt_code": "5050",
+      "kind": null,
+      "name": "工程科學及海洋工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 104,
+    "fields": {
+      "dpt_code": "5070",
+      "kind": null,
+      "name": "材料科學與工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 105,
+    "fields": {
+      "dpt_code": "5210",
+      "kind": null,
+      "name": "土木工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 106,
+    "fields": {
+      "dpt_code": "5211",
+      "kind": null,
+      "name": "大地工程組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 107,
+    "fields": {
+      "dpt_code": "5212",
+      "kind": null,
+      "name": "結構工程組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 108,
+    "fields": {
+      "dpt_code": "5213",
+      "kind": null,
+      "name": "水利工程組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 109,
+    "fields": {
+      "dpt_code": "5215",
+      "kind": null,
+      "name": "交通工程組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 110,
+    "fields": {
+      "dpt_code": "5216",
+      "kind": null,
+      "name": "電腦輔助工程組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 111,
+    "fields": {
+      "dpt_code": "5217",
+      "kind": null,
+      "name": "營建工程與管理組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 112,
+    "fields": {
+      "dpt_code": "5220",
+      "kind": null,
+      "name": "機械工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 113,
+    "fields": {
+      "dpt_code": "5221",
+      "kind": null,
+      "name": "流體力學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 114,
+    "fields": {
+      "dpt_code": "5223",
+      "kind": null,
+      "name": "熱學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 115,
+    "fields": {
+      "dpt_code": "5224",
+      "kind": null,
+      "name": "航空工程組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 116,
+    "fields": {
+      "dpt_code": "5225",
+      "kind": null,
+      "name": "固體力學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 117,
+    "fields": {
+      "dpt_code": "5226",
+      "kind": null,
+      "name": "設計組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 118,
+    "fields": {
+      "dpt_code": "5227",
+      "kind": null,
+      "name": "製造組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 119,
+    "fields": {
+      "dpt_code": "5228",
+      "kind": null,
+      "name": "系統控制組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 120,
+    "fields": {
+      "dpt_code": "5240",
+      "kind": null,
+      "name": "化學工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 121,
+    "fields": {
+      "dpt_code": "5250",
+      "kind": null,
+      "name": "工程科學及海洋工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 122,
+    "fields": {
+      "dpt_code": "5270",
+      "kind": null,
+      "name": "材料科學與工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 123,
+    "fields": {
+      "dpt_code": "5410",
+      "kind": null,
+      "name": "環境工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 124,
+    "fields": {
+      "dpt_code": "5430",
+      "kind": null,
+      "name": "應用力學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 125,
+    "fields": {
+      "dpt_code": "5440",
+      "kind": null,
+      "name": "建築與城鄉研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 126,
+    "fields": {
+      "dpt_code": "5460",
+      "kind": null,
+      "name": "工業工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 127,
+    "fields": {
+      "dpt_code": "5480",
+      "kind": null,
+      "name": "醫學工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 128,
+    "fields": {
+      "dpt_code": "5490",
+      "kind": null,
+      "name": "高分子科學與工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 129,
+    "fields": {
+      "dpt_code": "6010",
+      "kind": null,
+      "name": "農藝學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 130,
+    "fields": {
+      "dpt_code": "6020",
+      "kind": null,
+      "name": "生物環境系統工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 131,
+    "fields": {
+      "dpt_code": "6030",
+      "kind": null,
+      "name": "農業化學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 132,
+    "fields": {
+      "dpt_code": "6050",
+      "kind": null,
+      "name": "森林環境暨資源學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 133,
+    "fields": {
+      "dpt_code": "6060",
+      "kind": null,
+      "name": "動物科學技術學系(原畜產學系)"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 134,
+    "fields": {
+      "dpt_code": "6070",
+      "kind": null,
+      "name": "農業經濟學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 135,
+    "fields": {
+      "dpt_code": "6080",
+      "kind": null,
+      "name": "園藝暨景觀學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 136,
+    "fields": {
+      "dpt_code": "6090",
+      "kind": null,
+      "name": "獸醫學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 137,
+    "fields": {
+      "dpt_code": "6100",
+      "kind": null,
+      "name": "生物產業傳播暨發展學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 138,
+    "fields": {
+      "dpt_code": "6110",
+      "kind": null,
+      "name": "生物產業機電工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 139,
+    "fields": {
+      "dpt_code": "6120",
+      "kind": null,
+      "name": "昆蟲學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 140,
+    "fields": {
+      "dpt_code": "6130",
+      "kind": null,
+      "name": "植物病理與微生物學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 141,
+    "fields": {
+      "dpt_code": "6211",
+      "kind": null,
+      "name": "作物科學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 142,
+    "fields": {
+      "dpt_code": "6212",
+      "kind": null,
+      "name": "生物統計學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 143,
+    "fields": {
+      "dpt_code": "6220",
+      "kind": null,
+      "name": "生物環境系統工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 144,
+    "fields": {
+      "dpt_code": "6230",
+      "kind": null,
+      "name": "農業化學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 145,
+    "fields": {
+      "dpt_code": "6250",
+      "kind": null,
+      "name": "森林學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 146,
+    "fields": {
+      "dpt_code": "6260",
+      "kind": null,
+      "name": "畜產學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 147,
+    "fields": {
+      "dpt_code": "6270",
+      "kind": null,
+      "name": "農業經濟學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 148,
+    "fields": {
+      "dpt_code": "6280",
+      "kind": null,
+      "name": "園藝學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 149,
+    "fields": {
+      "dpt_code": "6281",
+      "kind": null,
+      "name": "園藝作物組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 150,
+    "fields": {
+      "dpt_code": "6282",
+      "kind": null,
+      "name": "園產品處理及加工組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 151,
+    "fields": {
+      "dpt_code": "6283",
+      "kind": null,
+      "name": "造園組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 152,
+    "fields": {
+      "dpt_code": "6290",
+      "kind": null,
+      "name": "獸醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 153,
+    "fields": {
+      "dpt_code": "6300",
+      "kind": null,
+      "name": "生物產業傳播暨發展學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 154,
+    "fields": {
+      "dpt_code": "6310",
+      "kind": null,
+      "name": "生物產業機電工程學所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 155,
+    "fields": {
+      "dpt_code": "6320",
+      "kind": null,
+      "name": "昆蟲學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 156,
+    "fields": {
+      "dpt_code": "6330",
+      "kind": null,
+      "name": "植物病理與微生物學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 157,
+    "fields": {
+      "dpt_code": "6410",
+      "kind": null,
+      "name": "食品科技研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 158,
+    "fields": {
+      "dpt_code": "6420",
+      "kind": null,
+      "name": "生物科技研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 159,
+    "fields": {
+      "dpt_code": "6430",
+      "kind": null,
+      "name": "臨床動物醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 160,
+    "fields": {
+      "dpt_code": "6440",
+      "kind": null,
+      "name": "分子暨比較病理生物學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 161,
+    "fields": {
+      "dpt_code": "6450",
+      "kind": null,
+      "name": "植物醫學碩士學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 162,
+    "fields": {
+      "dpt_code": "7011",
+      "kind": null,
+      "name": "企業管理組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 163,
+    "fields": {
+      "dpt_code": "7012",
+      "kind": null,
+      "name": "科技管理組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 164,
+    "fields": {
+      "dpt_code": "7020",
+      "kind": null,
+      "name": "會計學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 165,
+    "fields": {
+      "dpt_code": "7030",
+      "kind": null,
+      "name": "財務金融學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 166,
+    "fields": {
+      "dpt_code": "7040",
+      "kind": null,
+      "name": "國際企業學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 167,
+    "fields": {
+      "dpt_code": "7050",
+      "kind": null,
+      "name": "資訊管理學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 168,
+    "fields": {
+      "dpt_code": "7220",
+      "kind": null,
+      "name": "會計學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 169,
+    "fields": {
+      "dpt_code": "7230",
+      "kind": null,
+      "name": "財務金融學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 170,
+    "fields": {
+      "dpt_code": "7240",
+      "kind": null,
+      "name": "國際企業學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 171,
+    "fields": {
+      "dpt_code": "7250",
+      "kind": null,
+      "name": "資訊管理學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 172,
+    "fields": {
+      "dpt_code": "7410",
+      "kind": null,
+      "name": "商學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 173,
+    "fields": {
+      "dpt_code": "7440",
+      "kind": null,
+      "name": "管理學院會計與管理決策組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 174,
+    "fields": {
+      "dpt_code": "7450",
+      "kind": null,
+      "name": "管理學院財務金融組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 175,
+    "fields": {
+      "dpt_code": "7460",
+      "kind": null,
+      "name": "管理學院國際企業管理組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 176,
+    "fields": {
+      "dpt_code": "7470",
+      "kind": null,
+      "name": "管理學院資訊管理組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 177,
+    "fields": {
+      "dpt_code": "7480",
+      "kind": null,
+      "name": "管理學院商學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 178,
+    "fields": {
+      "dpt_code": "7490",
+      "kind": null,
+      "name": "管理學院企業管理碩士專班"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 179,
+    "fields": {
+      "dpt_code": "7500",
+      "kind": null,
+      "name": "臺大-復旦EMBA"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 180,
+    "fields": {
+      "dpt_code": "8010",
+      "kind": null,
+      "name": "公共衛生學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 181,
+    "fields": {
+      "dpt_code": "8410",
+      "kind": null,
+      "name": "職業醫學與工業衛生研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 182,
+    "fields": {
+      "dpt_code": "8440",
+      "kind": null,
+      "name": "環境衛生研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 183,
+    "fields": {
+      "dpt_code": "8470",
+      "kind": null,
+      "name": "公共衛生碩士學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 184,
+    "fields": {
+      "dpt_code": "8480",
+      "kind": null,
+      "name": "健康政策與管理研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 185,
+    "fields": {
+      "dpt_code": "8490",
+      "kind": null,
+      "name": "流行病學與預防醫學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 186,
+    "fields": {
+      "dpt_code": "8500",
+      "kind": null,
+      "name": "健康行為與社區科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 187,
+    "fields": {
+      "dpt_code": "9010",
+      "kind": null,
+      "name": "電機工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 188,
+    "fields": {
+      "dpt_code": "9020",
+      "kind": null,
+      "name": "資訊工程學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 189,
+    "fields": {
+      "dpt_code": "9210",
+      "kind": null,
+      "name": "電機工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 190,
+    "fields": {
+      "dpt_code": "9220",
+      "kind": null,
+      "name": "資訊工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 191,
+    "fields": {
+      "dpt_code": "9410",
+      "kind": null,
+      "name": "光電工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 192,
+    "fields": {
+      "dpt_code": "9420",
+      "kind": null,
+      "name": "電信工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 193,
+    "fields": {
+      "dpt_code": "9430",
+      "kind": null,
+      "name": "電子工程學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 194,
+    "fields": {
+      "dpt_code": "9440",
+      "kind": null,
+      "name": "資訊網路與多媒體研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 195,
+    "fields": {
+      "dpt_code": "9450",
+      "kind": null,
+      "name": "生醫電子與資訊學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 196,
+    "fields": {
+      "dpt_code": "A011",
+      "kind": null,
+      "name": "法學組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 197,
+    "fields": {
+      "dpt_code": "A012",
+      "kind": null,
+      "name": "司法組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 198,
+    "fields": {
+      "dpt_code": "A013",
+      "kind": null,
+      "name": "財法組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 199,
+    "fields": {
+      "dpt_code": "A210",
+      "kind": null,
+      "name": "法律研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 200,
+    "fields": {
+      "dpt_code": "A410",
+      "kind": null,
+      "name": "科際整合法律學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 201,
+    "fields": {
+      "dpt_code": "B010",
+      "kind": null,
+      "name": "生命科學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 202,
+    "fields": {
+      "dpt_code": "B020",
+      "kind": null,
+      "name": "生化科技學系"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 203,
+    "fields": {
+      "dpt_code": "B210",
+      "kind": null,
+      "name": "生命科學所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 204,
+    "fields": {
+      "dpt_code": "B220",
+      "kind": null,
+      "name": "生化科技研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 205,
+    "fields": {
+      "dpt_code": "B420",
+      "kind": null,
+      "name": "植物科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 206,
+    "fields": {
+      "dpt_code": "B430",
+      "kind": null,
+      "name": "分子與細胞生物學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 207,
+    "fields": {
+      "dpt_code": "B440",
+      "kind": null,
+      "name": "生態學與演化生物學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 208,
+    "fields": {
+      "dpt_code": "B450",
+      "kind": null,
+      "name": "漁業科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 209,
+    "fields": {
+      "dpt_code": "B460",
+      "kind": null,
+      "name": "生化科學研究所"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 210,
+    "fields": {
+      "dpt_code": "B480",
+      "kind": null,
+      "name": "基因體與系統生物學學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 211,
+    "fields": {
+      "dpt_code": "H410",
+      "kind": null,
+      "name": "統計碩士學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 212,
+    "fields": {
+      "dpt_code": "4211",
+      "kind": null,
+      "name": "臨床所外醫組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 213,
+    "fields": {
+      "dpt_code": "E410",
+      "kind": null,
+      "name": "事業經營碩士在職學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 214,
+    "fields": {
+      "dpt_code": "E420",
+      "kind": null,
+      "name": "事業經營法務碩士在職學位學程"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 215,
+    "fields": {
+      "dpt_code": "5411",
+      "kind": null,
+      "name": "環工所環工組"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 216,
+    "fields": {
+      "dpt_code": "5412",
+      "kind": null,
+      "name": "環工所環管組"
+    }
+  }
+]

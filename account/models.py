@@ -1,14 +1,12 @@
 import hashlib
+
+from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.utils import timezone
 
-class User(AbstractBaseUser):
-    # Meta information
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['kind']
 
+class User(AbstractUser):
     # Choices
     ADMIN = 'A'
     STATION = 'S'
@@ -20,14 +18,11 @@ class User(AbstractBaseUser):
         (SUPERVISOR, 'Supervisor'),
     )
 
-    username = models.CharField(max_length=32, unique=True)
     kind = models.CharField(max_length=1, choices=KIND_CHOICES)
-    description = models.CharField(max_length=256, blank=True)
-    is_active = models.BooleanField(default=True)
-    date_joined = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.username
+
 
 class Station(models.Model):
     name = models.CharField(max_length=16)
@@ -39,12 +34,13 @@ class Station(models.Model):
     def __str__(self):
         return '{}({})'.format(self.name, self.external_id)
 
+
 class Session(models.Model):
     NORMAL = 'N'
     EXPIRED = 'E'
     NOT_RESPONDING = 'H'
 
-    station = models.ForeignKey(Station)
+    user = models.ForeignKey(User)
     token = models.CharField(max_length=256, unique=True)
     created_on = models.DateTimeField(default=timezone.now)
     expired_on = models.DateTimeField()
@@ -55,7 +51,7 @@ class Session(models.Model):
         now = timezone.now()
         if (now - self.last_seen) > settings.SESSION_MAX_RESPOND_TIME:
             return Session.NOT_RESPONDING
-        elif self.expired_on > now:
+        elif self.expired_on < now:
             return Session.EXPIRED
         return Session.NORMAL
 
@@ -63,9 +59,9 @@ class Session(models.Model):
         return self.created_on.isoformat()
 
     @classmethod
-    def generate(cls, station, expired_on=None):
-        session = Session(station=station)
-        s = '&'.join((str(station.id), session.created_on.isoformat(), settings.SECRET_KEY))
+    def generate(cls, user, expired_on=None):
+        session = Session(user=user)
+        s = '&'.join((str(user.username), session.created_on.isoformat(), settings.SECRET_KEY))
         h = hashlib.sha256(s.encode()).hexdigest().upper()
         if not expired_on:
             expired_on = session.created_on + settings.SESSION_EXPIRE_TIME

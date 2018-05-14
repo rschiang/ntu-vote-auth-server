@@ -1,13 +1,19 @@
 from core.models import Record, AuthCode
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .decorators import check_prerequisites, scheduled
+from .decorators import check_prerequisites, scheduled, login_required, permission
 from .utils import error, exchange_token, logger
+from account.models import User
+
 
 @api_view(['POST'])
 @scheduled
-@check_prerequisites('uid', 'station', 'token')
+@login_required
+@permission(User.STATION)
+@check_prerequisites('uid', 'vote_token')
 def confirm(request):
     token = exchange_token(request)
     if not token:
@@ -30,7 +36,7 @@ def confirm(request):
     # Issue auth code
     code = AuthCode.objects.filter(kind=token.kind, issued=False).first()
     if code:
-        record.state = Record.USED
+        record.state = Record.VOTING
         record.save()
 
         code.issued = True
@@ -40,4 +46,11 @@ def confirm(request):
         return error('out_of_auth_code', status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     logger.info('Auth code issued: %s', token.kind)
-    return Response({'status': 'success', 'code': code.code})
+    callback = {
+        'uri': request.build_absolute_uri(reverse('elector:callback')),
+        'code': token.confirm_code,
+    }
+    return Response({
+        'status': 'success', 'ballot': code.code,
+        'callback': '{uri}?callback={code}'.format(**callback)
+    })
