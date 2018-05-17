@@ -1,4 +1,3 @@
-from django.contrib.admin import site as admin_site
 from django.conf.urls import url, include
 from core.views import (
     index, authenticate, confirm, report, complete
@@ -35,5 +34,4 @@ urlpatterns = [
         # M
         url(r'^status$', status, name='status'),
     ])),
-    url(r'^admin/', admin_site.urls)
 ]
