@@ -68,25 +68,3 @@ def login_required(f):
         return f(request, *args, **kwargs)
 
     return inner
-
-
-def permission(*permission):
-    def decorator(f):
-        @wraps(f, assigned=available_attrs(f))
-        def inner(request, *args, **kwargs):
-            logger.debug('Permission Required: %s', permission)
-            logger.debug('user kind %s', request.user.kind)
-            if request.user.kind not in permission:
-                logger.error('Rejected %s to access %s', request.user, request.path)
-                return error('permission_denied', status.HTTP_403_FORBIDDEN)
-
-            if request.user.kind is get_user_model().STATION:
-                if request.user.station.external_id:
-                    request.station = str(request.user.station.external_id)
-                else:
-                    logger.error('Request from no id station (%s)', request.user.station.name)
-                    return error('station_error')
-
-            return f(request, *args, **kwargs)
-        return inner
-    return decorator
