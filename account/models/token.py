@@ -1,11 +1,18 @@
+import base64
+import os
 from django.db import models
-from rest_framework.authtoken.models import Token as BaseToken
 
-# NOTE: be careful of this bug: <https://github.com/encode/django-rest-framework/issues/705>,
-# add `'rest_framework.authtoken'` to `INSTALLED_APPS` if necessary.
+def generate_token_key():
+    return base64.b32encode(os.urandom(25)).decode()
 
-class Token(BaseToken):
+class Token(models.Model):
     """
-    Represents an authorization token.
+    An authorization token.
     """
+    key = models.CharField(max_length=40, primary_key=True, default=generate_token_key)
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='tokens')
+    created = models.DateTimeField(auto_now_add=True)
     is_expired = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.key
