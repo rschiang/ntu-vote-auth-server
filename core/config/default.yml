@@ -12,4 +12,4 @@ vote:
 aca:
     user: ntusa
     password: ntusa
-    url: http://localhost:9527/
+    url: http://localhost:9527/seqServices/{}

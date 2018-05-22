@@ -18,7 +18,7 @@ def query_student(student_id):
     """
     # Loads the response from ACA
     request = AcaRequest(stuid=student_id)
-    response = request.post('/stuinfoByStuId')
+    response = request.post('stuinfo2ByStuId')
 
     # Read the response entity
     try:
@@ -44,7 +44,7 @@ def to_student_id(internal_id):
     request = AcaRequest(cardno=serial_id)
 
     # Load and parse response
-    response = request.post('/stuinfoByCardno')
+    response = request.post('stuinfo2ByCardno')
 
     # Read the response entity
     try:
@@ -84,7 +84,7 @@ class AcaRequest(object):
     def __init__(self, **values):
         self.values = values
 
-    def post(self, path):
+    def post(self, method):
         """
         Sends the request, returns an AcaResponse object.
         """
@@ -104,7 +104,7 @@ class AcaRequest(object):
         data = et.tostring(entity, encoding='big5')
 
         # Builds and sends the HTTP request
-        url = settings.ACA_API_URL + path
+        url = settings.ACA_API_URL.format(method)
         headers = {
             'Content-Type': 'text/xml; charset=big5',
             'X-Requested-With': 'NTUVote',
