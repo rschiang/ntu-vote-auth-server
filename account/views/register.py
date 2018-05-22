@@ -1,15 +1,15 @@
 import logging
 from account.models import Token
+from account.throttling import StrictAnonRateThrottle
 from django.db import transaction
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from rest_framework.throttling import AnonRateThrottle
 
 logger = logging.getLogger('vote.auth')
 
 class RegisterView(ObtainAuthToken):
-    throttle_classes = (AnonRateThrottle,)
+    throttle_classes = (StrictAnonRateThrottle,)
 
     def post(self, request, *args, **kwargs):
         # Authenticate user by default serializer
