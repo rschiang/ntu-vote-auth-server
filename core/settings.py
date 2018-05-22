@@ -201,6 +201,7 @@ API_VERSION = '4'
 # External service configurations
 VOTE_HOST = CONFIG['vote']['host']
 VOTE_API_KEY = CONFIG['vote']['key']
+VOTE_API_URL = CONFIG['vote']['url']
 ACA_API_USER = CONFIG['aca']['user']
 ACA_API_PASSWORD = CONFIG['aca']['password']
 ACA_API_URL = CONFIG['aca']['url']

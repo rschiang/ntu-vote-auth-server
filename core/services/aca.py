@@ -1,10 +1,11 @@
 import logging
 import struct
+from .errors import ExternalError
 from django.conf import settings
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as et
 
-logger = logging.getLogger('vote.service')
+logger = logging.getLogger('vote.aca')
 
 
 def reverse_indian(i):
@@ -93,11 +94,3 @@ class StudentInfo(object):
 
     def __str__(self):
         return '<StudentInfo: {id} ({college} {type} {department}){0}>'.format('' if self.valid else '*', **self.__dict__)
-
-
-class ExternalError(Exception):
-    def __init__(self, reason):
-        self.reason = reason
-
-    def __str__(self):
-        return repr(self.reason)

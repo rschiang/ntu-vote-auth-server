@@ -8,6 +8,7 @@ database:
 vote:
     host: localhost
     key: Lorem ipsum donor amet
+    url: http://localhost:9407/
 aca:
     user: ntusa
     password: ntusa
