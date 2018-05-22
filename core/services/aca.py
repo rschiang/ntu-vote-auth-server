@@ -1,8 +1,8 @@
 import logging
+import requests
 import struct
 from .errors import ExternalError
 from django.conf import settings
-from urllib.request import Request, urlopen
 from xml.etree import ElementTree as et
 
 logger = logging.getLogger('vote.aca')
@@ -12,40 +12,44 @@ def reverse_indian(i):
     return struct.unpack('<I', struct.pack('>I', i))
 
 
-def to_student_id(internal_id):
-    # Build up the clumsy request entity
-    req_entity = et.Element('STUREQ')
-    req_uid = et.SubElement(req_entity, 'UID')
-    req_uid.text = settings.ACA_API_USER
-    req_pass = et.SubElement(req_entity, 'PASSWORD')
-    req_pass.text = settings.ACA_API_PASSWORD
-    req_cid = et.SubElement(req_entity, 'CARDNO')
-    req_cid.text = str(reverse_indian(int(internal_id, 16))[0])
-    req_data = et.tostring(req_entity, encoding='big5')
-
-    # Initiate HTTP request
-    request = Request(settings.ACA_API_URL, method='POST')
-    request.add_header('Content-Type', 'application/xml')
-    request.add_header('X-Requested-With', 'NTUVote')
-
-    # Load and parse response
-    try:
-        response = urlopen(request, data=req_data)
-        resp_data = response.read().decode('big5')
-        resp_entity = et.fromstring(resp_data)
-    except (UnicodeDecodeError, et.ParseError):
-        logger.exception('Failed to load server entity')
-        raise ExternalError('entity_malformed')
-    except Exception as err:
-        logger.exception('Failed to connect the ACA server')
-        raise ExternalError('external_server_down') from err
+def query_student(student_id):
+    """
+    Gets the relevant student information from ACA.
+    """
+    # Loads the response from ACA
+    request = AcaRequest(stuid=student_id)
+    response = request.post('/stuinfoByStuId')
 
     # Read the response entity
     try:
-        status = resp_entity.find('WEBOK').text
-        error = resp_entity.find('ERROR').text
+        if not response.ok:
+            error = response.error
+            logger.warning('Querying ACA failed: %s', error)
+            raise ExternalError(error)  # TODO: Determine error type
+        info = StudentInfo(id=student_id, entity=response)
+    except KeyError:
+        logger.exception('Server entity malformed')
+        raise ExternalError('entity_malformed')
 
-        if status != 'OK':
+    logger.info(str(info))
+    return info
+
+
+def to_student_id(internal_id):
+    """
+    Gets the student ID and relevant information associated with this card from ACA.
+    """
+    # Build the request
+    serial_id = str(reverse_indian(int(internal_id, 16))[0])
+    request = AcaRequest(cardno=serial_id)
+
+    # Load and parse response
+    response = request.post('/stuinfoByCardno')
+
+    # Read the response entity
+    try:
+        if not response.ok:
+            error = response.error
             logger.warning('Querying ACA failed: %s', error)
 
             if '為黑名單' in error:
@@ -62,32 +66,104 @@ def to_student_id(internal_id):
             # All other rare cases
             raise ExternalError(error)
 
-        info = StudentInfo()
-        info.id = resp_entity.find('STUID').text
-        info.type = resp_entity.find('STUTYPE').text
-        info.valid = resp_entity.find('INCAMPUS').text
-        info.college = resp_entity.find('COLLEGE').text
-        info.department = resp_entity.find('DPTCODE').text
+        info = StudentInfo(entity=response)
 
-    except AttributeError:
+    except KeyError:
         logger.exception('Server entity malformed')
         raise ExternalError('entity_malformed')
-
-    # Normalize
-    info.valid = (info.valid == 'true')
 
     logger.info(str(info))
     return info
 
 
-class StudentInfo(object):
+class AcaRequest(object):
+    """
+    Builds and sends an ACA-style API request.
+    """
 
-    def __init__(self, id=None, type=None, valid=False, college=None, department=None):
-        self.id = id
-        self.type = type  # chinese value returned from ACA server
-        self.valid = valid
-        self.college = college
-        self.department = department
+    def __init__(self, **values):
+        self.values = values
+
+    def post(self, path):
+        """
+        Sends the request, returns an AcaResponse object.
+        """
+
+        # Prepare parameters
+        values = self.values
+        values['uid'] = settings.ACA_API_USER
+        values['password'] = settings.ACA_API_PASSWORD
+
+        # Generate POST entity
+        entity = et.Element('STUREQ')
+        ele = et.SubElement(entity, 'Vers')  # dunno why this is different
+        ele.text = '1.00'
+        for key, value in values.items():
+            ele = et.SubElement(entity, key.upper())
+            ele.text = value
+        data = et.tostring(entity, encoding='big5')
+
+        # Builds and sends the HTTP request
+        url = settings.ACA_API_URL + path
+        headers = {
+            'Content-Type': 'text/xml; charset=big5',
+            'X-Requested-With': 'NTUVote',
+        }
+
+        try:
+            response = requests.post(url, data=data, headers=headers)
+        except Exception as e:
+            logger.exception('Failed to connect the ACA server')
+            raise ExternalError('external_server_down') from e
+
+        return AcaResponse(response)
+
+
+class AcaResponse(object):
+    """
+    Contains the response from an ACA-style API request.
+    """
+
+    def __init__(self, response):
+        response.encoding = 'big5'
+        try:
+            self.entity = et.fromstring(response.body)
+        except (UnicodeDecodeError, et.ParseError) as e:
+            logger.exception('Failed to load server entity')
+            raise ExternalError('entity_malformed') from e
+
+    def __getitem__(self, key):
+        ele = self.entity.find(key.upper())
+        if not ele:
+            raise KeyError
+        return ele.text
+
+    @property
+    def ok(self):
+        """
+        Returns True if the request status is set to 'OK'; False otherwise.
+        """
+        return self['webok'] == 'OK'
+
+    @property
+    def error(self):
+        """
+        Returns the error text.
+        """
+        return self['error']
+
+
+class StudentInfo(object):
+    """
+    Contains student information acquired from ACA.
+    """
+
+    def __init__(self, id=None, type=None, valid=False, college=None, department=None, entity=None):
+        self.id = id or entity['stuid']
+        self.type = type or entity['stutype']  # chinese value returned from ACA server
+        self.valid = valid or (entity['incampus'] == 'true')
+        self.college = college or entity['college']
+        self.department = department or entity['dptcode']
 
     def __repr__(self):
         return "{0}(id='{id}', type='{type}', valid={valid}, college='{college}', department='{department}')".format(self.__class__.__name__, **self.__dict__)
