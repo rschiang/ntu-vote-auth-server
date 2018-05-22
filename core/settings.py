@@ -179,6 +179,20 @@ if 'mail' in CONFIG:
     EMAIL_SUBJECT_PREFIX = '[vote-auth] '
     ADMINS = list(CONFIG['admin'].items())
 
+# Cache
+
+if 'cache' in CONFIG:
+    CACHES = {
+        'default': {
+            'BACKEND': ({
+                'db': 'django.core.cache.backends.db.DatabaseCache',
+                'file': 'django.core.cache.backends.filebased.FileBasedCache',
+                'memcached': 'django.core.cache.backends.memcached.MemcachedCache',
+            }).get(CONFIG['cache']['backend']),
+            'LOCATION': CONFIG['cache'].get('location', '')
+        }
+    }
+
 # NTU Vote specific settings
 
 # REST API declaration
