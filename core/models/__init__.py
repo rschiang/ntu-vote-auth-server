@@ -7,4 +7,3 @@ from .elector import Elector
 from .errors import InvalidState
 from .session import Session
 from .station import Station
-from .validators import validate_student_id

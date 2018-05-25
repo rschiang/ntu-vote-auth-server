@@ -1,5 +1,5 @@
+from core.validators import student_id_validator
 from django.db import models
-from .validators import student_id_validator
 
 class AuthCode(models.Model):
     """

@@ -1,5 +1,6 @@
 name: default
 debug: true
+security: strict
 host: localhost
 secret: You could teleport yourself to the library bell tower
 database:

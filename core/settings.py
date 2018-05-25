@@ -213,8 +213,11 @@ ACA_API_USER = CONFIG['aca']['user']
 ACA_API_PASSWORD = CONFIG['aca']['password']
 ACA_API_URL = CONFIG['aca']['url']
 
-# Security enforcements
-ENFORCE_CARD_VALIDATION = True
+# Security enforcements (strict, quirk, off)
+CARD_VALIDATION_MODE = CONFIG['security']
+CARD_VALIDATION_STRICT = (CARD_VALIDATION_MODE == 'strict')
+CARD_VALIDATION_QUIRK = (CARD_VALIDATION_MODE == 'quirk')
+CARD_VALIDATION_OFF = (CARD_VALIDATION_MODE == 'off')
 
 # Election meta information
 UNDERGRADUATE_CODE = "BTE"

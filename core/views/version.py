@@ -10,7 +10,7 @@ class VersionView(APIView):
     Returns the running instance version if available.
     """
 
-    def get(self, request, format=None):
+    def get(self, request):
         try:
             # Reads Git HEAD file and parse its ref
             with open(os.path.join(settings.BASE_DIR, '.git/HEAD'), 'r') as f:
