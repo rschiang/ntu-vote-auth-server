@@ -5,7 +5,7 @@ from django.urls import include, path
 api_urlpatterns = [
     # General views
     path('', core.index),
-    path('version', core.version)
+    path('version', core.version),
 
     # Account views
     path('account/', include([
@@ -25,6 +25,9 @@ api_urlpatterns = [
         # Callback events
         path('allocated', core.allocated, name='allocated-event'),
         path('voted', core.voted, name='voted-event'),
+
+        # Live statistics
+        # path()
     ], namespace='election')),
 ]
 
