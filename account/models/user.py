@@ -9,11 +9,13 @@ class User(AbstractUser):
     ADMIN = 'A'
     STATION = 'S'
     SUPERVISOR = 'V'
+    REMOTE_SERVER = 'R'
 
     KIND_CHOICES = (
         (ADMIN, 'Administrator'),
         (STATION, 'Station staff'),
         (SUPERVISOR, 'Supervisor'),
+        (REMOTE_SERVER, 'Remote server'),
     )
 
     kind = models.CharField(max_length=1, choices=KIND_CHOICES)

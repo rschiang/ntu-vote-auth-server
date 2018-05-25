@@ -1,6 +1,5 @@
 # Views
-from .authenticate import authenticate
-from .confirm import confirm
-from .index import index
-from .report import report
-from .complete import complete
+from .index import index    # noqa: F401
+from .version import VersionView
+
+version = VersionView.as_view()
