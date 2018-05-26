@@ -1,7 +1,7 @@
 import logging
 import requests
 import struct
-from .errors import ExternalError
+from .errors import AuthenticationError, ExternalError
 from django.conf import settings
 from xml.etree import ElementTree as et
 
@@ -25,11 +25,11 @@ def query_student(student_id):
         if not response.ok:
             error = response.error
             logger.warning('Querying ACA failed: %s', error)
-            raise ExternalError(error)  # TODO: Determine error type
+            raise ExternalError(detail=error)  # TODO: Determine error type
         info = StudentInfo(id=student_id, entity=response)
     except KeyError:
         logger.exception('Server entity malformed')
-        raise ExternalError('entity_malformed')
+        raise ExternalError(code='entity_malformed')
 
     logger.info(str(info))
     return info
@@ -53,24 +53,24 @@ def to_student_id(internal_id):
             logger.warning('Querying ACA failed: %s', error)
 
             if '為黑名單' in error:
-                raise ExternalError('card_blacklisted')
+                raise AuthenticationError(code='card_blacklisted')
             elif '在卡務中不存在' in error or '尚未啟用' in error:
-                raise ExternalError('card_invalid')
+                raise AuthenticationError(code='card_invalid')
             elif '查無學號資料' in error:
-                raise ExternalError('student_not_found')
+                raise AuthenticationError(code='student_not_found')
             elif '未授權' in error:
-                raise ExternalError('unauthorized')
+                raise ExternalError(code='unauthorized')
             elif '輸入資料錯誤' in error:
-                raise ExternalError('params_invalid')
+                raise ExternalError(code='params_invalid')
 
             # All other rare cases
-            raise ExternalError(error)
+            raise ExternalError(detail=error)
 
         info = StudentInfo(entity=response)
 
     except KeyError:
         logger.exception('Server entity malformed')
-        raise ExternalError('entity_malformed')
+        raise ExternalError(code='entity_malformed')
 
     logger.info(str(info))
     return info
@@ -114,7 +114,7 @@ class AcaRequest(object):
             response = requests.post(url, data=data, headers=headers)
         except Exception as e:
             logger.exception('Failed to connect the ACA server')
-            raise ExternalError('external_server_down') from e
+            raise ExternalError(code='external_server_down') from e
 
         return AcaResponse(response)
 
@@ -130,7 +130,7 @@ class AcaResponse(object):
             self.entity = et.fromstring(response.body)
         except (UnicodeDecodeError, et.ParseError) as e:
             logger.exception('Failed to load server entity')
-            raise ExternalError('entity_malformed') from e
+            raise ExternalError(code='entity_malformed') from e
 
     def __getitem__(self, key):
         ele = self.entity.find(key.upper())
@@ -159,6 +159,7 @@ class StudentInfo(object):
     """
 
     def __init__(self, id=None, type=None, valid=False, college=None, department=None, entity=None):
+        # TODO: Normalize ACA input
         self.id = id or entity['stuid']
         self.type = type or entity['stutype']  # chinese value returned from ACA server
         self.valid = valid or (entity['incampus'] == 'true')

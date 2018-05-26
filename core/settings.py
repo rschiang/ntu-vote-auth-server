@@ -65,6 +65,7 @@ REST_FRAMEWORK = {
         'anon': '30/minute',
         'strict': '3/minute',
     },
+    'EXCEPTION_HANDLER': 'core.views.rest_exception_handler',
 }
 
 # Authentication

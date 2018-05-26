@@ -1,7 +1,5 @@
 Django==2.0.5
 djangorestframework==3.8.2
 gunicorn==19.8.1
-channels==2.1.1
-social-auth-app-django==2.1.0
 PyYAML==3.12
 requests==2.18.4

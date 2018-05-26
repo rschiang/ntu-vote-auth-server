@@ -6,11 +6,12 @@ class BallotManager(models.Manager):
     Custom manager to populate eligibility conditions early.
     """
 
-    def all_ballots(self):
+    def all_ballots(self, election=None):
         """
         Returns all ballots with their expressions prefetched.
         """
-        return self.prefetch_related('conditions').all()
+        queryset = self.filter(election=election) if election else self
+        return queryset.prefetch_related('conditions').all()
 
 
 class Ballot(models.Model):
@@ -44,3 +45,12 @@ class Ballot(models.Model):
             return self.conditions.get(parent=None)
         except ObjectDoesNotExist:
             return None
+
+    def match(self, fields):
+        """
+        Returns if the given fields match the conditions of this ballot.
+        """
+        condition = self.condition
+        if condition:
+            return condition.match(fields, queryset=self.conditions.all())
+        return True     # If no condition given, default to True.

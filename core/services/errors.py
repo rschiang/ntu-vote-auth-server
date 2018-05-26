@@ -1,14 +1,21 @@
 # Errors used in external services
+from rest_framework.exceptions import APIException
 
-class ExternalError(Exception):
+class ExternalError(APIException):
     """
     External API service error.
     """
-    def __init__(self, reason):
-        self.reason = reason
+    status_code = 503
+    default_code = 'external_error'
+    default_detail = 'Error occured in external service.'
 
-    def __str__(self):
-        return repr(self.reason)
+class AuthenticationError(APIException):
+    """
+    Raises when ACA authentication failed.
+    """
+    status_code = 401
+    default_code = 'auth_error'
+    default_detail = 'Authentication failed with ACA.'
 
 class NotImplemented(Exception):
     """
