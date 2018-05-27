@@ -58,7 +58,7 @@ def allocate_booth(station_id, auth_code):
                 raise RequestNotFulfilled('booth_unavailable')
 
             elif 'authcode step must 0' in message:
-                logger.info('No booth available for station %s', station_id)
+                logger.info('Auth code %s has been used', auth_code)
                 raise ExternalError('auth_code_used')
 
             else:

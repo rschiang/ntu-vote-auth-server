@@ -1,4 +1,4 @@
-from .validators import internal_id_validator, student_id_validator
+from .validators import internal_id_validator, student_id_validator, session_key_validator
 from django.conf import settings
 from rest_framework import serializers
 
@@ -19,3 +19,10 @@ class AuthenticateSerializer(serializers.Serializer):
         if not settings.CARD_VALIDATION_QUIRK and not value:
             raise serializers.ValidationError('Student ID could not be blank with current validation mode')
         return value
+
+class VerifySerializer(serializers.Serializer):
+    """
+    Represents an general verification request, either confirmation or rejection.
+    """
+    student_id = serializers.CharField(validators=[student_id_validator])
+    session_key = serializers.CharField(validators=[session_key_validator])
