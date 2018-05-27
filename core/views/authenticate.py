@@ -94,10 +94,13 @@ class AuthenticateView(BaseElectionView):
                 raise ElectorSuspicious
 
             # Cancel out older sessions
-            if old_session.state == Session.AUTHORIZED:
+            if old_session.state in (Session.AUTHORIZED, Session.CANCELED):
                 # Session terminated before booth allocation.
-                logger.info('Expiring session #%s [S%s] (2 → Z)', old_session.id, old_session.station_id)
-                old_session.save_state(Session.CANCELED)
+                if old_session.state == Session.AUTHORIZED:
+                    logger.info('Expiring session #%s [S%s] (2 → Z)', old_session.id, old_session.station_id)
+                    old_session.save_state(Session.CANCELED)
+                else:
+                    logger.info('Found old canceled session #%s [S%s]', old_session.id, old_session.station_id)
 
                 # Since the elector has confirmed their identity and we've already
                 # requested an auth code based on that, no re-evaluation would be done.

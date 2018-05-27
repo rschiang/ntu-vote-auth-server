@@ -19,7 +19,6 @@ api_urlpatterns = [
         path('authenticate', core.authenticate, name='authenticate'),
         path('allocate', core.allocate, name='allocate'),
         path('reject', core.reject, name='reject'),
-        path('cancel', core.cancel, name='cancel'),
         path('abort', core.abort, name='abort'),
 
         # Callback events
