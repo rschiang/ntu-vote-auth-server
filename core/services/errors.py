@@ -17,6 +17,14 @@ class AuthenticationError(APIException):
     default_code = 'auth_error'
     default_detail = 'Authentication failed with ACA.'
 
+class RequestNotFulfilled(APIException):
+    """
+    Raises when vote system cannot complete the required action due to availability.
+    """
+    status_code = 400
+    default_code = 'not_fulfilled'
+    default_detail = 'The request cannot be completed by the vote system at the moment.'
+
 class NotImplemented(Exception):
     """
     The API function has not yet been implemented.

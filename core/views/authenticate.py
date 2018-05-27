@@ -26,7 +26,7 @@ class AuthenticateView(BaseElectionView):
         except ValidationError:
             logger.warning('Station %s request invalid (card %s [%s][%s])',
                            station.id, serializer.internal_id, serializer.student_id, serializer.revision)
-            raise
+            raise   # Exception handler will handle for us.
 
         # Read validated data and authenticate against ACA
         internal_id = serializer.validated_data['internal_id']
@@ -149,7 +149,7 @@ class AuthenticateView(BaseElectionView):
                     ballots.append(ballot)
                 continue
             except Elector.DoesNotExist:
-                pass
+                pass    # This elector isn't explicitly black/whitelisted. Good.
 
             # 2) Matches the elector data against ballot conditions.
             # We've done the logic on models, so just call the method.
