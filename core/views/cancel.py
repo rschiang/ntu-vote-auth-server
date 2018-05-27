@@ -7,7 +7,7 @@ from rest_framework.serializers import ValidationError
 
 logger = logging.getLogger('vote')
 
-class RejectView(BaseElectionView):
+class CancelView(BaseElectionView):
     """
     Rejects the authenticated information or cancel booth allocation if an auth code were issued.
     """
@@ -54,7 +54,7 @@ class RejectView(BaseElectionView):
             session.save_state(Session.NOT_VERIFIED)
         else:
             # Mark the session as canceled; re-authentication would return cached info.
-            logger.info('Student %s canceled their vote at station %s', student_id, station.id)
+            logger.info('Canceled vote session of student %s at station %s', student_id, station.id)
             session.save_state(Session.CANCELED)
 
         return Response({

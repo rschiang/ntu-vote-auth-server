@@ -18,11 +18,10 @@ api_urlpatterns = [
         # Station actions
         path('authenticate', core.authenticate, name='authenticate'),
         path('allocate', core.allocate, name='allocate'),
-        path('reject', core.reject, name='reject'),
+        path('cancel', core.cancel, name='cancel'),
         path('abort', core.abort, name='abort'),
 
         # Callback events
-        path('allocated', core.allocated, name='allocated-event'),
         path('voted', core.voted, name='voted-event'),
 
         # Live statistics
