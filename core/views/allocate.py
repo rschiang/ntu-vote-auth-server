@@ -45,8 +45,8 @@ class AllocateView(BaseElectionView):
                 raise ValidationError('session_invalid')
 
         except ValidationError:
-            logger.warning('Station %s request invalid (student %s session %s)',
-                           station.id, serializer.student_id, serializer.session_key)
+            logger.warning('Station %s request invalid', station.id)
+            logger.info(serializer.initial_data)
             raise   # Exception handler will handle for us.
 
         # Since station staff could invoke this method multiple times before

@@ -18,7 +18,8 @@ class RegisterView(ObtainAuthToken):
         try:
             serializer.is_valid(raise_exception=True)
         except ValidationError:
-            logger.error('Login attempt failed for "%s":"%s"', serializer.username, serializer.password)
+            logger.error('Login attempt failed')
+            logger.info(serializer.initial_data)
             raise
 
         user = serializer.validated_data['user']

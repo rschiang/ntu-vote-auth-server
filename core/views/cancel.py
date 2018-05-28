@@ -43,8 +43,8 @@ class CancelView(BaseElectionView):
                 raise ValidationError('session_invalid')
 
         except ValidationError:
-            logger.warning('Station %s request invalid (student %s session %s)',
-                           station.id, serializer.student_id, serializer.session_key)
+            logger.warning('Station %s request invalid', station.id)
+            logger.info(serializer.initial_data)
             raise   # Exception handler will handle for us.
 
         # Check if an auth code has been issued before

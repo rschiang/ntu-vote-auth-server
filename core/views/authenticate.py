@@ -24,8 +24,8 @@ class AuthenticateView(BaseElectionView):
         try:
             serializer.is_valid(raise_exception=True)
         except ValidationError:
-            logger.warning('Station %s request invalid (card %s [%s][%s])',
-                           station.id, serializer.internal_id, serializer.student_id, serializer.revision)
+            logger.warning('Station %s request invalid', station.id)
+            logger.info(serializer.initial_data)
             raise   # Exception handler will handle for us.
 
         # Read validated data and authenticate against ACA
@@ -59,7 +59,8 @@ class AuthenticateView(BaseElectionView):
                     raise ElectorSuspicious
 
             else:
-                info = aca.query_student(student_id)    # Query student ID instead
+                student_id_with_rev = student_id + str(revision)
+                info = aca.query_student(student_id_with_rev)    # Query student ID instead
 
         # Error handling
         # We don't catch ExternalError as we can do nothing about it.
