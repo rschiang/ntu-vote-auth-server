@@ -8,7 +8,7 @@ class IsStationStaff(BasePermission):
     """
 
     def has_permission(self, request, view):
-        return request.user and request.user.kind == User.STATION
+        return request.user.is_authenticated and request.user.kind == User.STATION
 
 
 class IsRemoteServer(BasePermission):
@@ -19,9 +19,9 @@ class IsRemoteServer(BasePermission):
     def has_permission(self, request, view):
         host_allowed = True
         if settings.VOTE_HOST:  # Check hostname if it was specified
-            host = request.META['REMOTE_HOST']
-            addr = request.META['REMOTE_ADDR']
+            host = request.META.get('REMOTE_HOST')
+            addr = request.META.get('REMOTE_ADDR')
             # TODO: Log hostname if not matched
             host_allowed = (host == settings.VOTE_HOST or addr == settings.VOTE_HOST)
 
-        return request.user and request.user.kind == User.REMOTE_SERVER and host_allowed
+        return request.user.is_authenticated and request.user.kind == User.REMOTE_SERVER and host_allowed

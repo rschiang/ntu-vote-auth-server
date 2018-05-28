@@ -7,7 +7,7 @@ class AccountTokenAuthentication(TokenAuthentication):
 
     def authenticate(self, request):
         auth = super().authenticate(request)
-        if len(auth) > 1:
+        if auth:
             user, token = auth
             if token.is_expired:
                 raise AuthenticationFailed('Token expired.')
