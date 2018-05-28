@@ -12,10 +12,15 @@ class BoothView(APIView):
     def get(self, request):
         station = request.user.station
 
-        # TODO: Fetch status from vote system
+        # Fetch status from vote system
         response = vote.fetch_booth_status(station.foreign_id)
+
+        # Build response
+        booths = {}
+        for booth in response:
+            booths[booth.booth_id] = booth.status
 
         return Response({
             'status': 'success',
-            'response': response,
+            'booths': booths,
         })
