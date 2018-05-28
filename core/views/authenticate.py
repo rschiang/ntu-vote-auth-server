@@ -141,6 +141,12 @@ class AuthenticateView(BaseElectionView):
                          ('B' if student_type in settings.UNDERGRADUATE_CODE else '')),
         }
 
+        # Filter out ineligible identities as regulated in Election & Recall Act §13(2).
+        if student_type not in settings.GENERAL_CODE:
+            logger.warning('Student %s does not qualify as elector', student_id)
+            session.save_state(Session.NOT_AUTHENTICATED)
+            raise NotQualified
+
         # Iterate through ballots and check eligibility
         ballots = []
         for ballot in Ballot.objects.all_ballots(election=election):
