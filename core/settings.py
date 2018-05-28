@@ -85,8 +85,8 @@ if CONFIG['database']['engine'] == 'psql':
     # You may install additional dependencies like this:
     #     apt-get install python3-dev libpq-dev
     #     pip install psycopg2
-    DATABASES['default'] = { k.upper(): v for k, v in CONFIG['database']}
-    DATABASES['default']['engine'] = 'django.db.backends.postgresql_psycopg2'
+    DATABASES['default'] = { k.upper(): v for k, v in CONFIG['database'].items()}
+    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 else:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',

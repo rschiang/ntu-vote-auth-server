@@ -102,6 +102,7 @@ class AcaRequest(object):
             ele = et.SubElement(entity, key.upper())
             ele.text = value
         data = et.tostring(entity, encoding='big5')
+        print(data.decode('big5'))
 
         # Builds and sends the HTTP request
         url = settings.ACA_API_URL.format(method)
@@ -127,14 +128,14 @@ class AcaResponse(object):
     def __init__(self, response):
         response.encoding = 'big5'
         try:
-            self.entity = et.fromstring(response.body)
+            self.entity = et.fromstring(response.text)
         except (UnicodeDecodeError, et.ParseError) as e:
             logger.exception('Failed to load server entity')
             raise ExternalError(code='entity_malformed') from e
 
     def __getitem__(self, key):
         ele = self.entity.find(key.upper())
-        if not ele:
+        if ele is None:
             raise KeyError
         return ele.text
 

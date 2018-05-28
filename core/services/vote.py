@@ -47,7 +47,8 @@ def request_auth_code(ballot_ids):
     """
     Requests the vote system to generate an auth code with the given set of ballots.
     """
-    response = send_request('/vote/allocate', {'kind': ','.join(ballot_ids)})
+    kind_str = ','.join(str(i) for i in ballot_ids)
+    response = send_request('/vote/allocate', {'kind': kind_str})
 
     # Reads and returns the enveloped auth code
     try:
@@ -63,9 +64,10 @@ def request_auth_code(ballot_ids):
         logger.exception('Server entity malformed on req #%s', response.get('api_callid'))
         raise ExternalError('entity_malformed')
     else:
-        logger.error('Auth code request failed on req #%s, reason %s', response.get('api_callid'), response.get('message'))
+        message = response.get('message')
+        logger.error('Auth code request failed on req #%s, reason %s', response.get('api_callid'), message)
         logger.info(response)
-        raise ExternalError
+        raise ExternalError(detail=message)
 
 
 def allocate_booth(station_id, auth_code):
@@ -149,7 +151,7 @@ class BoothInfo(object):
         if status == 'lock':
             self.status = 'in_use'
         elif status == 'free':
-            if (now - last_seen).total_seconds() > 60:  # check if not responding
+            if (now - self.last_seen).total_seconds() > 60:  # check if not responding
                 self.status = 'offline'
             else:
                 self.status = 'available'

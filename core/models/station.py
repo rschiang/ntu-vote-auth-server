@@ -13,7 +13,7 @@ class Station(models.Model):
     foreign_id = models.IntegerField()
 
     # Designated User object for API authentication
-    user = models.OneToOneField(get_user_model())
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
 
     name = models.CharField(max_length=64)
     description = models.TextField(blank=True)
