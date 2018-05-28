@@ -12,7 +12,7 @@ api_urlpatterns = [
         path('register', account.register, name='register'),
         path('ping', account.ping, name='ping'),
         path('booth', account.booth, name='booth'),
-    ], namespace='account')),
+    ])),
 
     # Election-specific views
     path('election/<slug:name>/', include([
@@ -27,7 +27,7 @@ api_urlpatterns = [
 
         # Live statistics
         # path('statistics', core.statistics, name='statistics'),
-    ], namespace='election')),
+    ])),
 ]
 
 urlpatterns = [
