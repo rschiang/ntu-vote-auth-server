@@ -12,12 +12,12 @@ def reverse_indian(i):
     return struct.unpack('<I', struct.pack('>I', i))
 
 
-def query_student(student_id):
+def query_student(student_id_with_rev):
     """
     Gets the relevant student information from ACA.
     """
     # Loads the response from ACA
-    request = AcaRequest(stuid=student_id)
+    request = AcaRequest(stuid=student_id_with_rev)
     response = request.post('stuinfo2ByStuId')
 
     # Read the response entity
@@ -25,8 +25,20 @@ def query_student(student_id):
         if not response.ok:
             error = response.error
             logger.warning('Querying ACA failed: %s', error)
+
+            if '發卡次數不一致' in error:
+                raise AuthenticationError(code='revision_mismatch')
+            elif '沒有啟用卡片資料' in error:
+                raise AuthenticationError(code='card_invalid')
+            elif '查無學號資料' in error:
+                raise AuthenticationError(code='student_not_found')
+            elif '未授權' in error:
+                raise ExternalError(code='unauthorized')
+            elif '輸入資料錯誤' in error:
+                raise ExternalError(code='params_invalid')
+
             raise ExternalError(detail=error)  # TODO: Determine error type
-        info = StudentInfo(id=student_id, entity=response)
+        info = StudentInfo(entity=response)
     except KeyError:
         logger.exception('Server entity malformed')
         raise ExternalError(code='entity_malformed')
@@ -102,7 +114,6 @@ class AcaRequest(object):
             ele = et.SubElement(entity, key.upper())
             ele.text = value
         data = et.tostring(entity, encoding='big5')
-        print(data.decode('big5'))
 
         # Builds and sends the HTTP request
         url = settings.ACA_API_URL.format(method)
