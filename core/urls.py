@@ -19,13 +19,13 @@ api_urlpatterns = [
         path('authenticate', core.authenticate, name='authenticate'),
         path('allocate', core.allocate, name='allocate'),
         path('cancel', core.cancel, name='cancel'),
-        path('abort', core.abort, name='abort'),
+        # path('abort', core.abort, name='abort'),
 
         # Callback events
         path('voted', core.voted, name='voted-event'),
 
         # Live statistics
-        # path()
+        # path('statistics', core.statistics, name='statistics'),
     ], namespace='election')),
 ]
 

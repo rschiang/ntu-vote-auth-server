@@ -27,6 +27,12 @@ class VerifySerializer(serializers.Serializer):
     student_id = serializers.CharField(validators=[student_id_validator])
     session_key = serializers.CharField(validators=[session_key_validator])
 
+class AbortSerializer(serializers.Serializer):
+    """
+    Represents an abortion request. Ouch.
+    """
+    booth_id = serializers.IntegerField(min_value=1)
+
 class VoteEventSerializer(serializers.Serializer):
     """
     Represents a general event callback from vote system.
