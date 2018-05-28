@@ -24,24 +24,10 @@ def fetch_booth_status(station_id=None):
                 result_list = [i for i in result_list if i['a_id'] == station_id]
 
             # Iterate through entries and convert them into objects
-            entries = []
-            for entry in response['result']:
-                # TODO: Use REST Framework serializer.
-                station_id = int(entry['a_id'])
-                booth_id = int(entry['num'])
-                status = entry['status']
-                last_seen = datetime.fromtimestamp(int(entry['lastseen']), tz=timezone.utc)
-
-                # Determine real status based on last_seen
-                if status == 'free' and (now - last_seen).total_seconds() > 60:
-                    status = 'offline'
-                elif status == 'lock':
-                    status = 'in_use'
-                else:
-                    status = 'available'
-
-                # Create corresponding booth info object
-                entries.push(BoothInfo(station_id=station_id, booth_id=booth_id, status=status, last_seen=last_seen))
+            # TODO: Use REST Framework serializer.
+            entries = [BoothInfo(
+                station_id=i['a_id'], booth_id=i['num'], status=i['status'], last_seen=i['lastseen'], now=now
+            ) for i in result_list]
 
             # Return the whole thing
             return entries
@@ -152,11 +138,21 @@ class BoothInfo(object):
     Contains status information for a booth.
     """
 
-    def __init__(self, station_id=None, booth_id=None, status=None, last_seen=None):
-        self.station_id = station_id
-        self.booth_id = booth_id
+    def __init__(self, station_id=None, booth_id=None, status=None, last_seen=None, now=None):
+        self.station_id = int(station_id)
+        self.booth_id = int(booth_id)
         self.status = status
-        self.last_seen = last_seen
+        self.last_seen = datetime.fromtimestamp(int(last_seen), tz=timezone.utc)
+
+        # Determine status by calculating time offset
+        now = now or timezone.now()
+        if status == 'lock':
+            self.status = 'in_use'
+        elif status == 'free':
+            if (now - last_seen).total_seconds() > 60:  # check if not responding
+                self.status = 'offline'
+            else:
+                self.status = 'available'
 
     def __str__(self):
         return '<BoothInfo: #{station_id}-{booth_id} ({status})>'.format(**self.__dict__)
