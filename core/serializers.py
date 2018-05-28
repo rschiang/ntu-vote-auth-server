@@ -22,7 +22,13 @@ class AuthenticateSerializer(serializers.Serializer):
 
 class VerifySerializer(serializers.Serializer):
     """
-    Represents an general verification request, either confirmation or rejection.
+    Represents a general verification request, either confirmation or rejection.
     """
     student_id = serializers.CharField(validators=[student_id_validator])
     session_key = serializers.CharField(validators=[session_key_validator])
+
+class VoteEventSerializer(serializers.Serializer):
+    """
+    Represents a general event callback from vote system.
+    """
+    auth_code = serializers.CharField(max_length=256)

@@ -2,6 +2,7 @@
 from .abort import AbortView
 from .allocate import AllocateView
 from .authenticate import AuthenticateView
+from .voted import VotedEventView
 from .cancel import CancelView
 from .version import VersionView
 
@@ -14,3 +15,4 @@ allocate = AllocateView.as_view()
 authenticate = AuthenticateView.as_view()
 cancel = CancelView.as_view()
 version = VersionView.as_view()
+voted = VotedEventView.as_view()

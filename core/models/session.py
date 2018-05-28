@@ -45,8 +45,7 @@ class Session(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     # Session-specific information
-    auth_code = models.ForeignKey('AuthCode', on_delete=models.SET_NULL, null=True)
-    ballots = models.ManyToManyField('Ballot')      # Ballots matched during authentication
+    auth_code = models.CharField(max_length=256, blank=True)
     key = models.CharField(max_length=8, default=generate_session_key)  # Unique session key
 
     def __str__(self):

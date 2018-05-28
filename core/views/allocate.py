@@ -2,7 +2,7 @@ import logging
 from .generics import BaseElectionView
 from core.serializers import VerifySerializer
 from core.services import vote
-from core.models import Session, AuthCode
+from core.models import Session
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -56,16 +56,15 @@ class AllocateView(BaseElectionView):
         if not session.auth_code:
             # Ask the vote system to generate one for us
             ballot_ids = [ballot.foreign_id for ballot in session.ballots.all()]
-            code = vote.request_auth_code(ballot_ids=ballot_ids)
+            auth_code = vote.request_auth_code(ballot_ids=ballot_ids)
 
             # Update the session state in advance
-            auth_code = AuthCode.objects.create(election=election, student_id=student_id, code=code)
             session.auth_code = auth_code
             session.save_state(Session.AUTHORIZED)
 
         # We've got an auth code, now try allocating a booth for elector
         # let underlying APIException do the out-of-booth handling for us
-        booth_id = vote.allocate_booth(station_id=station.foreign_id, auth_code=session.auth_code.code)
+        booth_id = vote.allocate_booth(station_id=station.foreign_id, auth_code=session.auth_code)
 
         # Mark the session as VOTING
         session.save_state(Session.VOTING)

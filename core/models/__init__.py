@@ -1,6 +1,5 @@
 # Models
 # flake8: noqa: F401
-from .auth_code import AuthCode
 from .ballot import Ballot
 from .election import Election
 from .elector import Elector

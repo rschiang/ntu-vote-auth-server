@@ -1,4 +1,5 @@
 from core.models import Election
+from django.conf import settings
 from rest_framework.permissions import BasePermission
 
 class IsElectionRunning(BasePermission):
@@ -19,3 +20,15 @@ class IsAssociatedElection(BasePermission):
             return request.user.station.election == obj
         except AttributeError:
             return False        # No station or election associated
+
+class IsFromVoteSystem(BasePermission):
+    """
+    Only allows access from vote system if configured with `VOTE_HOST`.
+    """
+
+    def has_permission(self, request, view):
+        if settings.VOTE_HOST:
+            host = request.META['REMOTE_HOST']
+            addr = request.META['REMOTE_ADDR']
+            return (host == settings.VOTE_HOST or addr == settings.VOTE_HOST)
+        return True     # No host configured
