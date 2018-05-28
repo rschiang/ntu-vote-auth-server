@@ -1,4 +1,5 @@
 from account.models import User
+from django.conf import settings
 from rest_framework.permissions import BasePermission
 
 class IsStationStaff(BasePermission):
@@ -16,5 +17,11 @@ class IsRemoteServer(BasePermission):
     """
 
     def has_permission(self, request, view):
-        # TODO: Check HOST
-        return request.user and request.user.kind == User.REMOTE_SERVER
+        host_allowed = True
+        if settings.VOTE_HOST:  # Check hostname if it was specified
+            host = request.META['REMOTE_HOST']
+            addr = request.META['REMOTE_ADDR']
+            # TODO: Log hostname if not matched
+            host_allowed = (host == settings.VOTE_HOST or addr == settings.VOTE_HOST)
+
+        return request.user and request.user.kind == User.REMOTE_SERVER and host_allowed

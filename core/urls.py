@@ -11,6 +11,7 @@ api_urlpatterns = [
     path('account/', include([
         path('register', account.register, name='register'),
         path('ping', account.ping, name='ping'),
+        path('booth', account.booth, name='booth'),
     ], namespace='account')),
 
     # Election-specific views

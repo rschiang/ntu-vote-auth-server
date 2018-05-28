@@ -1,6 +1,6 @@
 from account.permissions import IsRemoteServer, IsStationStaff
 from core.models import Election
-from core.permissions import IsAssociatedElection, IsElectionRunning, IsFromVoteSystem
+from core.permissions import IsAssociatedElection, IsElectionRunning
 from rest_framework.generics import GenericAPIView
 
 class BaseElectionView(GenericAPIView):
@@ -20,4 +20,4 @@ class BaseElectionEventView(BaseElectionView):
     # Note that we don't enforce election state checking, since the callback
     # could be arriving much later. This should not be an issue now, but we'll
     # just document the whole thing.
-    permission_classes = (IsRemoteServer, IsFromVoteSystem)
+    permission_classes = (IsRemoteServer,)
