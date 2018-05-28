@@ -6,8 +6,10 @@ class AccountTokenAuthentication(TokenAuthentication):
     model = Token
 
     def authenticate(self, request):
-        user, token = super().authenticate(request)
-        if token.is_expired:
-            raise AuthenticationFailed('Token expired.')
-        # TODO: Insert telemetry here
-        return user, token
+        auth = super().authenticate(request)
+        if len(auth) > 1:
+            user, token = auth
+            if token.is_expired:
+                raise AuthenticationFailed('Token expired.')
+            # TODO: Insert telemetry here
+        return auth
