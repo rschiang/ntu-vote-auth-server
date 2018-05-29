@@ -1,3 +1,4 @@
+from .models import Session
 from .validators import internal_id_validator, student_id_validator, session_key_validator
 from django.conf import settings
 from rest_framework import serializers
@@ -26,6 +27,14 @@ class VerifySerializer(serializers.Serializer):
     """
     student_id = serializers.CharField(validators=[student_id_validator])
     session_key = serializers.CharField(validators=[session_key_validator])
+
+    def validate(self, data):
+        session = Session.objects.filter(student_id=data['student_id'],
+                                         session_key=data['session_key']).order_by('-created').first()
+        if not session:
+            raise serializers.ValidationError('Session not found.')
+        data['session'] = session
+        return data
 
 class AbortSerializer(serializers.Serializer):
     """

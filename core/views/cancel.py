@@ -1,9 +1,9 @@
 import logging
 from .generics import BaseElectionView
+from core.exceptions import SessionInvalid
 from core.serializers import VerifySerializer
 from core.models import Session
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 
 logger = logging.getLogger('vote')
 
@@ -18,26 +18,19 @@ class CancelView(BaseElectionView):
         station = request.user.station
         validated_data = self.get_validated_data(request)
 
-        # Read validated data
-        student_id = validated_data['student_id']
-        session_key = validated_data['session_key']
-
         # Load the session and check its status
-        session = Session.objects.filter(student_id=student_id, session_key=session_key).order_by('-created').first()
+        student_id = validated_data['student_id']
+        session = validated_data['session']
 
-        # 1) Session should exist
-        if not session:
-            raise ValidationError(code='session_invalid')
-
-        # 2) Request should be from same station
-        elif session.station != station:
+        # 1) Request should be from same station (asserting the same election)
+        if session.station != station:
             logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station_id, station.id)
-            raise ValidationError('session_invalid')
+            raise SessionInvalid
 
-        # 3) State should be AUTHENTICATED (first try) or AUTHORIZED (retries)
+        # 2) State should be AUTHENTICATED (first try) or AUTHORIZED (retries)
         elif session.state not in (Session.AUTHENTICATED, Session.AUTHORIZED):
             logger.warning('State mismatch for session #%s [S%s] (%s)', session.id, station.id, session.state)
-            raise ValidationError('session_invalid')
+            raise SessionInvalid
 
         # Check if an auth code has been issued before
         if not session.auth_code:
