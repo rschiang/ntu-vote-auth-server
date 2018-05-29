@@ -1,117 +1,99 @@
-# -*- coding: utf-8 -*-
-
 """
-Django settings for core project.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.7/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.7/ref/settings/
+Django settings for NTU Vote authentication server.
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-# Update configurations from local settings if applicable
-if 'SETTINGS_FILE' in os.environ:
-    import json
-    with open(os.environ['SETTINGS_FILE']) as f:
-        os.environ.update(json.load(f))
+# Read configuration file
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
+CONFIG_FILE = os.environ.get('CONFIG_FILE', 'core/config/default.yml')
+with open(os.path.join(BASE_DIR, CONFIG_FILE), 'r') as f:
+    import yaml
+    CONFIG = yaml.load(f)
+
+# Project-wide settings
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('APP_SECRET_KEY', 'LoremIpsum')
+SECRET_KEY = CONFIG['secret']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-TEMPLATE_DEBUG = False
-ALLOWED_HOSTS = ['*']
+DEBUG = CONFIG['debug']
 
+# HTTP configuration
+
+if 'host' in CONFIG:
+    ALLOWED_HOSTS = [CONFIG['host']]
 
 # Application definition
 
 INSTALLED_APPS = (
-    'django.contrib.staticfiles',
     'django.contrib.auth',
-    'django.contrib.sessions',
     'django.contrib.contenttypes',
-    'django.contrib.admin',
+    'django.contrib.sessions',
     'rest_framework',
     'core',
     'account',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
-
-AUTH_USER_MODEL = 'account.User'
+]
 
 ROOT_URLCONF = 'core.urls'
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'account.authentication.AccountTokenAuthentication',
+    ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-    )
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '30/minute',
+        'strict': '3/minute',
+    },
+    'EXCEPTION_HANDLER': 'core.views.rest_exception_handler',
 }
 
-# Template
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
+# Authentication
+
+AUTH_USER_MODEL = 'account.User'
+
+# Templates
+
+TEMPLATE_DEBUG = DEBUG
 
 # Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+DATABASES = {}
 
-# Enable the use of external database
-# You may install additional dependencies like this:
-#     apt-get install python3-dev libpq-dev
-#     pip install psycopg2
-
-if os.environ.get('DATABASE_USER'):
+if CONFIG['database']['engine'] == 'psql':
+    # Enable the use of external database
+    # You may install additional dependencies like this:
+    #     apt-get install python3-dev libpq-dev
+    #     pip install psycopg2
+    DATABASES['default'] = { k.upper(): v for k, v in CONFIG['database'].items()}
+    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+else:
     DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DATABASE_NAME', 'vote'),
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': os.environ.get('DATABASE_HOST', ''),
-        'PORT': os.environ.get('DATABASE_PORT', ''),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, CONFIG['database']['file']),
     }
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'zh-tw'
 TIME_ZONE = 'Asia/Taipei'
@@ -119,33 +101,126 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-
 # Logging
-from .log import LOGGING_DIR, LOGGING
 
-# API declarations
-API_VERSION = '3'
+LOGGING_DIR = os.path.join(BASE_DIR, CONFIG.get('log', '.'))
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'debug_log', 'mail_admins'],
+            'level': 'DEBUG',
+        },
+        'django.security': {
+            'handlers': ['console', 'security_log', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'py.warnings': {
+            'handlers': ['console', 'debug_log'],
+        },
+        'vote': {
+            'handlers': ['vote_log'],
+            'level': 'DEBUG',
+        },
+    },
+    'formatters': {
+        'default': {
+            'format': '[{asctime}] {levelname}: {message}',
+            'style': '{'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'debug_log': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGGING_DIR, 'debug.log'),
+            'formatter': 'default',
+        },
+        'security_log': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGGING_DIR, 'security.log'),
+            'formatter': 'default',
+        },
+        'vote_log': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGGING_DIR, 'vote.log'),
+            'formatter': 'default',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+}
 
-# App configurations
-API_KEY = os.environ.get('VOTE_API_KEY', 'test_api_key')
-ACA_API_USER = os.environ.get('ACA_API_USER')
-ACA_API_PASSWORD = os.environ.get('ACA_API_PASSWORD')
-ACA_API_URL = os.environ.get('ACA_API_URL')
+# Mail
 
-# Callback domain
-CALLBACK_DOMAIN = os.environ.get('CALLBACK_DOMAIN', 'localhost')
+if 'mail' in CONFIG:
+    EMAIL_HOST = CONFIG['mail'].get('host', 'localhost')
+    EMAIL_PORT = CONFIG['mail'].get('port', 25)
+    EMAIL_HOST_USER = CONFIG['mail'].get('user', '')
+    EMAIL_HOST_PASSWORD = CONFIG['mail'].get('password', '')
+    if CONFIG['mail'].get('tls'):
+        EMAIL_USE_TLS = True
+    elif CONFIG['mail'].get('ssl'):
+        EMAIL_USE_SSL = True
+    SERVER_EMAIL = CONFIG['mail']['from']
+    DEFAULT_FROM_EMAIL = SERVER_EMAIL
+    EMAIL_SUBJECT_PREFIX = '[vote-auth] '
+    ADMINS = list(CONFIG['admin'].items())
 
-# Security enforcements
-ENFORCE_CARD_VALIDATION = True
-# TODO: use boolen value to activiate this option
-ENFORCE_EVENT_DATE = (os.environ.get('ENFORCE_EVENT') == '1')
+# Cache
 
-# Meta
-# All election meta information
-from .meta import *
+if 'cache' in CONFIG:
+    CACHES = {
+        'default': {
+            'BACKEND': ({
+                'db': 'django.core.cache.backends.db.DatabaseCache',
+                'file': 'django.core.cache.backends.filebased.FileBasedCache',
+                'memcached': 'django.core.cache.backends.memcached.MemcachedCache',
+            }).get(CONFIG['cache']['backend']),
+            'LOCATION': CONFIG['cache'].get('location', '')
+        }
+    }
+
+# NTU Vote specific settings
+
+# REST API declaration
+API_VERSION = '4'
+
+# External service configurations
+VOTE_HOST = CONFIG['vote']['host']
+VOTE_API_KEY = CONFIG['vote']['key']
+VOTE_API_URL = CONFIG['vote']['url']
+ACA_API_USER = CONFIG['aca']['user']
+ACA_API_PASSWORD = CONFIG['aca']['password']
+ACA_API_URL = CONFIG['aca']['url']
+
+# Security enforcements (strict, quirk, off)
+CARD_VALIDATION_MODE = CONFIG['security']
+CARD_VALIDATION_STRICT = (CARD_VALIDATION_MODE == 'strict')
+CARD_VALIDATION_QUIRK = (CARD_VALIDATION_MODE == 'quirk')
+CARD_VALIDATION_OFF = (not CARD_VALIDATION_MODE)
+
+# Election meta information
+UNDERGRADUATE_CODE = "BTE"
+GRADUATE_CODE = "RAPJMDCFQ"
+GENERAL_CODE = "BTERAPJMDCFQ"

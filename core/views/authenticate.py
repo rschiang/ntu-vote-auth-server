@@ -1,109 +1,176 @@
-import re
-from core import service
-from core.models import Record, AuthToken
-from core.service import kind_classifier
+import logging
+from .generics import BaseElectionView
+from core.exceptions import AlreadyVoted, CardInvalid, ElectorBanned, ElectorSuspicious, NotQualified
+from core.serializers import AuthenticateSerializer
+from core.services import aca, AuthenticationError
+from core.models import Ballot, Elector, Session
 from django.conf import settings
-from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from urllib.error import URLError
-from .decorators import check_prerequisites, scheduled, login_required, permission
-from .utils import error, logger
-from account.models import User
 
+logger = logging.getLogger('vote')
 
-@api_view(['POST'])
-@scheduled
-@login_required
-@permission(User.STATION)
-@check_prerequisites('cid', 'uid')
-def authenticate(request):
-    # Check parameters
-    internal_id = request.data['cid']
-    raw_student_id = request.data['uid']
-    station_id = request.station
+class AuthenticateView(BaseElectionView):
+    """
+    Authenticates card information against ACA API and returns available ballots.
+    """
+    serializer_class = AuthenticateSerializer
 
-    if settings.ENFORCE_CARD_VALIDATION:
-        # Parse student ID
-        if re.match(r'[A-Z]\d{2}[0-9A-Z]\d{6}', raw_student_id) and re.match(r'[0-9a-f]{8}', internal_id) and re.match(r'\d+', station_id):
-            # Extract parameters
-            student_id = raw_student_id[:-1]
-            revision = int(raw_student_id[-1:])
-            logger.info('Station %s request for card %s[%s]', station_id, student_id, revision)
+    def post(self, request, *args, **kwargs):
+        # Sanitize input
+        election = self.get_object()
+        station = request.user.station
+        validated_data = self.get_validated_data(request)
+
+        # Read validated data and authenticate against ACA
+        internal_id = validated_data['internal_id']
+        student_id = validated_data['student_id']
+        revision = validated_data['revision']
+
+        # Prepare the session
+        session = Session.objects.create(election=election, station=station, student_id=student_id, revision=revision)
+
+        # Authentication methods:
+        # 1) internal + student ID ["strict" mode]
+        # 2) internal ID only ["quirk" mode] (for less capable NFC clients)
+        # 3) student ID only (rely on client side validation)
+
+        # Log the request first
+        if settings.CARD_VALIDATION_QUIRK:
+            logger.info('Station %s requests card (%s****)', station.id, internal_id[:4])
         else:
-            # Malformed card information
-            logger.info('Station %s request for card %s (%s)', station_id, raw_student_id, internal_id)
-            return error('card_invalid')
+            logger.info('Station %s requests card %s[%s]', student_id, revision)
 
-    else:
-        # Do not reveal full internal ID as ACA requested
-        logger.info('Station %s request for card (%s****)', station_id, internal_id[:4])
+        # Call corresponding ACA API
+        try:
+            if not settings.CARD_VALIDATION_OFF:
+                info = aca.to_student_id(internal_id)   # Use internal ID to authenicate
 
-    # Call ACA API
-    try:
-        aca_info = service.to_student_id(internal_id)
+                # Double check if student ID matches in strict mode
+                if settings.CARD_VALIDATION_STRICT and info.id != student_id:
+                    logger.warning('ID %s returned instead', info.id)
+                    session.save_state(Session.NOT_AUTHENTICATED)
+                    raise ElectorSuspicious
 
-    except URLError:
-        logger.exception('Failed to connect to ACA server')
-        return error('external_error', status.HTTP_502_BAD_GATEWAY)
+            else:
+                student_id_with_rev = student_id + str(revision)
+                info = aca.query_student(student_id_with_rev)    # Query student ID instead
 
-    except service.ExternalError as e:
-        if not settings.ENFORCE_CARD_VALIDATION:
-            # We can only reveal full internal ID if it’s an invalid card
-            logger.exception('Card rejected by ACA server (%s), reason %s', internal_id, e.reason)
-        else:
-            logger.exception('Card rejected by ACA server, reason %s', e.reason)
+        # Error handling
+        # We don't catch ExternalError as we can do nothing about it.
+        except AuthenticationError as e:
+            session.save_state(Session.NOT_AUTHENTICATED)
+            if e.get_codes() == 'card_invalid':
+                raise CardInvalid
+            else:
+                raise ElectorSuspicious
 
-        # Tell clients the exact reason of error
-        if e.reason == 'card_invalid' or e.reason == 'student_not_found':
-            return error('card_invalid')
-        elif e.reason == 'card_blacklisted':
-            return error('card_suspicious')
-        return error('external_error', status.HTTP_502_BAD_GATEWAY)
+        # Now that ACA has verified the elector,
+        # we'll check against our record if there were any previous voting sessions.
+        sessions = Session.objects.filter(student_id=student_id)
 
-    else:
-        if not settings.ENFORCE_CARD_VALIDATION:
-            student_id = aca_info.id
-            revision = 0
-            logger.info('User %s (%s) checked', student_id, aca_info.type)
-        elif aca_info.id != student_id:
-            logger.info('ID %s returned instead', aca_info.id)
-            return error('card_suspicious')
+        # 1) Check if the elector has voted or not
+        if sessions.filter(state__in=(Session.VOTING, Session.VOTED)).exists():
+            session.save_state(Session.NOT_AUTHENTICATED)
+            raise AlreadyVoted
+        # 2) Check if the elector was banned (either by registering remote voting
+        # or earlier unlawful attempts.)
+        elif sessions.filter(state__in=(Session.ABORTED, Session.BANNED)).exists():
+            session.save_state(Session.NOT_AUTHENTICATED)
+            raise ElectorBanned
 
-    # Check vote record
-    try:
-        record = Record.objects.get(student_id=student_id)
-        if settings.ENFORCE_CARD_VALIDATION and record.revision != revision:
-            # ACA claim the card valid!
-            logger.info('Expect revision %s, recorded %s', revision, record.revision)
-            return error('card_suspicious')
+        # 3) Iterate through previous records, cancel out incomplete sessions;
+        # double-check on previous information if available.
+        for old_session in sessions.order_by('created'):
+            # Check on previous revision record; reject if using an older one.
+            if old_session.revision > revision:
+                session.save_state(Session.NOT_AUTHENTICATED)
+                raise ElectorSuspicious
 
-        if record.state == Record.VOTING:
-            # Automaticlly unlock stuck record
-            record.state = Record.AVAILABLE
-            record.save()
-            logger.info('Reset %s state from VOTING', student_id)
+            # Cancel out older sessions
+            if old_session.state in (Session.AUTHORIZED, Session.CANCELED):
+                # Session terminated before booth allocation.
+                if old_session.state == Session.AUTHORIZED:
+                    logger.info('Expiring session #%s [S%s] (2 → Z)', old_session.id, old_session.station.id)
+                    old_session.save_state(Session.CANCELED)
+                else:
+                    logger.info('Found old canceled session #%s [S%s]', old_session.id, old_session.station.id)
 
-        if record.state != Record.AVAILABLE:
-            logger.error('Duplicate entry (%s)', student_id)
-            return error('duplicate_entry')
+                # Since the elector has confirmed their identity and we've already
+                # requested an auth code based on that, no re-evaluation would be done.
+                # We'll just return cached identities instead.
+                ballots = old_session.ballots.all()
+                session.auth_code = old_session.auth_code
+                session.save_state(Session.AUTHENTICATED)
+                session.ballots.add(*ballots)
 
-    except Record.DoesNotExist:
-        record = Record(student_id=student_id, revision=revision)
+                return Response({
+                    'status': 'success', 'session_key': session.key, 'cached': True,
+                    'college': info.college_id, 'department': info.department,
+                    'ballots': [ballot.name for ballot in ballots],
+                })
 
-    # Determine graduate status
-    kind = kind_classifier.get_kind(aca_info)
+            elif old_session.state == Session.AUTHENTICATED:
+                # Session terminated before confirming identity.
+                # No big deal. We'll just invalidate this session.
+                logger.info('Expiring session #%s [S%s] (1 → Y)', old_session.id, old_session.station.id)
+                old_session.save_state(Session.NOT_VERIFIED)
 
-    if kind is None:
-        return error('unqualified')
+            elif old_session.state != Session.NOT_AUTHENTICATED:
+                # Either we've bumped into CREATED or some unknown state.
+                # Shouldn't occur but we'll cancel it out anyway.
+                logger.warning('Expiring session #%s [S%s] (%s → X)', old_session.id, old_session.station.id, old_session.state)
+                old_session.save_state(Session.NOT_AUTHENTICATED)
 
-    # Generate record and token
-    record.state = Record.LOCKED
-    record.save()
+        #
+        # ...Authentication succeeded.
 
-    token = AuthToken.generate(student_id, station_id, kind)
-    token.save()
+        # Build up elector information for condition matching
+        student_type = info.id[0]
+        elector_data = {
+            # Known information
+            'type': student_type, 'college': info.college_id, 'department': info.department,
+            # Normalized information
+            'standing': ('R' if student_type in settings.GRADUATE_CODE else
+                         ('B' if student_type in settings.UNDERGRADUATE_CODE else '')),
+        }
 
-    logger.info('Auth token issued: %s', token.code)
-    return Response({'status': 'success', 'uid': student_id, 'type': aca_info.college, 
-        'college': settings.DPTCODE_NAME[aca_info.department], 'vote_token': token.code})
+        # Filter out ineligible identities as regulated in Election & Recall Act §13(2).
+        if student_type not in settings.GENERAL_CODE:
+            logger.warning('Student %s does not qualify as elector', student_id)
+            session.save_state(Session.NOT_AUTHENTICATED)
+            raise NotQualified
+
+        # Iterate through ballots and check eligibility
+        ballots = []
+        for ballot in Ballot.objects.all_ballots(election=election):
+            # 1) Check if the elector is explicitly specified in list.
+            # Takes presedence over all ballot conditions.
+            try:
+                elector = ballot.electors.get(student_id=student_id)
+                if elector.is_allowed:
+                    ballots.append(ballot)
+                continue
+            except Elector.DoesNotExist:
+                pass    # This elector isn't explicitly black/whitelisted. Good.
+
+            # 2) Matches the elector data against ballot conditions.
+            # We've done the logic on models, so just call the method.
+            if ballot.match(fields=elector_data):
+                ballots.append(ballot)
+
+        # 3) Checks if there is at least one ballot to vote.
+        if not ballots:
+            logger.warning('Student %s does not qualify any ballot', student_id)
+            session.save_state(Session.NOT_AUTHENTICATED)
+            raise NotQualified  # Fail if there aren't any
+
+        # Saves the session and intermediate information
+        session.ballots.add(*ballots)
+        session.save_state(Session.AUTHENTICATED)
+
+        # Returns the ballot information and the session key for further operation
+        return Response({
+            'status': 'success', 'session_key': session.key,
+            'college': info.college, 'department': info.department,
+            'ballots': [ballot.name for ballot in ballots],
+        })

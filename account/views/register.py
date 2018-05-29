@@ -1,64 +1,36 @@
-from account.models import User, Session
-from django.utils import timezone
-from rest_framework import status
-from rest_framework.decorators import api_view
+import logging
+from account.throttling import StrictAnonRateThrottle
+from django.db import transaction
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
-from core.views.decorators import check_prerequisites
-from core.views.utils import error, logger
+from rest_framework.serializers import ValidationError
 
+logger = logging.getLogger('vote.auth')
 
-@api_view(['POST'])
-@check_prerequisites('username', 'password')
-def register(request):
-    username = request.data['username']
-    password = request.data['password']
+class RegisterView(ObtainAuthToken):
+    throttle_classes = (StrictAnonRateThrottle,)
 
-    # Authentication
-    user = None
-    try:
-        user = User.objects.get(username=username)
-        if not user.check_password(password):
-            user = None
-        elif not user.is_active:
-            logger.error('Login attempt failed for deactivated user %s', username)
-            return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
-    except User.DoesNotExist:
-        pass
+    def post(self, request, *args, **kwargs):
+        # Authenticate user by default serializer
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
-    # Filter and log failed attempts
-    if not user:
-        logger.error('Login attempt failed for "%s":"%s"', username, password)
-        return error('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError:
+            logger.error('Login attempt failed')
+            logger.info(serializer.initial_data)
+            raise
 
-    current_time = timezone.now()
-    station_id = None
+        user = serializer.validated_data['user']
 
-    # Expire older sessions
-    if user.kind == User.STATION:
-        station = user.station
-        sessions = Session.objects.filter(user=user, expired_on__gte=current_time).order_by('created_on')
-        if len(sessions) >= station.max_sessions:
-            old_session = sessions.first()
-            old_session.expired_on = current_time
-            old_session.save()
-        name = station.name
-        station_id = station.external_id
+        # Invalidate any previous token
+        with transaction.atomic():
+            old_token_count = user.tokens.update(is_expired=True)
+            token = user.tokens.create()
 
-    else:
-        # ADMIN and SUPERVISOR
-        old_sessions = Session.objects.filter(user=user, expired_on__gte=current_time)
-        for s in old_sessions:
-            s.expired_on = current_time
-            s.save()
-        name = username
+        logger.info('User %s logged in, %s old tokens expired', user.username, old_token_count)
 
-    # Issue session token
-    session = Session.generate(user=user)
-    session.save()
-
-    return Response({
-        'status': 'success',
-        'name': name,
-        'station_id': 0 if station_id is None else station_id,
-        'token': session.token,
-    })
+        return Response({
+            'status': 'success',
+            'token': token.key,
+        })

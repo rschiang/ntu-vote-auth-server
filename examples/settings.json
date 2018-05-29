@@ -1,9 +1,0 @@
-{
-    "APP_SECRET_KEY": "<Specify secret key here>",
-    "VOTE_API_KEY": "<Specify API key here>",
-    "ACA_API_USER": "ntusa",
-    "ACA_API_PASSWORD": "ntusa",
-    "ACA_API_URL": "http://localhost:9527/",
-    "CALLBACK_DOMAIN": "vote.ntuosc.org",
-    "ENFORCE_EVENT": "false"
-}

@@ -1,0 +1,16 @@
+name: default
+debug: true
+security: strict
+host: localhost
+secret: You could teleport yourself to the library bell tower
+database:
+    engine: sqlite
+    file: db.sqlite3
+vote:
+    host: localhost
+    key: Lorem ipsum donor amet
+    url: http://localhost:9407/
+aca:
+    user: ntusa
+    password: ntusa
+    url: http://localhost:9527/seqServices/{}

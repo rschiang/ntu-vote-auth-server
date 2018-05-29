@@ -1,39 +1,35 @@
-from django.contrib.admin import site as admin_site
-from django.conf.urls import url, include
-from core.views import (
-    index, authenticate, confirm, report, complete
-)
-from account.views import (register, ping)
-from staff.views import status
+import account.views as account
+import core.views as core
+from django.urls import include, path
+
+api_urlpatterns = [
+    # General views
+    path('', core.index),
+    path('version', core.version),
+
+    # Account views
+    path('account/', include([
+        path('register', account.register, name='register'),
+        path('ping', account.ping, name='ping'),
+        path('booth', account.booth, name='booth'),
+    ])),
+
+    # Election-specific views
+    path('election/<slug:name>/', include([
+        # Station actions
+        path('authenticate', core.authenticate, name='authenticate'),
+        path('allocate', core.allocate, name='allocate'),
+        path('cancel', core.cancel, name='cancel'),
+        # path('abort', core.abort, name='abort'),
+
+        # Callback events
+        path('voted', core.voted, name='voted-event'),
+
+        # Live statistics
+        # path('statistics', core.statistics, name='statistics'),
+    ])),
+]
 
 urlpatterns = [
-    url(r'^api/', include([
-        url(r'^$', index),
-
-        # general G series
-        url(r'^general/', include([
-            url(r'^register$', register, name='register'),
-            url(r'^ping$', ping, name='ping'),
-        ], namespace='general')),
-
-        # A series
-        url(r'^elector/', include([
-            url(r'^authenticate$', authenticate, name='authenticate'),
-            url(r'^confirm$', confirm, name='confirm'),
-            url(r'^reject$', report, name='report'),
-            url(r'^complete$', complete, name='callback'),
-        ], namespace='elector')),
-        # R
-        url(r'^resets/', include([
-            ], namespace='resets')),
-        # C
-        url(r'^entry/', include([
-            ], namespace='entry')),
-        # T
-        url(r'^test/', include([
-            ], 'test')),
-        # M
-        url(r'^status$', status, name='status'),
-    ])),
-    url(r'^admin/', admin_site.urls)
+    path('api/', include(api_urlpatterns)),
 ]
