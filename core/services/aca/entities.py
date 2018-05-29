@@ -7,7 +7,6 @@ class StudentInfo(object):
     """
 
     def __init__(self, id=None, type=None, valid=False, college=None, department=None, entity=None):
-        # TODO: Normalize ACA input
         self.id = id or entity['stuid']
         self.type = type or entity['stutype']  # Mandarin value returned from ACA server
         self.valid = valid or (entity['incampus'] == 'true')

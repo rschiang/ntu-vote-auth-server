@@ -30,7 +30,7 @@ class VerifySerializer(serializers.Serializer):
 
     def validate(self, data):
         session = Session.objects.filter(student_id=data['student_id'],
-                                         session_key=data['session_key']).order_by('-created').first()
+                                         key=data['session_key']).order_by('-created').first()
         if not session:
             raise serializers.ValidationError('Session not found.')
         data['session'] = session
