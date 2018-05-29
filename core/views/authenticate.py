@@ -113,7 +113,7 @@ class AuthenticateView(BaseElectionView):
 
                 return Response({
                     'status': 'success', 'session_key': session.key, 'cached': True,
-                    'college': info.college, 'department': info.department,
+                    'college': info.college_id, 'department': info.department,
                     'ballots': [ballot.name for ballot in ballots],
                 })
 
