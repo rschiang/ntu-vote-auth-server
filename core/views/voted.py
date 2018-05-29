@@ -24,7 +24,7 @@ class VotedEventView(BaseElectionEventView):
         except Session.DoesNotExist:
             # Invalid auth code
             logger.error('Invalid auth code %s passed from vote server', auth_code)
-            raise ValidationError(code='code_invalid')
+            raise ValidationError(code='code_invalid', detail='Auth code or state invalid.')
 
         # Update session status
         logger.info('Student %s has voted', session.student_id)

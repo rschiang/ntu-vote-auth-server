@@ -46,6 +46,7 @@ class Session(models.Model):
 
     # Session-specific information
     auth_code = models.CharField(max_length=256, blank=True)
+    ballots = models.ManyToManyField('Ballot')      # Ballots matched during authentication
     key = models.CharField(max_length=8, default=generate_session_key)  # Unique session key
 
     def __str__(self):

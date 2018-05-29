@@ -27,7 +27,7 @@ class AuthenticateView(BaseElectionView):
         revision = validated_data['revision']
 
         # Prepare the session
-        session = Session(election=election, station=station, student_id=student_id, revision=revision)
+        session = Session.objects.create(election=election, station=station, student_id=student_id, revision=revision)
 
         # Authentication methods:
         # 1) internal + student ID ["strict" mode]
@@ -59,7 +59,6 @@ class AuthenticateView(BaseElectionView):
         # We don't catch ExternalError as we can do nothing about it.
         except AuthenticationError as e:
             session.save_state(Session.NOT_AUTHENTICATED)
-            # TODO: Check reason
             if e.get_codes() == 'card_invalid':
                 raise CardInvalid
             else:
@@ -129,7 +128,7 @@ class AuthenticateView(BaseElectionView):
         student_type = info.id[0]
         elector_data = {
             # Known information
-            'type': student_type, 'college': info.college, 'department': info.department,
+            'type': student_type, 'college': info.college_id, 'department': info.department,
             # Normalized information
             'standing': ('R' if student_type in settings.GRADUATE_CODE else
                          ('B' if student_type in settings.UNDERGRADUATE_CODE else '')),
@@ -166,8 +165,8 @@ class AuthenticateView(BaseElectionView):
             raise NotQualified  # Fail if there aren't any
 
         # Saves the session and intermediate information
-        session.save_state(Session.AUTHENTICATED)
         session.ballots.add(*ballots)
+        session.save_state(Session.AUTHENTICATED)
 
         # Returns the ballot information and the session key for further operation
         return Response({
