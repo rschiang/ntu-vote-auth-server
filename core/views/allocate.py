@@ -12,7 +12,7 @@ class AllocateView(BaseElectionView):
     """
     Confirms the authenticated information, requests an auth code and allocates it to a booth.
     """
-    serializer = VerifySerializer
+    serializer_class = VerifySerializer
 
     def post(self, request, *args, **kwargs):
         # Sanitize input
@@ -25,7 +25,7 @@ class AllocateView(BaseElectionView):
 
         # 1) Request should be from same station (assert the same election)
         if session.station != station:
-            logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station_id, station.id)
+            logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station.id, station.id)
             raise SessionInvalid
 
         # 2) State should be AUTHENTICATED (first try) or AUTHORIZED (retries)

@@ -11,7 +11,7 @@ class VotedEventView(BaseElectionEventView):
     """
     Called when elector has completed voting session on vote system.
     """
-    serializer = VoteEventSerializer
+    serializer_class = VoteEventSerializer
 
     def post(self, request, *args, **kwargs):
         election = self.get_object()

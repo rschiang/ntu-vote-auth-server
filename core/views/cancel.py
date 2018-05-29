@@ -24,7 +24,7 @@ class CancelView(BaseElectionView):
 
         # 1) Request should be from same station (asserting the same election)
         if session.station != station:
-            logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station_id, station.id)
+            logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station.id, station.id)
             raise SessionInvalid
 
         # 2) State should be AUTHENTICATED (first try) or AUTHORIZED (retries)

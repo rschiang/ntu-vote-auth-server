@@ -12,15 +12,16 @@ class AbortView(BaseElectionView):
     """
     Aborts the voting process in a booth.
     """
-    serializer = AbortSerializer
+    serializer_class = AbortSerializer
 
     def post(self, request, *args, **kwargs):
         # Sanitize input
         station = request.user.station
         validated_data = self.get_validated_data(request)
+        booth_id = validated_data['booth_id']
 
         # Call the abort API
-        # vote.abort_booth(station_id=station.id, booth_id=booth_id)
+        # vote.abort_booth(station_id=station.foreign_id, booth_id=booth_id)
 
         # Update the session state
         # session = Session.objects.filter(election=election, station=station, booth_id=booth_id)

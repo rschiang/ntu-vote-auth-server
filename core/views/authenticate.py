@@ -91,10 +91,10 @@ class AuthenticateView(BaseElectionView):
             if old_session.state in (Session.AUTHORIZED, Session.CANCELED):
                 # Session terminated before booth allocation.
                 if old_session.state == Session.AUTHORIZED:
-                    logger.info('Expiring session #%s [S%s] (2 → Z)', old_session.id, old_session.station_id)
+                    logger.info('Expiring session #%s [S%s] (2 → Z)', old_session.id, old_session.station.id)
                     old_session.save_state(Session.CANCELED)
                 else:
-                    logger.info('Found old canceled session #%s [S%s]', old_session.id, old_session.station_id)
+                    logger.info('Found old canceled session #%s [S%s]', old_session.id, old_session.station.id)
 
                 # Since the elector has confirmed their identity and we've already
                 # requested an auth code based on that, no re-evaluation would be done.
@@ -113,13 +113,13 @@ class AuthenticateView(BaseElectionView):
             elif old_session.state == Session.AUTHENTICATED:
                 # Session terminated before confirming identity.
                 # No big deal. We'll just invalidate this session.
-                logger.info('Expiring session #%s [S%s] (1 → Y)', old_session.id, old_session.station_id)
+                logger.info('Expiring session #%s [S%s] (1 → Y)', old_session.id, old_session.station.id)
                 old_session.save_state(Session.NOT_VERIFIED)
 
             elif old_session.state != Session.NOT_AUTHENTICATED:
                 # Either we've bumped into CREATED or some unknown state.
                 # Shouldn't occur but we'll cancel it out anyway.
-                logger.warning('Expiring session #%s [S%s] (%s → X)', old_session.id, old_session.station_id, old_session.state)
+                logger.warning('Expiring session #%s [S%s] (%s → X)', old_session.id, old_session.station.id, old_session.state)
                 old_session.save_state(Session.NOT_AUTHENTICATED)
 
         #
