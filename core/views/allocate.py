@@ -1,10 +1,10 @@
 import logging
 from .generics import BaseElectionView
+from core.exceptions import SessionInvalid
 from core.serializers import VerifySerializer
 from core.services import vote
 from core.models import Session
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 
 logger = logging.getLogger('vote')
 
@@ -12,42 +12,33 @@ class AllocateView(BaseElectionView):
     """
     Confirms the authenticated information, requests an auth code and allocates it to a booth.
     """
+    serializer = VerifySerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         # Sanitize input
-        election = self.get_object()
         station = request.user.station
-        serializer = VerifySerializer(data=request.data)
+        validated_data = self.get_validated_data(request)
 
-        try:
-            # Verify the fields first
-            serializer.is_valid(raise_exception=True)
+        # Read validated data
+        student_id = validated_data['student_id']
+        session_key = validated_data['session_key']
 
-            # Read validated data
-            student_id = serializer.validated_data['student_id']
-            session_key = serializer.validated_data['session_key']
+        # Load the session and check its status
+        session = Session.objects.filter(student_id=student_id, session_key=session_key).order_by('-created').first()
 
-            # Load the session and check its status
-            session = Session.objects.filter(student_id=student_id, session_key=session_key).order_by('-created').first()
+        # 1) Session should exist
+        if not session:
+            raise SessionInvalid
 
-            # 1) Session should exist
-            if not session:
-                raise ValidationError(code='session_invalid')
+        # 2) Request should be from same station
+        elif session.station != station:
+            logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station_id, station.id)
+            raise SessionInvalid
 
-            # 2) Request should be from same station
-            elif session.station != station:
-                logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station_id, station.id)
-                raise ValidationError('session_invalid')
-
-            # 3) State should be AUTHENTICATED (first try) or AUTHORIZED (retries)
-            elif session.state not in (Session.AUTHENTICATED, Session.AUTHORIZED):
-                logger.warning('State mismatch for session #%s [S%s] (%s)', session.id, station.id, session.state)
-                raise ValidationError('session_invalid')
-
-        except ValidationError:
-            logger.warning('Station %s request invalid', station.id)
-            logger.info(serializer.initial_data)
-            raise   # Exception handler will handle for us.
+        # 3) State should be AUTHENTICATED (first try) or AUTHORIZED (retries)
+        elif session.state not in (Session.AUTHENTICATED, Session.AUTHORIZED):
+            logger.warning('State mismatch for session #%s [S%s] (%s)', session.id, station.id, session.state)
+            raise SessionInvalid
 
         # Since station staff could invoke this method multiple times before
         # a booth is allocated, we'll need to put reentry in mind.

@@ -6,7 +6,6 @@ from core.services import aca, AuthenticationError
 from core.models import Ballot, Elector, Session
 from django.conf import settings
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 
 logger = logging.getLogger('vote')
 
@@ -14,24 +13,18 @@ class AuthenticateView(BaseElectionView):
     """
     Authenticates card information against ACA API and returns available ballots.
     """
+    serializer_class = AuthenticateSerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         # Sanitize input
         election = self.get_object()
         station = request.user.station
-        serializer = AuthenticateSerializer(data=request.data)
-
-        try:
-            serializer.is_valid(raise_exception=True)
-        except ValidationError:
-            logger.warning('Station %s request invalid', station.id)
-            logger.info(serializer.initial_data)
-            raise   # Exception handler will handle for us.
+        validated_data = self.get_validated_data(request)
 
         # Read validated data and authenticate against ACA
-        internal_id = serializer.validated_data['internal_id']
-        student_id = serializer.validated_data['student_id']
-        revision = serializer.validated_data['revision']
+        internal_id = validated_data['internal_id']
+        student_id = validated_data['student_id']
+        revision = validated_data['revision']
 
         # Prepare the session
         session = Session(election=election, station=station, student_id=student_id, revision=revision)

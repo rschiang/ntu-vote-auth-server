@@ -11,41 +11,33 @@ class CancelView(BaseElectionView):
     """
     Rejects the authenticated information or cancel booth allocation if an auth code were issued.
     """
+    serializer_class = VerifySerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         # Sanitize input
         station = request.user.station
-        serializer = VerifySerializer(data=request.data)
+        validated_data = self.get_validated_data(request)
 
-        try:
-            # Verify the fields first
-            serializer.is_valid(raise_exception=True)
+        # Read validated data
+        student_id = validated_data['student_id']
+        session_key = validated_data['session_key']
 
-            # Read validated data
-            student_id = serializer.validated_data['student_id']
-            session_key = serializer.validated_data['session_key']
+        # Load the session and check its status
+        session = Session.objects.filter(student_id=student_id, session_key=session_key).order_by('-created').first()
 
-            # Load the session and check its status
-            session = Session.objects.filter(student_id=student_id, session_key=session_key).order_by('-created').first()
+        # 1) Session should exist
+        if not session:
+            raise ValidationError(code='session_invalid')
 
-            # 1) Session should exist
-            if not session:
-                raise ValidationError(code='session_invalid')
+        # 2) Request should be from same station
+        elif session.station != station:
+            logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station_id, station.id)
+            raise ValidationError('session_invalid')
 
-            # 2) Request should be from same station
-            elif session.station != station:
-                logger.warning('Station mismatch for session #%s [S%s → %s]', session.id, session.station_id, station.id)
-                raise ValidationError('session_invalid')
-
-            # 3) State should be AUTHENTICATED (first try) or AUTHORIZED (retries)
-            elif session.state not in (Session.AUTHENTICATED, Session.AUTHORIZED):
-                logger.warning('State mismatch for session #%s [S%s] (%s)', session.id, station.id, session.state)
-                raise ValidationError('session_invalid')
-
-        except ValidationError:
-            logger.warning('Station %s request invalid', station.id)
-            logger.info(serializer.initial_data)
-            raise   # Exception handler will handle for us.
+        # 3) State should be AUTHENTICATED (first try) or AUTHORIZED (retries)
+        elif session.state not in (Session.AUTHENTICATED, Session.AUTHORIZED):
+            logger.warning('State mismatch for session #%s [S%s] (%s)', session.id, station.id, session.state)
+            raise ValidationError('session_invalid')
 
         # Check if an auth code has been issued before
         if not session.auth_code:

@@ -11,22 +11,16 @@ class VotedEventView(BaseElectionEventView):
     """
     Called when elector has completed voting session on vote system.
     """
+    serializer = VoteEventSerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         election = self.get_object()
-        serializer = VoteEventSerializer(data=request.data)
+        validated_data = self.get_validated_data(request)
+
+        auth_code = validated_data['auth_code']
 
         try:
-            # Sanitize and find the matching session with the auth code
-            serializer.is_valid(raise_exception=True)
-            auth_code = serializer.validated_data['auth_code']
             session = Session.objects.get(election=election, auth_code=auth_code, state=Session.VOTING)
-
-        except ValidationError:
-            # Seriously? With only one argument?
-            logger.error('Invalid request from vote server')
-            raise
-
         except Session.DoesNotExist:
             # Invalid auth code
             logger.error('Invalid auth code %s passed from vote server', auth_code)

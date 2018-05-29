@@ -1,5 +1,4 @@
 import logging
-from account.models import Token
 from account.throttling import StrictAnonRateThrottle
 from django.db import transaction
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -26,8 +25,8 @@ class RegisterView(ObtainAuthToken):
 
         # Invalidate any previous token
         with transaction.atomic():
-            old_token_count = Token.objects.filter(user=user).update(is_expired=True)
-            token = Token.objects.create(user=user)
+            old_token_count = user.tokens.update(is_expired=True)
+            token = user.tokens.create()
 
         logger.info('User %s logged in, %s old tokens expired', user.username, old_token_count)
 

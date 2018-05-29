@@ -5,7 +5,6 @@ from core.exceptions import APIException
 from core.serializers import AbortSerializer
 # from core.services import vote
 # from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 
 logger = logging.getLogger('vote')
 
@@ -13,18 +12,12 @@ class AbortView(BaseElectionView):
     """
     Aborts the voting process in a booth.
     """
+    serializer = AbortSerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         # Sanitize input
         station = request.user.station
-        serializer = AbortSerializer(data=request.data)
-
-        try:
-            # Verify the fields first
-            serializer.is_valid(raise_exception=True)
-        except ValidationError:
-            logger.warning('Station %s request invalid', station.id)
-            raise   # Exception handler will handle for us.
+        validated_data = self.get_validated_data(request)
 
         # Call the abort API
         # vote.abort_booth(station_id=station.id, booth_id=booth_id)

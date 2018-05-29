@@ -39,3 +39,8 @@ class NotQualified(APIException):
     status_code = 401
     default_code = 'not_qualified'
     default_detail = 'Elector isn’t qualified to vote in this election.'
+
+class SessionInvalid(APIException):
+    status_code = 403
+    default_code = 'session_invalid'
+    default_detail = 'Session invalid.'
