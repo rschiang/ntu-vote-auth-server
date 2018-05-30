@@ -1,7 +1,15 @@
 from account.permissions import IsStationStaff
+from core.models import Election
 from core.services import vote
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+ELECTION_STATES = {
+    Election.NOT_STARTED: 'not_started',
+    Election.STARTED: 'started',
+    Election.PAUSED: 'paused',
+    Election.ENDED: 'stopped',
+}
 
 class BoothView(APIView):
     """
@@ -18,6 +26,7 @@ class BoothView(APIView):
         # Build response
         response = {
             'status': 'success',
+            'election': ELECTION_STATES[station.election.state],
             'booths': { booth.booth_id: booth.status for booth in booth_list },
         }
 
