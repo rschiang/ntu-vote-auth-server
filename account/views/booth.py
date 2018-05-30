@@ -22,7 +22,7 @@ class BoothView(APIView):
         }
 
         # Append additional information if requested
-        if request.data.get('initialize'):
+        if request.query_params.get('initialize'):
             response['station'] = station.name
             response['description'] = station.election.description or station.description
 
