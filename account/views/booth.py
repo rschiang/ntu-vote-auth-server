@@ -13,14 +13,17 @@ class BoothView(APIView):
         station = request.user.station
 
         # Fetch status from vote system
-        response = vote.fetch_booth_status(station.foreign_id)
+        booth_list = vote.fetch_booth_status(station.foreign_id)
 
         # Build response
-        booths = {}
-        for booth in response:
-            booths[booth.booth_id] = booth.status
-
-        return Response({
+        response = {
             'status': 'success',
-            'booths': booths,
-        })
+            'booths': { booth.booth_id: booth.status for booth in booth_list },
+        }
+
+        # Append additional information if requested
+        if request.data.get('initialize'):
+            response['station'] = station.name
+            response['description'] = station.election.description or station.description
+
+        return Response(response)
