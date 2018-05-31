@@ -1,6 +1,5 @@
-from core.exceptions import NotQualified
-from core.services import aca, vote
-from core.models import Ballot, Elector, Election, Session
+from core.services import aca
+from core.models import Ballot, Elector, Election
 from django.conf import settings
 
 def query_ballots(student_id, revision):
