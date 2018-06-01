@@ -12,11 +12,11 @@ def raise_exception(message):
     # Try given error messages in meta
     for trait, code in meta.AUTHENTICATION_ERRORS:
         if trait in message:
-            raise AuthenticationError(code=code)
+            raise AuthenticationError(code=code, detail=message)
 
     for trait, code in meta.SERVICE_ERRORS:
         if trait in message:
-            raise ExternalError(code=code)
+            raise ExternalError(code=code, detail=message)
 
     # Either we were totally revoked access to ACA
     # or something was wrong with their server.
