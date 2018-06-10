@@ -70,7 +70,7 @@ class AuthenticateView(BaseElectionView):
         sessions = Session.objects.filter(student_id=student_id)
 
         # 1) Check if the elector has voted or not
-        if sessions.filter(state__in=(Session.VOTING, Session.VOTED)).exists():
+        if sessions.filter(state__in=(Session.VOTING, Session.VOTED, Session.REMOTE_VOTED)).exists():
             session.save_state(Session.NOT_AUTHENTICATED)
             raise AlreadyVoted
         # 2) Check if the elector was banned (either by registering remote voting

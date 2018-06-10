@@ -13,6 +13,7 @@ SESSION_STATES = {
     Session.CANCELED: 'CANCELD',
     Session.ABORTED: 'ABORTED',
     Session.BANNED: 'BANNED',
+    Session.REMOTE_VOTED: 'VOTED-R',
 }
 
 class Command(BaseCommand):
@@ -29,6 +30,7 @@ class Command(BaseCommand):
             else:
                 print('Sessions for student', student_id)
                 for session in sessions:
-                    print('{} [{}] {}-{} {}'.format(localtime(session.created), SESSION_STATES[session.state].ljust('7'),
-                                                    session.student_id, session.revision, session.auth_code or '<no code>'))
+                    print('{} [{}] {}-{} {} {}'.format(localtime(session.created), SESSION_STATES[session.state].ljust(7),
+                                                       session.student_id, session.revision, session.auth_code or '<no code>',
+                                                       '/'.join(ballot.name for ballot in session.ballots.all())))
                 print('=' * 40)

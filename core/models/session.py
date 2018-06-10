@@ -22,6 +22,7 @@ class Session(models.Model):
     CANCELED = 'Z'  # Elector left before being allocated a booth.
     ABORTED = 'Q'   # Elector left the booth before finishing their vote.
     BANNED = 'N'    # Fake session to ban a user permanently in an election.
+    REMOTE_VOTED = 'M'  # Additional state to identify completed remote voting session.
 
     STATE_CHOICES = (
         (CREATED, 'Created'),
