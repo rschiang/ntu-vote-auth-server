@@ -22,13 +22,17 @@ class VotedEventView(BaseElectionEventView):
         try:
             session = Session.objects.get(election=election, auth_code=auth_code, state=Session.VOTING)
         except Session.DoesNotExist:
+            # See if remote voting session exists
+            session = Session.objects.filter(election=election, auth_code=auth_code, state=Session.BANNED).first()
+
+        if not session:
             # Invalid auth code
             logger.error('Invalid auth code %s passed from vote server', auth_code)
             raise ValidationError(code='code_invalid', detail='Auth code or state invalid.')
 
         # Update session status
         logger.info('Student %s has voted', session.student_id)
-        session.save_state(Session.VOTED)
+        session.save_state(Session.VOTED if session.state == Session.VOTING else Session.REMOTE_VOTED)
 
         return Response({
             'status': 'success',

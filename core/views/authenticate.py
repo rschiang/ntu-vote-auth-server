@@ -59,17 +59,18 @@ class AuthenticateView(BaseElectionView):
         # We don't catch ExternalError as we can do nothing about it.
         except AuthenticationError as e:
             session.save_state(Session.NOT_AUTHENTICATED)
-            if e.get_codes() == 'card_invalid':
+            code = e.get_codes()
+            if code == 'card_invalid':
                 raise CardInvalid
-            else:
-                raise ElectorSuspicious
+            else:   # Let ACA error codes pass through
+                raise ElectorSuspicious(code=code)
 
         # Now that ACA has verified the elector,
         # we'll check against our record if there were any previous voting sessions.
         sessions = Session.objects.filter(student_id=student_id)
 
         # 1) Check if the elector has voted or not
-        if sessions.filter(state__in=(Session.VOTING, Session.VOTED)).exists():
+        if sessions.filter(state__in=(Session.VOTING, Session.VOTED, Session.REMOTE_VOTED)).exists():
             session.save_state(Session.NOT_AUTHENTICATED)
             raise AlreadyVoted
         # 2) Check if the elector was banned (either by registering remote voting
@@ -105,7 +106,7 @@ class AuthenticateView(BaseElectionView):
 
                 return Response({
                     'status': 'success', 'session_key': session.key, 'cached': True,
-                    'college': info.college_id, 'department': info.department,
+                    'college': info.college, 'department': info.department,
                     'ballots': [ballot.name for ballot in ballots],
                 })
 

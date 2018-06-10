@@ -41,7 +41,7 @@ class AllocateView(BaseElectionView):
             logger.info('Request auth code for student %s', student_id)
 
             # Ask the vote system to generate one for us
-            ballot_ids = [ballot.foreign_id for ballot in session.ballots.all()]
+            ballot_ids = sorted(ballot.foreign_id for ballot in session.ballots.all())
             auth_code = vote.request_auth_code(ballot_ids=ballot_ids)
 
             # Update the session state in advance
